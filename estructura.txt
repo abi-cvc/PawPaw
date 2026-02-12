@@ -1,0 +1,574 @@
+Listado de rutas de carpetas para el volumen Windos
+El n£mero de serie del volumen es 148F-B2F0
+C:.
+|   .classpath
+|   .gitignore
+|   .project
+|   estructura.txt
+|   pom.xml
+|   tmpclaude-1dac-cwd
+|   
++---.metadata
+|   |   .lock
+|   |   .lock_info
+|   |   .log
+|   |   version.ini
+|   |   
+|   +---.mylyn
+|   |       repositories.xml.zip
+|   |       
+|   \---.plugins
+|       +---org.eclipse.buildship.core
+|       |   \---gradle
+|       |           versions.json
+|       |           
+|       +---org.eclipse.core.resources
+|       |   +---.projects
+|       |   |   \---.org.eclipse.egit.core.cmp
+|       |   |           .location
+|       |   |           
+|       |   +---.root
+|       |   |   |   1.tree
+|       |   |   |   
+|       |   |   \---.indexes
+|       |   |           history.version
+|       |   |           properties.index
+|       |   |           properties.version
+|       |   |           
+|       |   \---.safetable
+|       |           org.eclipse.core.resources
+|       |           
+|       +---org.eclipse.core.runtime
+|       |   \---.settings
+|       |           org.eclipse.ant.ui.prefs
+|       |           org.eclipse.core.resources.prefs
+|       |           org.eclipse.debug.ui.prefs
+|       |           org.eclipse.jdt.core.prefs
+|       |           org.eclipse.jdt.launching.prefs
+|       |           org.eclipse.jdt.ui.prefs
+|       |           org.eclipse.jsch.core.prefs
+|       |           org.eclipse.jst.j2ee.webservice.ui.prefs
+|       |           org.eclipse.m2e.discovery.prefs
+|       |           org.eclipse.mylyn.context.core.prefs
+|       |           org.eclipse.mylyn.monitor.ui.prefs
+|       |           org.eclipse.mylyn.tasks.ui.prefs
+|       |           org.eclipse.ui.ide.prefs
+|       |           org.eclipse.ui.navigator.prefs
+|       |           org.eclipse.ui.prefs
+|       |           org.eclipse.ui.workbench.prefs
+|       |           org.eclipse.wst.jsdt.ui.prefs
+|       |           org.eclipse.wst.sse.ui.prefs
+|       |           
+|       +---org.eclipse.e4.workbench
+|       |       workbench.xmi
+|       |       
+|       +---org.eclipse.egit.core
+|       |   \---.org.eclipse.egit.core.cmp
+|       |       |   .project
+|       |       |   
+|       |       \---.settings
+|       |               org.eclipse.core.resources.prefs
+|       |               
+|       +---org.eclipse.jdt.core
+|       |       assumedExternalFilesCache
+|       |       externalFilesCache
+|       |       javaLikeNames.txt
+|       |       nonChainingJarsCache
+|       |       variablesAndContainers.dat
+|       |       
+|       +---org.eclipse.jdt.launching
+|       |       .install.xml
+|       |       libraryInfos.xml
+|       |       
+|       +---org.eclipse.jdt.ui
+|       |       OpenTypeHistory.xml
+|       |       QualifiedTypeNameHistory.xml
+|       |       
+|       +---org.eclipse.m2e.core
+|       |       archetypesInfo.xml
+|       |       workspaceState.ser
+|       |       
+|       +---org.eclipse.m2e.core.ui
+|       |       dialog_settings.xml
+|       |       
+|       +---org.eclipse.m2e.logback
+|       |       0.log
+|       |       logback.2.7.101.20251017-1242.xml
+|       |       
+|       +---org.eclipse.mylyn.github.ui
+|       |       avatars.ser
+|       |       
+|       +---org.eclipse.oomph.setup
+|       |       workspace.setup
+|       |       
+|       +---org.eclipse.pde.core
+|       |   \---.cache
+|       |           clean-cache.properties
+|       |           
+|       +---org.eclipse.swt
+|       |   \---EBWebView
+|       |       |   BrowserMetrics-spare.pma
+|       |       |   Last Version
+|       |       |   Local State
+|       |       |   Variations
+|       |       |   
+|       |       +---AutoLaunchProtocolsComponent
+|       |       |   \---1.0.0.10
+|       |       |           manifest.json
+|       |       |           protocols.json
+|       |       |           
+|       |       +---BrowserMetrics
+|       |       |       BrowserMetrics-698BF118-1B0C.pma
+|       |       |       
+|       |       +---CertificateRevocation
+|       |       |   \---6498.2025.9.4
+|       |       |           crl-set
+|       |       |           manifest.json
+|       |       |           
+|       |       +---component_crx_cache
+|       |       |       000ac7dc9366969db9d1e41810a3a27c747a7623535d856eecc2de86cfed80c7
+|       |       |       89f43cb3df807293de2772d5f01ac2fc1482b38ccc8fdaee859b80642b7a0487
+|       |       |       95fd9d48e4fc245a3f3a99a3a16ecd1355050ba3f4afc555f19a97c7f9b49677
+|       |       |       fa29a6d5775ff340900a65b39b02fc8b4b77d403c048d8debf22f2f5d09c61a0
+|       |       |       fbb2c0f4fad3b34b3ac7116d98f83638cf6f55a47992026a7abf944a759aa0ea
+|       |       |       metadata.json
+|       |       |       
+|       |       +---Crashpad
+|       |       |       metadata
+|       |       |       settings.dat
+|       |       |       throttle_store.dat
+|       |       |       
+|       |       +---Default
+|       |       |   |   BookmarkMergedSurfaceOrdering
+|       |       |   |   BrowsingTopicsSiteData
+|       |       |   |   BrowsingTopicsSiteData-journal
+|       |       |   |   BrowsingTopicsState
+|       |       |   |   DIPS
+|       |       |   |   ExtensionActivityComp
+|       |       |   |   ExtensionActivityEdge
+|       |       |   |   ExtensionActivityEdge-journal
+|       |       |   |   Favicons
+|       |       |   |   Favicons-journal
+|       |       |   |   favorites_diagnostic.log
+|       |       |   |   heavy_ad_intervention_opt_out.db
+|       |       |   |   heavy_ad_intervention_opt_out.db-journal
+|       |       |   |   History
+|       |       |   |   History-journal
+|       |       |   |   LOCK
+|       |       |   |   LOG
+|       |       |   |   LOG.old
+|       |       |   |   Login Data
+|       |       |   |   Login Data For Account
+|       |       |   |   Login Data For Account-journal
+|       |       |   |   Login Data-journal
+|       |       |   |   Network Action Predictor
+|       |       |   |   Network Action Predictor-journal
+|       |       |   |   Preferences
+|       |       |   |   README
+|       |       |   |   Secure Preferences
+|       |       |   |   ServerCertificate
+|       |       |   |   ServerCertificate-journal
+|       |       |   |   SharedStorage
+|       |       |   |   Top Sites
+|       |       |   |   Top Sites-journal
+|       |       |   |   Vpn Tokens
+|       |       |   |   Vpn Tokens-journal
+|       |       |   |   Web Data
+|       |       |   |   Web Data-journal
+|       |       |   |   
+|       |       |   +---AutofillAiModelCache
+|       |       |   |       LOCK
+|       |       |   |       LOG
+|       |       |   |       LOG.old
+|       |       |   |       
+|       |       |   +---AutofillStrikeDatabase
+|       |       |   |       LOCK
+|       |       |   |       LOG
+|       |       |   |       LOG.old
+|       |       |   |       
+|       |       |   +---BudgetDatabase
+|       |       |   |       LOCK
+|       |       |   |       LOG
+|       |       |   |       LOG.old
+|       |       |   |       
+|       |       |   +---Cache
+|       |       |   |   +---Cache_Data
+|       |       |   |   |       data_0
+|       |       |   |   |       data_1
+|       |       |   |   |       data_2
+|       |       |   |   |       data_3
+|       |       |   |   |       f_000001
+|       |       |   |   |       f_000002
+|       |       |   |   |       index
+|       |       |   |   |       
+|       |       |   |   \---No_Vary_Search
+|       |       |   |           journal.baj
+|       |       |   |           snapshot.baf
+|       |       |   |           
+|       |       |   +---ClientCertificates
+|       |       |   |       LOCK
+|       |       |   |       LOG
+|       |       |   |       LOG.old
+|       |       |   |       
+|       |       |   +---Code Cache
+|       |       |   |   +---js
+|       |       |   |   |   |   ca4476001c08c94c_0
+|       |       |   |   |   |   index
+|       |       |   |   |   |   
+|       |       |   |   |   \---index-dir
+|       |       |   |   |           the-real-index
+|       |       |   |   |           
+|       |       |   |   \---wasm
+|       |       |   |       |   index
+|       |       |   |       |   
+|       |       |   |       \---index-dir
+|       |       |   |               the-real-index
+|       |       |   |               
+|       |       |   +---commerce_subscription_db
+|       |       |   |       LOCK
+|       |       |   |       LOG
+|       |       |   |       LOG.old
+|       |       |   |       
+|       |       |   +---DawnGraphiteCache
+|       |       |   |       data_0
+|       |       |   |       data_1
+|       |       |   |       data_2
+|       |       |   |       data_3
+|       |       |   |       index
+|       |       |   |       
+|       |       |   +---DawnWebGPUCache
+|       |       |   |       data_0
+|       |       |   |       data_1
+|       |       |   |       data_2
+|       |       |   |       data_3
+|       |       |   |       index
+|       |       |   |       
+|       |       |   +---discounts_db
+|       |       |   |       LOCK
+|       |       |   |       LOG
+|       |       |   |       LOG.old
+|       |       |   |       
+|       |       |   +---discount_infos_db
+|       |       |   |       LOCK
+|       |       |   |       LOG
+|       |       |   |       LOG.old
+|       |       |   |       
+|       |       |   +---Extension Rules
+|       |       |   |       000003.log
+|       |       |   |       CURRENT
+|       |       |   |       LOCK
+|       |       |   |       LOG
+|       |       |   |       MANIFEST-000001
+|       |       |   |       
+|       |       |   +---Extension Scripts
+|       |       |   |       000003.log
+|       |       |   |       CURRENT
+|       |       |   |       LOCK
+|       |       |   |       LOG
+|       |       |   |       MANIFEST-000001
+|       |       |   |       
+|       |       |   +---Extension State
+|       |       |   |       000003.log
+|       |       |   |       CURRENT
+|       |       |   |       LOCK
+|       |       |   |       LOG
+|       |       |   |       LOG.old
+|       |       |   |       MANIFEST-000001
+|       |       |   |       
+|       |       |   +---Feature Engagement Tracker
+|       |       |   |   +---AvailabilityDB
+|       |       |   |   |       LOCK
+|       |       |   |   |       LOG
+|       |       |   |   |       LOG.old
+|       |       |   |   |       
+|       |       |   |   \---EventDB
+|       |       |   |           LOCK
+|       |       |   |           LOG
+|       |       |   |           LOG.old
+|       |       |   |           
+|       |       |   +---GPUCache
+|       |       |   |       data_0
+|       |       |   |       data_1
+|       |       |   |       data_2
+|       |       |   |       data_3
+|       |       |   |       index
+|       |       |   |       
+|       |       |   +---Local Storage
+|       |       |   |   \---leveldb
+|       |       |   |           000003.log
+|       |       |   |           CURRENT
+|       |       |   |           LOCK
+|       |       |   |           LOG
+|       |       |   |           LOG.old
+|       |       |   |           MANIFEST-000001
+|       |       |   |           
+|       |       |   +---Network
+|       |       |   |       Cookies
+|       |       |   |       Cookies-journal
+|       |       |   |       Network Persistent State
+|       |       |   |       NetworkDataMigrated
+|       |       |   |       Reporting and NEL
+|       |       |   |       Reporting and NEL-journal
+|       |       |   |       SCT Auditing Pending Reports
+|       |       |   |       Sdch Dictionaries
+|       |       |   |       TransportSecurity
+|       |       |   |       Trust Tokens
+|       |       |   |       Trust Tokens-journal
+|       |       |   |       
+|       |       |   +---optimization_guide_hint_cache_store
+|       |       |   |       LOCK
+|       |       |   |       LOG
+|       |       |   |       LOG.old
+|       |       |   |       
+|       |       |   +---parcel_tracking_db
+|       |       |   |       LOCK
+|       |       |   |       LOG
+|       |       |   |       LOG.old
+|       |       |   |       
+|       |       |   +---PersistentOriginTrials
+|       |       |   |       LOCK
+|       |       |   |       LOG
+|       |       |   |       LOG.old
+|       |       |   |       
+|       |       |   +---Safe Browsing Network
+|       |       |   |       NetworkDataMigrated
+|       |       |   |       Safe Browsing Cookies
+|       |       |   |       Safe Browsing Cookies-journal
+|       |       |   |       
+|       |       |   +---Session Storage
+|       |       |   |       000003.log
+|       |       |   |       CURRENT
+|       |       |   |       LOCK
+|       |       |   |       LOG
+|       |       |   |       LOG.old
+|       |       |   |       MANIFEST-000001
+|       |       |   |       
+|       |       |   +---Shared Dictionary
+|       |       |   |   |   db
+|       |       |   |   |   db-journal
+|       |       |   |   |   
+|       |       |   |   \---cache
+|       |       |   |       |   index
+|       |       |   |       |   
+|       |       |   |       \---index-dir
+|       |       |   |               the-real-index
+|       |       |   |               
+|       |       |   +---shared_proto_db
+|       |       |   |   |   000003.log
+|       |       |   |   |   CURRENT
+|       |       |   |   |   LOCK
+|       |       |   |   |   LOG
+|       |       |   |   |   LOG.old
+|       |       |   |   |   MANIFEST-000001
+|       |       |   |   |   
+|       |       |   |   \---metadata
+|       |       |   |           000003.log
+|       |       |   |           CURRENT
+|       |       |   |           LOCK
+|       |       |   |           LOG
+|       |       |   |           LOG.old
+|       |       |   |           MANIFEST-000001
+|       |       |   |           
+|       |       |   +---Site Characteristics Database
+|       |       |   |       000003.log
+|       |       |   |       CURRENT
+|       |       |   |       LOCK
+|       |       |   |       LOG
+|       |       |   |       LOG.old
+|       |       |   |       MANIFEST-000001
+|       |       |   |       
+|       |       |   \---Sync Data
+|       |       |       \---LevelDB
+|       |       |               000003.log
+|       |       |               CURRENT
+|       |       |               LOCK
+|       |       |               LOG
+|       |       |               LOG.old
+|       |       |               MANIFEST-000001
+|       |       |               
+|       |       +---Domain Actions
+|       |       |   \---3.0.0.16
+|       |       |           domain_actions.dll
+|       |       |           manifest.json
+|       |       |           
+|       |       +---extensions_crx_cache
+|       |       |       metadata.json
+|       |       |       
+|       |       +---GraphiteDawnCache
+|       |       |       data_0
+|       |       |       data_1
+|       |       |       data_2
+|       |       |       data_3
+|       |       |       index
+|       |       |       
+|       |       +---GrShaderCache
+|       |       |       data_0
+|       |       |       data_1
+|       |       |       data_2
+|       |       |       data_3
+|       |       |       f_000001
+|       |       |       index
+|       |       |       
+|       |       +---OriginTrials
+|       |       |   \---0.0.1.7
+|       |       |           manifest.json
+|       |       |           
+|       |       +---ShaderCache
+|       |       |       data_0
+|       |       |       data_1
+|       |       |       data_2
+|       |       |       data_3
+|       |       |       index
+|       |       |       
+|       |       +---SmartScreen
+|       |       |   +---local
+|       |       |   |       downloadCache
+|       |       |   |       downloadCache_
+|       |       |   |       uriCache
+|       |       |   |       uriCache_
+|       |       |   |       
+|       |       |   \---RemoteData
+|       |       |           customSettings
+|       |       |           customSettings_F95BA787499AB4FA9EFFF472CE383A14
+|       |       |           edgeSettings
+|       |       |           edgeSettings_2.0-a82cb2897a8bf9445d68dcc2be05af89ad4b2fda1fddb2952693be7cd5353ad3
+|       |       |           topTraffic
+|       |       |           topTraffic_638004170464094982
+|       |       |           
+|       |       \---TrustTokenKeyCommitments
+|       |           \---2025.9.29.1
+|       |               |   keys.json
+|       |               |   LICENSE
+|       |               |   manifest.json
+|       |               |   
+|       |               \---_metadata
+|       |                       verified_contents.json
+|       |                       
+|       +---org.eclipse.tips.ide
+|       |       dialog_settings.xml
+|       |       
+|       +---org.eclipse.ui.intro
+|       |       introstate
+|       |       
+|       +---org.eclipse.ui.workbench
+|       |       dialog_settings.xml
+|       |       workingsets.xml
+|       |       
+|       +---org.eclipse.wst.jsdt.core
+|       |       variablesAndContainers.dat
+|       |       
+|       \---org.eclipse.wst.jsdt.ui
+|               OpenTypeHistory.xml
+|               QualifiedTypeNameHistory.xml
+|               
++---.qodo
+|   +---agents
+|   \---workflows
++---.settings
+|       .jsdtscope
+|       org.eclipse.core.resources.prefs
+|       org.eclipse.jdt.apt.core.prefs
+|       org.eclipse.jdt.core.prefs
+|       org.eclipse.m2e.core.prefs
+|       org.eclipse.wst.common.component
+|       org.eclipse.wst.common.project.facet.core.xml
+|       org.eclipse.wst.jsdt.ui.superType.container
+|       org.eclipse.wst.jsdt.ui.superType.name
+|       org.eclipse.wst.validation.prefs
+|       
++---.vscode
+|       settings.json
+|       
++---src
+|   \---main
+|       +---java
+|       +---resources
+|       \---webapp
+|           +---css
+|           |       styles.css
+|           |       
+|           +---images
+|           |       logo.png
+|           |       
+|           +---js
+|           |       main.js
+|           |       
+|           \---view
+|               |   index.jsp
+|               |   
+|               +---admin
+|               +---externalUser
+|               \---internalUser
+|                       login.jsp
+|                       
+\---target
+    |   PawPaw-0.0.1-SNAPSHOT.war
+    |   
+    +---classes
+    +---generated-sources
+    |   \---annotations
+    +---m2e-wtp
+    |   \---web-resources
+    |       \---META-INF
+    |           |   MANIFEST.MF
+    |           |   
+    |           \---maven
+    |               \---PawPaw
+    |                   \---PawPaw
+    |                           pom.properties
+    |                           pom.xml
+    |                           
+    +---maven-archiver
+    |       pom.properties
+    |       
+    +---maven-status
+    |   \---maven-compiler-plugin
+    |       \---compile
+    |           \---default-compile
+    |                   inputFiles.lst
+    |                   
+    +---PawPaw-0.0.1-SNAPSHOT
+    |   +---META-INF
+    |   \---WEB-INF
+    |       +---classes
+    |       \---lib
+    |               angus-activation-2.0.1.jar
+    |               aopalliance-repackaged-3.0.4.jar
+    |               eclipselink-4.0.2.jar
+    |               gson-2.10.1.jar
+    |               hk2-api-3.0.4.jar
+    |               hk2-locator-3.0.4.jar
+    |               hk2-utils-3.0.4.jar
+    |               jackson-annotations-2.14.1.jar
+    |               jackson-core-2.15.2.jar
+    |               jackson-databind-2.14.1.jar
+    |               jackson-datatype-jsr310-2.15.2.jar
+    |               jackson-module-jakarta-xmlbind-annotations-2.14.1.jar
+    |               jakarta.activation-api-2.1.2.jar
+    |               jakarta.annotation-api-2.1.1.jar
+    |               jakarta.el-api-6.0.0.jar
+    |               jakarta.inject-api-2.0.1.jar
+    |               jakarta.persistence-api-3.1.0.jar
+    |               jakarta.servlet.jsp.jstl-3.0.1.jar
+    |               jakarta.servlet.jsp.jstl-api-3.0.0.jar
+    |               jakarta.validation-api-3.0.2.jar
+    |               jakarta.ws.rs-api-3.1.0.jar
+    |               jakarta.xml.bind-api-4.0.2.jar
+    |               javassist-3.29.0-GA.jar
+    |               jaxb-core-4.0.3.jar
+    |               jaxb-osgi-4.0.5.jar
+    |               jaxb-xjc-4.0.3.jar
+    |               jersey-client-3.1.2.jar
+    |               jersey-common-3.1.2.jar
+    |               jersey-container-servlet-3.1.2.jar
+    |               jersey-container-servlet-core-3.1.2.jar
+    |               jersey-entity-filtering-3.1.2.jar
+    |               jersey-hk2-3.1.2.jar
+    |               jersey-media-jaxb-3.1.2.jar
+    |               jersey-media-json-jackson-3.1.2.jar
+    |               jersey-server-3.1.2.jar
+    |               mysql-connector-j-8.3.0.jar
+    |               osgi-resource-locator-1.0.3.jar
+    |               protobuf-java-3.25.1.jar
+    |               
+    \---test-classes
