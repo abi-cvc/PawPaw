@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Iniciar Sesión - PawPaw</title>
+    <title>Crear Cuenta - PawPaw</title>
 
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/logo.png">
@@ -18,13 +18,13 @@
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
 
     <style>
-        /* Estilos específicos para el formulario de login */
+        /* Estilos específicos para el formulario de registro */
         .auth-container {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem;
+            padding: 2rem 1rem;
             background: linear-gradient(135deg, #FFF9F0 0%, #FFF 100%);
         }
 
@@ -122,10 +122,11 @@
             color: #c33;
         }
 
-        .alert-success {
-            background-color: #efe;
-            border: 1px solid #cfc;
-            color: #3c3;
+        .password-hint {
+            font-size: 0.85rem;
+            color: var(--color-1);
+            opacity: 0.7;
+            margin-top: 0.25rem;
         }
 
         .form-footer {
@@ -156,9 +157,18 @@
             width: 100%;
         }
 
+        .terms-text {
+            font-size: 0.85rem;
+            color: var(--color-1);
+            opacity: 0.8;
+            text-align: center;
+            margin-top: 1rem;
+            line-height: 1.5;
+        }
+
         @media (max-width: 640px) {
             .auth-card {
-                padding: 2rem;
+                padding: 2rem 1.5rem;
             }
 
             .auth-titulo {
@@ -178,31 +188,37 @@
                     <img src="<%= request.getContextPath() %>/images/logo.png" alt="Logo PawPaw" class="auth-logo-img">
                     <span class="auth-logo-texto">PawPaw</span>
                 </a>
-                <h1 class="auth-titulo">Iniciar Sesión</h1>
-                <p class="auth-subtitulo">Bienvenido de nuevo</p>
+                <h1 class="auth-titulo">Crear Cuenta</h1>
+                <p class="auth-subtitulo">Comienza a proteger a tu mascota hoy</p>
             </div>
 
-            <!-- Mensajes de error o éxito -->
+            <!-- Mensaje de error -->
             <% 
                 String error = (String) request.getAttribute("error");
-                String success = (String) request.getAttribute("success");
-                
                 if (error != null && !error.isEmpty()) {
             %>
                 <div class="alert alert-error">
                     <%= error %>
                 </div>
             <% } %>
-            
-            <% if (success != null && !success.isEmpty()) { %>
-                <div class="alert alert-success">
-                    <%= success %>
-                </div>
-            <% } %>
 
             <!-- Formulario -->
-            <form action="<%= request.getContextPath() %>/login" method="post">
+            <form action="<%= request.getContextPath() %>/register" method="post">
                 
+                <!-- Nombre -->
+                <div class="form-group">
+                    <label for="name" class="form-label">Nombre completo</label>
+                    <input 
+                        type="text" 
+                        id="name" 
+                        name="name" 
+                        class="form-input" 
+                        placeholder="Juan Pérez"
+                        value="<%= request.getAttribute("name") != null ? request.getAttribute("name") : "" %>"
+                        required
+                        autocomplete="name">
+                </div>
+
                 <!-- Email -->
                 <div class="form-group">
                     <label for="email" class="form-label">Email</label>
@@ -227,21 +243,45 @@
                         class="form-input" 
                         placeholder="••••••••"
                         required
-                        autocomplete="current-password">
+                        autocomplete="new-password"
+                        minlength="6">
+                    <div class="password-hint">Mínimo 6 caracteres</div>
+                </div>
+
+                <!-- Confirmar contraseña -->
+                <div class="form-group">
+                    <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
+                    <input 
+                        type="password" 
+                        id="confirmPassword" 
+                        name="confirmPassword" 
+                        class="form-input" 
+                        placeholder="••••••••"
+                        required
+                        autocomplete="new-password"
+                        minlength="6">
                 </div>
 
                 <!-- Botón de envío -->
                 <button type="submit" class="btn btn-primario btn-full btn-grande">
-                    Iniciar Sesión
+                    Crear Cuenta
                 </button>
+
+                <!-- Términos y condiciones -->
+                <p class="terms-text">
+                    Al crear una cuenta, aceptas nuestros 
+                    <a href="${pageContext.request.contextPath}/terms" class="form-link">Términos de uso</a> 
+                    y 
+                    <a href="${pageContext.request.contextPath}/privacy" class="form-link">Política de privacidad</a>
+                </p>
 
             </form>
 
             <!-- Footer del formulario -->
             <div class="form-footer">
-                <div class="divider">¿No tienes una cuenta?</div>
-                <a href="<%= request.getContextPath() %>/register" class="btn btn-outline btn-full">
-                    Crear Cuenta
+                <div class="divider">¿Ya tienes una cuenta?</div>
+                <a href="<%= request.getContextPath() %>/login" class="btn btn-outline btn-full">
+                    Iniciar Sesión
                 </a>
             </div>
 
