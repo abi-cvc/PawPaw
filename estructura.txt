@@ -479,9 +479,19 @@ C:.
 +---.vscode
 |       settings.json
 |       
++---OOD
+|       .PawPaw Project.vpp.lck
+|       PawPaw Project.vpp
+|       PawPaw Project.vpp.bak_000f
+|       
 +---src
 |   \---main
 |       +---java
+|       |   \---controller
+|       |           AuthenticationController.java
+|       |           LogoutServlet.java
+|       |           UserController.java
+|       |           
 |       +---resources
 |       \---webapp
 |           +---css
@@ -500,11 +510,17 @@ C:.
 |               +---externalUser
 |               \---internalUser
 |                       login.jsp
+|                       register.jsp
 |                       
 \---target
     |   PawPaw-0.0.1-SNAPSHOT.war
     |   
     +---classes
+    |   \---controller
+    |           AuthenticationController.class
+    |           LogoutServlet.class
+    |           UserController.class
+    |           
     +---generated-sources
     |   \---annotations
     +---m2e-wtp
