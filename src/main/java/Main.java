@@ -13,11 +13,20 @@ public class Main {
         tomcat.setPort(Integer.parseInt(port));
         tomcat.getConnector();
         
-        String webappDir = new File("src/main/webapp/").getAbsolutePath();
-        Context context = tomcat.addWebapp("", webappDir);
+        // Usar el WAR compilado en lugar de src/main/webapp
+        String warFile = "target/PawPaw.war";
+        File war = new File(warFile);
+        
+        if (!war.exists()) {
+            System.err.println("❌ WAR file not found: " + war.getAbsolutePath());
+            System.exit(1);
+        }
+        
+        System.out.println("📦 Loading WAR: " + war.getAbsolutePath());
+        Context context = tomcat.addWebapp("", war.getAbsolutePath());
         
         tomcat.start();
-        System.out.println("✅ PawPaw is running!");
+        System.out.println("✅ PawPaw is running at http://localhost:" + port);
         tomcat.getServer().await();
     }
 }
