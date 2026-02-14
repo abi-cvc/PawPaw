@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test CSS - PawPaw</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+        body {
+            padding: 2rem;
+            font-family: Arial, sans-serif;
+        }
+        .test-box {
+            padding: 2rem;
+            margin: 1rem 0;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test de CSS - PawPaw</h1>
+    
+    <div class="test-box">
+        <h2>1. Prueba de botón primario (desde styles.css)</h2>
+        <button class="btn btn-primario">Botón Primario</button>
+        <button class="btn btn-secundario">Botón Secundario</button>
+        <p>Si los botones tienen estilos de PawPaw (color naranja/marrón), el CSS funciona ✅</p>
+    </div>
+    
+    <div class="test-box">
+        <h2>2. Prueba de formulario (desde styles.css)</h2>
+        <div class="form-group">
+            <label class="form-label required">Email</label>
+            <input type="email" class="form-input" placeholder="test@test.com">
+        </div>
+        <p>Si el input tiene bordes redondeados y padding, el CSS funciona ✅</p>
+    </div>
+    
+    <div class="test-box">
+        <h2>3. Información de carga</h2>
+        <p><strong>Ruta del CSS:</strong> <code>css/styles.css</code></p>
+        <p><strong>Si ves colores y estilos bonitos:</strong> ✅ CSS cargado</p>
+        <p><strong>Si ves solo texto plano:</strong> ❌ CSS NO cargado</p>
+    </div>
+    
+    <div class="test-box">
+        <h2>4. Acciones</h2>
+        <ol>
+            <li>Abre DevTools (F12)</li>
+            <li>Ve a Network → CSS</li>
+            <li>Recarga la página</li>
+            <li>Busca "styles.css" en la lista</li>
+            <li>Verifica:
+                <ul>
+                    <li>Status: debe ser 200 (no 404)</li>
+                    <li>Size: debe tener varios KB (no 0 bytes)</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+    
+    <hr>
+    
+    <h2>Links de prueba:</h2>
+    <ul>
+        <li><a href="css/styles.css" target="_blank">Ver styles.css directamente</a></li>
+        <li><a href="view/internalUser/login.jsp">Ir a Login</a></li>
+        <li><a href="user/panel">Ir a Panel</a></li>
+    </ul>
+</body>
+</html>

@@ -17,7 +17,7 @@ public class DatabaseConnection {
     // Configuración de conexión - CAMBIAR ESTOS VALORES
     private static final String DB_URL = "jdbc:postgresql://***REMOVED***/pawpawbd?sslmode=require";
     private static final String DB_USER = "***REMOVED***";
-    private static final String DB_PASSWORD = "npg_ru6hFPSO3jl3aep"; // CAMBIAR por tu password real
+    private static final String DB_PASSWORD = "***REMOVED***"; // CAMBIAR por tu password real
     
     // Configuración del pool de conexiones
     private static final int MAX_POOL_SIZE = 10;

@@ -1,5 +1,8 @@
 package controller;
 
+import model.dao.UserDAO;
+import model.entity.User;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -12,11 +15,12 @@ import java.io.IOException;
 /**
  * Servlet implementation class AuthenticationController
  * Maneja la autenticación de usuarios (login y logout)
- * Basado en el diseño OOD del sistema PawPaw
  */
 @WebServlet("/login")
 public class AuthenticationController extends HttpServlet {
     private static final long serialVersionUID = 1L;
+    
+    private UserDAO userDAO = new UserDAO();
 
     /**
      * Muestra el formulario de login
@@ -26,7 +30,7 @@ public class AuthenticationController extends HttpServlet {
         
         // Verificar si ya hay una sesión activa
         HttpSession session = request.getSession(false);
-        if (session != null && session.getAttribute("user") != null) {
+        if (session != null && session.getAttribute("userId") != null) {
             // Si ya está logueado, redirigir al panel correspondiente
             String rol = (String) session.getAttribute("rol");
             if ("admin".equals(rol)) {
@@ -43,7 +47,6 @@ public class AuthenticationController extends HttpServlet {
 
     /**
      * Procesa el formulario de login
-     * Método: authenticate(email, password)
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -60,65 +63,31 @@ public class AuthenticationController extends HttpServlet {
             return;
         }
         
-        // Llamar al método authenticate
-        if (authenticate(email, password)) {
-            // Crear sesión
+        // Autenticar usando el DAO
+        User user = userDAO.findByEmailAndPassword(email, password);
+        
+        if (user != null) {
+            // Autenticación exitosa - Crear sesión
             HttpSession session = request.getSession(true);
-            session.setAttribute("user", email);
+            session.setAttribute("userId", user.getIdUser());
+            session.setAttribute("user", user.getEmail());
+            session.setAttribute("userName", user.getNameUser());
+            session.setAttribute("rol", user.getRol());
             
-            // Determinar rol (esto debería venir de la BD)
-            String rol = determineUserRole(email);
-            session.setAttribute("rol", rol);
+            System.out.println("✅ Login exitoso - Usuario: " + user.getEmail() + " - Rol: " + user.getRol());
             
             // Redirigir según el rol
-            if ("admin".equals(rol)) {
+            if ("admin".equals(user.getRol())) {
                 response.sendRedirect(request.getContextPath() + "/admin/panel");
             } else {
                 response.sendRedirect(request.getContextPath() + "/user/panel");
             }
         } else {
             // Error de autenticación
+            System.out.println("❌ Login fallido - Email: " + email);
             request.setAttribute("error", "Email o contraseña incorrectos");
-            request.setAttribute("email", email); // Mantener el email ingresado
+            request.setAttribute("email", email);
             request.getRequestDispatcher("/view/internalUser/login.jsp").forward(request, response);
         }
-    }
-    
-    /**
-     * Método authenticate(email, password) del diagrama OOD
-     * Autentica las credenciales del usuario
-     * 
-     * @param email Email del usuario
-     * @param password Contraseña del usuario
-     * @return true si las credenciales son válidas, false en caso contrario
-     */
-    public boolean authenticate(String email, String password) {
-        // TODO: Implementar validación con base de datos
-        // 1. Buscar usuario por email en la tabla User
-        // 2. Verificar que la contraseña hasheada coincida
-        // 3. Verificar que la cuenta esté activa
-        
-        // Ejemplo de implementación con DAO (a implementar):
-        /*
-        UserDAO userDAO = new UserDAO();
-        User user = userDAO.findUser(email, password);
-        return user != null && user.isActive();
-        */
-        
-        // Implementación temporal para testing
-        return email != null && password != null && password.length() >= 6;
-    }
-    
-    /**
-     * Método auxiliar para determinar el rol del usuario
-     * (Debe obtenerse desde la base de datos)
-     */
-    private String determineUserRole(String email) {
-        // TODO: Obtener rol desde base de datos usando UserDAO
-        // Ejemplo temporal
-        if (email.contains("admin")) {
-            return "admin";
-        }
-        return "user";
     }
 }

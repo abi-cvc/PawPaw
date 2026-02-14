@@ -2,17 +2,17 @@
 
 // Función para redirigir a login
 function irALogin() {
-    window.location.href = contextPath + '/views/login.jsp';
+    window.location.href = contextPath + '/login';
 }
 
 // Función para redirigir a registro
 function irARegistro() {
-    window.location.href = contextPath + '/views/register.jsp';
+    window.location.href = contextPath + '/register';
 }
 
 // Función para redirigir al index
 function irAIndex() {
-    window.location.href = contextPath + '/views/index.jsp';
+    window.location.href = contextPath + '/';
 }
 
 // ==================== VALIDACIONES DE FORMULARIOS ====================
@@ -45,7 +45,6 @@ function validarLogin(event) {
     }
     
     if (esValido) {
-        // Aquí enviarías el formulario al servidor
         document.getElementById('loginForm').submit();
     }
 }
@@ -54,10 +53,10 @@ function validarLogin(event) {
 function validarRegistro(event) {
     event.preventDefault();
     
-    const nombre = document.getElementById('nombre').value.trim();
+    const nombre = document.getElementById('name').value.trim();
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value.trim();
-    const confirmarPassword = document.getElementById('confirmar-password').value.trim();
+    const confirmarPassword = document.getElementById('confirmPassword').value.trim();
     
     // Limpiar mensajes de error previos
     limpiarErrores();
@@ -66,7 +65,7 @@ function validarRegistro(event) {
     
     // Validar nombre
     if (nombre === '') {
-        mostrarError('nombre', 'Por favor ingresa tu nombre');
+        mostrarError('name', 'Por favor ingresa tu nombre');
         esValido = false;
     }
     
@@ -90,15 +89,14 @@ function validarRegistro(event) {
     
     // Validar confirmación de contraseña
     if (confirmarPassword === '') {
-        mostrarError('confirmar-password', 'Por favor confirma tu contraseña');
+        mostrarError('confirmPassword', 'Por favor confirma tu contraseña');
         esValido = false;
     } else if (password !== confirmarPassword) {
-        mostrarError('confirmar-password', 'Las contraseñas no coinciden');
+        mostrarError('confirmPassword', 'Las contraseñas no coinciden');
         esValido = false;
     }
     
     if (esValido) {
-        // Aquí enviarías el formulario al servidor
         document.getElementById('registerForm').submit();
     }
 }
@@ -115,7 +113,7 @@ function validarEmail(email) {
 function mostrarError(campoId, mensaje) {
     const campo = document.getElementById(campoId);
     const errorDiv = document.createElement('div');
-    errorDiv.className = 'mensaje-error';
+    errorDiv.className = 'mensaje mensaje-error';
     errorDiv.textContent = mensaje;
     campo.parentElement.appendChild(errorDiv);
     campo.classList.add('input-error');
@@ -143,3 +141,185 @@ function togglePassword(inputId, iconId) {
         icon.textContent = '👁️';
     }
 }
+
+// ==================== UPLOAD DE IMÁGENES ====================
+
+// Configuración de Imgur
+const IMGUR_CLIENT_ID = 'df36f9a0bb16cee';
+
+// Inicializar eventos de drag & drop
+function inicializarUpload() {
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    
+    if (!uploadArea || !fileInput) return;
+    
+    // Prevenir comportamiento por defecto
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    // Efectos visuales
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, () => {
+            uploadArea.classList.add('dragover');
+        }, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadArea.addEventListener(eventName, () => {
+            uploadArea.classList.remove('dragover');
+        }, false);
+    });
+    
+    // Manejar drop
+    uploadArea.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            handleFile(files[0]);
+        }
+    }, false);
+    
+    // Click en área
+    uploadArea.addEventListener('click', () => {
+        fileInput.click();
+    });
+    
+    // Cambio en input
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            handleFile(e.target.files[0]);
+        }
+    });
+}
+
+// Procesar archivo
+function handleFile(file) {
+    // Validar tipo
+    if (!file.type.match('image.*')) {
+        alert('⚠️ Por favor selecciona una imagen válida');
+        return;
+    }
+    
+    // Validar tamaño (10MB)
+    if (file.size > 10 * 1024 * 1024) {
+        alert('⚠️ La imagen es muy grande. Máximo 10MB');
+        return;
+    }
+    
+    // Mostrar preview local inmediato
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        mostrarPreview(e.target.result);
+    };
+    reader.readAsDataURL(file);
+    
+    // Subir a Imgur
+    uploadToImgur(file);
+}
+
+// Subir imagen a Imgur
+async function uploadToImgur(file) {
+    const submitBtn = document.getElementById('submitBtn');
+    const progress = document.getElementById('uploadProgress');
+    const progressFill = document.getElementById('progressFill');
+    const status = document.getElementById('uploadStatus');
+    
+    if (!progress || !progressFill || !status || !submitBtn) return;
+    
+    // Deshabilitar botón
+    submitBtn.disabled = true;
+    
+    // Mostrar progreso
+    progress.style.display = 'block';
+    status.textContent = '📤 Subiendo imagen...';
+    progressFill.style.width = '30%';
+    
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    try {
+        const response = await fetch('https://api.imgur.com/3/image', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Client-ID ${IMGUR_CLIENT_ID}`
+            },
+            body: formData
+        });
+        
+        progressFill.style.width = '70%';
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            const imageUrl = data.data.link;
+            document.getElementById('photoUrl').value = imageUrl;
+            
+            progressFill.style.width = '100%';
+            status.textContent = '✅ Imagen subida correctamente';
+            
+            setTimeout(() => {
+                progress.style.display = 'none';
+                submitBtn.disabled = false;
+            }, 1500);
+            
+            console.log('✅ Imagen subida a Imgur:', imageUrl);
+        } else {
+            throw new Error('Error al subir la imagen');
+        }
+        
+    } catch (error) {
+        console.error('Error:', error);
+        progressFill.style.width = '0%';
+        status.textContent = '❌ Error al subir. Intenta nuevamente.';
+        submitBtn.disabled = false;
+        
+        setTimeout(() => {
+            progress.style.display = 'none';
+        }, 3000);
+    }
+}
+
+// Mostrar preview
+function mostrarPreview(url) {
+    const preview = document.getElementById('imagePreview');
+    const container = document.getElementById('previewContainer');
+    const uploadArea = document.getElementById('uploadArea');
+    
+    if (!preview || !container || !uploadArea) return;
+    
+    preview.src = url;
+    container.style.display = 'block';
+    uploadArea.style.display = 'none';
+}
+
+// Quitar imagen
+function quitarImagen() {
+    const preview = document.getElementById('imagePreview');
+    const container = document.getElementById('previewContainer');
+    const uploadArea = document.getElementById('uploadArea');
+    const photoInput = document.getElementById('photoUrl');
+    const fileInput = document.getElementById('fileInput');
+    
+    if (preview) preview.src = '';
+    if (photoInput) photoInput.value = '';
+    if (fileInput) fileInput.value = '';
+    if (container) container.style.display = 'none';
+    if (uploadArea) uploadArea.style.display = 'block';
+}
+
+// Inicializar al cargar la página
+document.addEventListener('DOMContentLoaded', function() {
+    inicializarUpload();
+    
+    // Mostrar preview si ya hay URL
+    const photoUrl = document.getElementById('photoUrl');
+    if (photoUrl && photoUrl.value) {
+        mostrarPreview(photoUrl.value);
+    }
+});

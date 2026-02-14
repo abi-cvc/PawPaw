@@ -184,6 +184,19 @@
 		    <version>0.4</version>
 		</dependency>
 		
+		<!-- SLF4J Logging (NUEVO) -->
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-api</artifactId>
+		    <version>2.0.9</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>ch.qos.logback</groupId>
+		    <artifactId>logback-classic</artifactId>
+		    <version>1.4.14</version>
+		</dependency>
+
 		<!-- HikariCP - Connection Pool (Opcional pero recomendado) -->
 		<dependency>
 		    <groupId>com.zaxxer</groupId>
