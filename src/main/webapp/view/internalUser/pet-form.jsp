@@ -51,7 +51,7 @@
                 </div>
             <% } %>
             
-            <form method="POST" action="<%= request.getContextPath() %>/user/pets/<%= isEdit ? "edit" : "new" %>" class="form-grid">
+            <form method="POST" action="<%= request.getContextPath() %>/user/pets/<%= isEdit ? "edit" : "new" %>" class="form-grid" id="petForm">
                 
                 <% if (isEdit && pet != null) { %>
                     <input type="hidden" name="id" value="<%= pet.getIdPet() %>">
@@ -73,18 +73,19 @@
                 
                 <!-- Raza -->
                 <div class="form-group">
-                    <label for="breed" class="form-label">Raza</label>
+                    <label for="breed" class="form-label required">Raza</label>
                     <input type="text" 
                            id="breed" 
                            name="breed" 
                            class="form-input" 
                            value="<%= breed %>"
+                           required
                            placeholder="Ej: Labrador, Mestizo">
                 </div>
                 
                 <!-- Edad -->
                 <div class="form-group">
-                    <label for="age" class="form-label">Edad (años)</label>
+                    <label for="age" class="form-label required">Edad (años)</label>
                     <input type="number" 
                            id="age" 
                            name="age" 
@@ -92,6 +93,7 @@
                            value="<%= age != null ? age : "" %>"
                            min="0" 
                            max="50"
+                           required
                            placeholder="Ej: 3">
                 </div>
                 

@@ -144,8 +144,9 @@ function togglePassword(inputId, iconId) {
 
 // ==================== UPLOAD DE IMÁGENES ====================
 
-// Configuración de Imgur
-const IMGUR_CLIENT_ID = 'df36f9a0bb16cee';
+// Configuración de Cloudinary - REEMPLAZA CON TUS CREDENCIALES
+const CLOUDINARY_CLOUD_NAME = 'dcmye4eng';  // ← Solo el nombre, sin URL
+const CLOUDINARY_UPLOAD_PRESET = 'pawpaw_uploads';  // ← Preset unsigned
 
 // Inicializar eventos de drag & drop
 function inicializarUpload() {
@@ -202,7 +203,7 @@ function inicializarUpload() {
 function handleFile(file) {
     // Validar tipo
     if (!file.type.match('image.*')) {
-        alert('⚠️ Por favor selecciona una imagen válida');
+        alert('⚠️ Por favor selecciona una imagen válida (JPG, PNG, GIF)');
         return;
     }
     
@@ -219,69 +220,100 @@ function handleFile(file) {
     };
     reader.readAsDataURL(file);
     
-    // Subir a Imgur
-    uploadToImgur(file);
+    // Subir a Cloudinary
+    uploadToCloudinary(file);
 }
 
-// Subir imagen a Imgur
-async function uploadToImgur(file) {
+// Subir imagen a Cloudinary
+async function uploadToCloudinary(file) {
     const submitBtn = document.getElementById('submitBtn');
     const progress = document.getElementById('uploadProgress');
     const progressFill = document.getElementById('progressFill');
     const status = document.getElementById('uploadStatus');
+    const photoInput = document.getElementById('photoUrl');
     
     if (!progress || !progressFill || !status || !submitBtn) return;
+    
+    // Validar configuración
+    if (CLOUDINARY_CLOUD_NAME === 'TU_CLOUD_NAME_AQUI' || CLOUDINARY_UPLOAD_PRESET === 'TU_UPLOAD_PRESET_AQUI') {
+        alert('⚠️ ERROR: Debes configurar tus credenciales de Cloudinary en main.js\n\nSigue las instrucciones en CLOUDINARY-SETUP.md');
+        return;
+    }
     
     // Deshabilitar botón
     submitBtn.disabled = true;
     
     // Mostrar progreso
     progress.style.display = 'block';
-    status.textContent = '📤 Subiendo imagen...';
-    progressFill.style.width = '30%';
-    
-    const formData = new FormData();
-    formData.append('image', file);
+    status.textContent = '📤 Subiendo imagen a Cloudinary...';
+    status.style.color = '#666';
+    progressFill.style.width = '20%';
+    progressFill.style.background = 'linear-gradient(90deg, var(--color-1), var(--color-3))';
     
     try {
-        const response = await fetch('https://api.imgur.com/3/image', {
+        // Preparar FormData
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+        formData.append('cloud_name', CLOUDINARY_CLOUD_NAME);
+        
+        progressFill.style.width = '40%';
+        
+        // URL de Cloudinary
+        const cloudinaryUrl = `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`;
+        
+        console.log('📤 Subiendo a:', cloudinaryUrl);
+        
+        const response = await fetch(cloudinaryUrl, {
             method: 'POST',
-            headers: {
-                'Authorization': `Client-ID ${IMGUR_CLIENT_ID}`
-            },
             body: formData
         });
         
-        progressFill.style.width = '70%';
+        progressFill.style.width = '80%';
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`HTTP ${response.status}: ${errorText}`);
+        }
         
         const data = await response.json();
         
-        if (data.success) {
-            const imageUrl = data.data.link;
-            document.getElementById('photoUrl').value = imageUrl;
+        if (data.secure_url || data.url) {
+            // Cloudinary devuelve la URL en data.secure_url
+            const imageUrl = data.secure_url || data.url;
+            photoInput.value = imageUrl;
             
             progressFill.style.width = '100%';
             status.textContent = '✅ Imagen subida correctamente';
+            status.style.color = '#2e7d32';
             
             setTimeout(() => {
                 progress.style.display = 'none';
                 submitBtn.disabled = false;
             }, 1500);
             
-            console.log('✅ Imagen subida a Imgur:', imageUrl);
+            console.log('✅ Imagen subida a Cloudinary:', imageUrl);
         } else {
-            throw new Error('Error al subir la imagen');
+            throw new Error('Respuesta inválida del servidor');
         }
         
     } catch (error) {
-        console.error('Error:', error);
+        console.error('❌ Error al subir imagen:', error);
+        
+        // Limpiar preview y campo
+        quitarImagen();
+        
+        // Mostrar error persistente
         progressFill.style.width = '0%';
-        status.textContent = '❌ Error al subir. Intenta nuevamente.';
+        progressFill.style.background = '#f44336';
+        status.innerHTML = `❌ Error: ${error.message}<br><small>Verifica tu configuración de Cloudinary</small>`;
+        status.style.color = '#c62828';
+        
+        // Mantener el mensaje visible
+        progress.style.display = 'block';
         submitBtn.disabled = false;
         
-        setTimeout(() => {
-            progress.style.display = 'none';
-        }, 3000);
+        alert('⚠️ No se pudo subir la imagen.\n\nVerifica:\n1. Que configuraste CLOUD_NAME correctamente\n2. Que creaste el Upload Preset "unsigned"\n3. Tu conexión a internet');
     }
 }
 
@@ -321,5 +353,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const photoUrl = document.getElementById('photoUrl');
     if (photoUrl && photoUrl.value) {
         mostrarPreview(photoUrl.value);
+    }
+    
+    // Validar formulario antes de enviar
+    const petForm = document.getElementById('petForm');
+    if (petForm) {
+        petForm.addEventListener('submit', function(e) {
+            const photoInput = document.getElementById('photoUrl');
+            if (!photoInput || !photoInput.value || photoInput.value.trim() === '') {
+                e.preventDefault();
+                alert('⚠️ Debes subir una foto de tu mascota antes de continuar.');
+                
+                // Resaltar el área de upload
+                const uploadArea = document.getElementById('uploadArea');
+                if (uploadArea) {
+                    uploadArea.style.borderColor = '#f44336';
+                    uploadArea.style.background = '#ffebee';
+                    setTimeout(() => {
+                        uploadArea.style.borderColor = '#e0e0e0';
+                        uploadArea.style.background = '#fafafa';
+                    }, 3000);
+                }
+                
+                return false;
+            }
+        });
     }
 });

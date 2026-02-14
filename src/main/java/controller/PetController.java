@@ -153,9 +153,30 @@ public class PetController extends HttpServlet {
         String photo = request.getParameter("photo");
         String extraComments = request.getParameter("extraComments");
         
-        // Validar campos obligatorios
+        // Validar campos obligatorios: nombre, edad, raza y foto
         if (name == null || name.trim().isEmpty()) {
             request.setAttribute("error", "El nombre de la mascota es obligatorio");
+            request.setAttribute("action", "new");
+            request.getRequestDispatcher("/view/internalUser/pet-form.jsp").forward(request, response);
+            return;
+        }
+        
+        if (ageStr == null || ageStr.trim().isEmpty()) {
+            request.setAttribute("error", "La edad de la mascota es obligatoria");
+            request.setAttribute("action", "new");
+            request.getRequestDispatcher("/view/internalUser/pet-form.jsp").forward(request, response);
+            return;
+        }
+        
+        if (breed == null || breed.trim().isEmpty()) {
+            request.setAttribute("error", "La raza de la mascota es obligatoria");
+            request.setAttribute("action", "new");
+            request.getRequestDispatcher("/view/internalUser/pet-form.jsp").forward(request, response);
+            return;
+        }
+        
+        if (photo == null || photo.trim().isEmpty()) {
+            request.setAttribute("error", "La foto de la mascota es obligatoria. Por favor sube una imagen.");
             request.setAttribute("action", "new");
             request.getRequestDispatcher("/view/internalUser/pet-form.jsp").forward(request, response);
             return;
@@ -166,20 +187,21 @@ public class PetController extends HttpServlet {
         pet.setIdUser(userId);
         pet.setNamePet(name.trim());
         
-        // Edad (opcional)
-        if (ageStr != null && !ageStr.trim().isEmpty()) {
-            try {
-                pet.setAgePet(Integer.parseInt(ageStr));
-            } catch (NumberFormatException e) {
-                // Ignorar si no es un número válido
-            }
+        // Edad (ya validada que no está vacía)
+        try {
+            pet.setAgePet(Integer.parseInt(ageStr.trim()));
+        } catch (NumberFormatException e) {
+            request.setAttribute("error", "La edad debe ser un número válido");
+            request.setAttribute("action", "new");
+            request.getRequestDispatcher("/view/internalUser/pet-form.jsp").forward(request, response);
+            return;
         }
         
-        pet.setBreed(breed != null && !breed.trim().isEmpty() ? breed.trim() : null);
+        pet.setBreed(breed.trim());
         pet.setSexPet(sex);
         pet.setMedicalConditions(medicalConditions);
         pet.setContactPhone(contactPhone != null && !contactPhone.trim().isEmpty() ? contactPhone.trim() : null);
-        pet.setPhoto(photo != null && !photo.trim().isEmpty() ? photo.trim() : null);
+        pet.setPhoto(photo.trim());
         pet.setStatusPet("active");
         pet.setExtraComments(extraComments);
         
