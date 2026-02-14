@@ -1,1 +1,1 @@
-web: java -jar target/dependency/jetty-runner.jar --port $PORT target/PawPaw.war
+web: java -cp "target/classes:target/lib/*" Main

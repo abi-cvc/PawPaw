@@ -36,24 +36,30 @@
       
       <plugin>
 	    <groupId>org.apache.maven.plugins</groupId>
+	    <artifactId>maven-jar-plugin</artifactId>
+	    <version>3.3.0</version>
+	    <configuration>
+	        <archive>
+	            <manifest>
+	                <mainClass>Main</mainClass>
+	                <addClasspath>true</addClasspath>
+	                <classpathPrefix>lib/</classpathPrefix>
+	            </manifest>
+	        </archive>
+	    </configuration>
+	</plugin>
+	
+	<plugin>
+	    <groupId>org.apache.maven.plugins</groupId>
 	    <artifactId>maven-dependency-plugin</artifactId>
-	    <version>3.6.1</version>
 	    <executions>
 	        <execution>
 	            <phase>package</phase>
 	            <goals>
-	                <goal>copy</goal>
+	                <goal>copy-dependencies</goal>
 	            </goals>
 	            <configuration>
-	                <artifactItems>
-	                    <artifactItem>
-	                        <groupId>org.eclipse.jetty</groupId>
-	                        <artifactId>jetty-runner</artifactId>
-	                        <version>9.4.53.v20231009</version>
-	                        <destFileName>jetty-runner.jar</destFileName>
-	                    </artifactItem>
-	                </artifactItems>
-	                <outputDirectory>${project.build.directory}/dependency</outputDirectory>
+	                <outputDirectory>${project.build.directory}/lib</outputDirectory>
 	            </configuration>
 	        </execution>
 	    </executions>
@@ -230,10 +236,22 @@
 		    <version>5.1.0</version>
 		</dependency>
 		
+		<!-- DEPENDENCIAS PARA TOMCAT EMBEBIDO-->
+		
 		<dependency>
-		    <groupId>org.eclipse.jetty</groupId>
-		    <artifactId>jetty-runner</artifactId>
-		    <version>9.4.53.v20231009</version>
+		    <groupId>org.apache.tomcat.embed</groupId>
+		    <artifactId>tomcat-embed-core</artifactId>
+		    <version>10.1.18</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.tomcat.embed</groupId>
+		    <artifactId>tomcat-embed-jasper</artifactId>
+		    <version>10.1.18</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.tomcat</groupId>
+		    <artifactId>tomcat-jasper</artifactId>
+		    <version>10.1.18</version>
 		</dependency>
 
 </dependencies>
