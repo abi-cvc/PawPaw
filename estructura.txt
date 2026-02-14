@@ -580,6 +580,9 @@ C:.
     |   \---test
     |           TestDatabase.class
     |           
+    +---dependency
+    |       jetty-runner.jar
+    |       
     +---generated-sources
     |   \---annotations
     +---m2e-wtp
@@ -603,108 +606,109 @@ C:.
     |                   createdFiles.lst
     |                   inputFiles.lst
     |                   
-    \---PawPaw-0.0.1-SNAPSHOT
-        +---css
-        |       styles.css
-        |       
-        +---images
-        |       logo.png
-        |       
-        +---js
-        |       main.js
-        |       
-        +---META-INF
-        +---view
-        |   |   index.jsp
-        |   |   
-        |   +---externalUser
-        |   |       pet-not-found.jsp
-        |   |       pet-public.jsp
-        |   |       
-        |   \---internalUser
-        |           login.jsp
-        |           panel.jsp
-        |           pet-form.jsp
-        |           pets-list.jsp
-        |           profile.jsp
-        |           qr-codes.jsp
-        |           register.jsp
-        |           
-        \---WEB-INF
-            |   web.xml
-            |   
-            +---classes
-            |   +---config
-            |   |       DatabaseConnection.class
-            |   |       
-            |   +---controller
-            |   |       AuthenticationController.class
-            |   |       LogoutServlet.class
-            |   |       PetController.class
-            |   |       PublicPetController.class
-            |   |       QRCodeController$QRCodeData.class
-            |   |       QRCodeController.class
-            |   |       UserController.class
-            |   |       UserPanelController.class
-            |   |       UserProfileController.class
-            |   |       
-            |   +---model
-            |   |   +---dao
-            |   |   |       PetDAO.class
-            |   |   |       QRCodeDAO.class
-            |   |   |       UserDAO.class
-            |   |   |       
-            |   |   \---entity
-            |   |           Pet.class
-            |   |           QRcode.class
-            |   |           Suggestion.class
-            |   |           User.class
-            |   |           
-            |   \---test
-            |           TestDatabase.class
-            |           
-            \---lib
-                    angus-activation-2.0.1.jar
-                    aopalliance-repackaged-3.0.4.jar
-                    checker-qual-3.41.0.jar
-                    eclipselink-4.0.2.jar
-                    gson-2.10.1.jar
-                    HikariCP-5.1.0.jar
-                    hk2-api-3.0.4.jar
-                    hk2-locator-3.0.4.jar
-                    hk2-utils-3.0.4.jar
-                    jackson-annotations-2.14.1.jar
-                    jackson-core-2.15.2.jar
-                    jackson-databind-2.14.1.jar
-                    jackson-datatype-jsr310-2.15.2.jar
-                    jackson-module-jakarta-xmlbind-annotations-2.14.1.jar
-                    jakarta.activation-api-2.1.2.jar
-                    jakarta.annotation-api-2.1.1.jar
-                    jakarta.el-api-6.0.0.jar
-                    jakarta.inject-api-2.0.1.jar
-                    jakarta.persistence-api-3.1.0.jar
-                    jakarta.servlet.jsp.jstl-3.0.1.jar
-                    jakarta.servlet.jsp.jstl-api-3.0.0.jar
-                    jakarta.validation-api-3.0.2.jar
-                    jakarta.ws.rs-api-3.1.0.jar
-                    jakarta.xml.bind-api-4.0.2.jar
-                    javassist-3.29.0-GA.jar
-                    jaxb-core-4.0.3.jar
-                    jaxb-osgi-4.0.5.jar
-                    jaxb-xjc-4.0.3.jar
-                    jbcrypt-0.4.jar
-                    jersey-client-3.1.2.jar
-                    jersey-common-3.1.2.jar
-                    jersey-container-servlet-3.1.2.jar
-                    jersey-container-servlet-core-3.1.2.jar
-                    jersey-entity-filtering-3.1.2.jar
-                    jersey-hk2-3.1.2.jar
-                    jersey-media-jaxb-3.1.2.jar
-                    jersey-media-json-jackson-3.1.2.jar
-                    jersey-server-3.1.2.jar
-                    logback-classic-1.4.14.jar
-                    logback-core-1.4.14.jar
-                    osgi-resource-locator-1.0.3.jar
-                    postgresql-42.7.1.jar
-                    slf4j-api-2.0.9.jar
-                    
+    +---PawPaw-0.0.1-SNAPSHOT
+    |   +---css
+    |   |       styles.css
+    |   |       
+    |   +---images
+    |   |       logo.png
+    |   |       
+    |   +---js
+    |   |       main.js
+    |   |       
+    |   +---META-INF
+    |   +---view
+    |   |   |   index.jsp
+    |   |   |   
+    |   |   +---externalUser
+    |   |   |       pet-not-found.jsp
+    |   |   |       pet-public.jsp
+    |   |   |       
+    |   |   \---internalUser
+    |   |           login.jsp
+    |   |           panel.jsp
+    |   |           pet-form.jsp
+    |   |           pets-list.jsp
+    |   |           profile.jsp
+    |   |           qr-codes.jsp
+    |   |           register.jsp
+    |   |           
+    |   \---WEB-INF
+    |       |   web.xml
+    |       |   
+    |       +---classes
+    |       |   +---config
+    |       |   |       DatabaseConnection.class
+    |       |   |       
+    |       |   +---controller
+    |       |   |       AuthenticationController.class
+    |       |   |       LogoutServlet.class
+    |       |   |       PetController.class
+    |       |   |       PublicPetController.class
+    |       |   |       QRCodeController$QRCodeData.class
+    |       |   |       QRCodeController.class
+    |       |   |       UserController.class
+    |       |   |       UserPanelController.class
+    |       |   |       UserProfileController.class
+    |       |   |       
+    |       |   +---model
+    |       |   |   +---dao
+    |       |   |   |       PetDAO.class
+    |       |   |   |       QRCodeDAO.class
+    |       |   |   |       UserDAO.class
+    |       |   |   |       
+    |       |   |   \---entity
+    |       |   |           Pet.class
+    |       |   |           QRcode.class
+    |       |   |           Suggestion.class
+    |       |   |           User.class
+    |       |   |           
+    |       |   \---test
+    |       |           TestDatabase.class
+    |       |           
+    |       \---lib
+    |               angus-activation-2.0.1.jar
+    |               aopalliance-repackaged-3.0.4.jar
+    |               checker-qual-3.41.0.jar
+    |               eclipselink-4.0.2.jar
+    |               gson-2.10.1.jar
+    |               HikariCP-5.1.0.jar
+    |               hk2-api-3.0.4.jar
+    |               hk2-locator-3.0.4.jar
+    |               hk2-utils-3.0.4.jar
+    |               jackson-annotations-2.14.1.jar
+    |               jackson-core-2.15.2.jar
+    |               jackson-databind-2.14.1.jar
+    |               jackson-datatype-jsr310-2.15.2.jar
+    |               jackson-module-jakarta-xmlbind-annotations-2.14.1.jar
+    |               jakarta.activation-api-2.1.2.jar
+    |               jakarta.annotation-api-2.1.1.jar
+    |               jakarta.el-api-6.0.0.jar
+    |               jakarta.inject-api-2.0.1.jar
+    |               jakarta.persistence-api-3.1.0.jar
+    |               jakarta.servlet.jsp.jstl-3.0.1.jar
+    |               jakarta.servlet.jsp.jstl-api-3.0.0.jar
+    |               jakarta.validation-api-3.0.2.jar
+    |               jakarta.ws.rs-api-3.1.0.jar
+    |               jakarta.xml.bind-api-4.0.2.jar
+    |               javassist-3.29.0-GA.jar
+    |               jaxb-core-4.0.3.jar
+    |               jaxb-osgi-4.0.5.jar
+    |               jaxb-xjc-4.0.3.jar
+    |               jbcrypt-0.4.jar
+    |               jersey-client-3.1.2.jar
+    |               jersey-common-3.1.2.jar
+    |               jersey-container-servlet-3.1.2.jar
+    |               jersey-container-servlet-core-3.1.2.jar
+    |               jersey-entity-filtering-3.1.2.jar
+    |               jersey-hk2-3.1.2.jar
+    |               jersey-media-jaxb-3.1.2.jar
+    |               jersey-media-json-jackson-3.1.2.jar
+    |               jersey-server-3.1.2.jar
+    |               logback-classic-1.4.14.jar
+    |               logback-core-1.4.14.jar
+    |               osgi-resource-locator-1.0.3.jar
+    |               postgresql-42.7.1.jar
+    |               slf4j-api-2.0.9.jar
+    |               
+    \---test-classes
