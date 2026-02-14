@@ -5,7 +5,9 @@ C:.
 |   .gitignore
 |   .project
 |   estructura.txt
+|   nixpacks.toml
 |   pom.xml
+|   Procfile
 |   tmpclaude-1dac-cwd
 |   
 +---.metadata
@@ -493,6 +495,7 @@ C:.
 |       |   |       AuthenticationController.java
 |       |   |       LogoutServlet.java
 |       |   |       PetController.java
+|       |   |       PublicPetController.java
 |       |   |       QRCodeController.java
 |       |   |       UserController.java
 |       |   |       UserPanelController.java
@@ -529,6 +532,9 @@ C:.
 |           |   |   
 |           |   +---admin
 |           |   +---externalUser
+|           |   |       pet-not-found.jsp
+|           |   |       pet-public.jsp
+|           |   |       
 |           |   \---internalUser
 |           |           login.jsp
 |           |           panel.jsp
@@ -552,6 +558,7 @@ C:.
     |   |       AuthenticationController.class
     |   |       LogoutServlet.class
     |   |       PetController.class
+    |   |       PublicPetController.class
     |   |       QRCodeController$QRCodeData.class
     |   |       QRCodeController.class
     |   |       UserController.class
@@ -575,6 +582,17 @@ C:.
     |           
     +---generated-sources
     |   \---annotations
+    +---m2e-wtp
+    |   \---web-resources
+    |       \---META-INF
+    |           |   MANIFEST.MF
+    |           |   
+    |           \---maven
+    |               \---PawPaw
+    |                   \---PawPaw
+    |                           pom.properties
+    |                           pom.xml
+    |                           
     +---maven-archiver
     |       pom.properties
     |       
@@ -599,6 +617,10 @@ C:.
         +---view
         |   |   index.jsp
         |   |   
+        |   +---externalUser
+        |   |       pet-not-found.jsp
+        |   |       pet-public.jsp
+        |   |       
         |   \---internalUser
         |           login.jsp
         |           panel.jsp
@@ -619,6 +641,7 @@ C:.
             |   |       AuthenticationController.class
             |   |       LogoutServlet.class
             |   |       PetController.class
+            |   |       PublicPetController.class
             |   |       QRCodeController$QRCodeData.class
             |   |       QRCodeController.class
             |   |       UserController.class

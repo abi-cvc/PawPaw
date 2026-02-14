@@ -9,15 +9,16 @@ import java.sql.SQLException;
 /**
  * Configuración de conexión a la base de datos PostgreSQL (Neon)
  * Utiliza HikariCP para pool de conexiones eficiente
+ * Funciona en desarrollo (localhost) y producción (Railway)
  */
 public class DatabaseConnection {
     
     private static HikariDataSource dataSource;
     
-    // Configuración de conexión - CAMBIAR ESTOS VALORES
+    // Configuración de conexión - Valores por defecto para desarrollo local
     private static final String DB_URL = "jdbc:postgresql://ep-morning-meadow-acbwlvy2-pooler.sa-east-1.aws.neon.tech/pawpawbd?sslmode=require";
     private static final String DB_USER = "neondb_owner";
-    private static final String DB_PASSWORD = "npg_ru6hPFSOJjl3"; // CAMBIAR por tu password real
+    private static final String DB_PASSWORD = "npg_ru6hPFSOJjl3";
     
     // Configuración del pool de conexiones
     private static final int MAX_POOL_SIZE = 10;
@@ -37,14 +38,30 @@ public class DatabaseConnection {
     
     /**
      * Inicializa el DataSource con HikariCP
+     * Lee configuración de variables de entorno (Railway) o usa valores locales
      */
     private static void inicializarDataSource() {
         HikariConfig config = new HikariConfig();
         
+        // Leer variables de entorno (Railway/Producción)
+        String dbUrl = System.getenv("DB_URL");
+        String dbUser = System.getenv("DB_USER");
+        String dbPassword = System.getenv("DB_PASSWORD");
+        
+        // Si no hay variables de entorno, usar configuración local
+        if (dbUrl == null || dbUrl.isEmpty()) {
+            System.out.println("🔵 Modo: DESARROLLO (localhost)");
+            dbUrl = DB_URL;
+            dbUser = DB_USER;
+            dbPassword = DB_PASSWORD;
+        } else {
+            System.out.println("🚀 Modo: PRODUCCIÓN (Railway)");
+        }
+        
         // Configuración básica
-        config.setJdbcUrl(DB_URL);
-        config.setUsername(DB_USER);
-        config.setPassword(DB_PASSWORD);
+        config.setJdbcUrl(dbUrl);
+        config.setUsername(dbUser);
+        config.setPassword(dbPassword);
         
         // Configuración del pool
         config.setMaximumPoolSize(MAX_POOL_SIZE);
