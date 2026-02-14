@@ -1,1 +1,1 @@
-web: java -cp "target/classes:target/dependency/*" -Dserver.port=$PORT org.eclipse.jetty.runner.Runner target/*.war
+web: java -jar target/dependency/jetty-runner.jar --port $PORT target/PawPaw.war
