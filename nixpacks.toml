@@ -5,4 +5,4 @@ nixPkgs = ['maven', 'jdk21']
 cmds = ['mvn clean package -DskipTests']
 
 [start]
-cmd = 'java -jar target/dependency/jetty-runner.jar --port $PORT target/PawPaw.war'
+cmd = 'java -cp "target/classes:target/lib/*" Main'
