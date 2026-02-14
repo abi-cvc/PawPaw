@@ -53,6 +53,7 @@
 	                        <destFileName>jetty-runner.jar</destFileName>
 	                    </artifactItem>
 	                </artifactItems>
+	                <outputDirectory>${project.build.directory}/dependency</outputDirectory>
 	            </configuration>
 	        </execution>
 	    </executions>
