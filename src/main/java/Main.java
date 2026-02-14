@@ -12,12 +12,19 @@ public class Main {
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(Integer.parseInt(port));
         
-        // Usar directorio writable
-        File workDir = new File(System.getProperty("java.io.tmpdir"), "tomcat-work-" + System.currentTimeMillis());
-        workDir.mkdirs();
-        tomcat.setBaseDir(workDir.getAbsolutePath());
-        System.out.println("Work directory: " + workDir.getAbsolutePath());
+        // Crear estructura de directorios completa
+        File workDir = new File(System.getProperty("java.io.tmpdir"), "tomcat-" + System.currentTimeMillis());
+        File webappsDir = new File(workDir, "webapps");
+        File rootDir = new File(webappsDir, "ROOT");
         
+        // Crear todos los directorios necesarios
+        rootDir.mkdirs();
+        System.out.println("Created directories:");
+        System.out.println("  Work: " + workDir.getAbsolutePath());
+        System.out.println("  Webapps: " + webappsDir.getAbsolutePath());
+        System.out.println("  ROOT: " + rootDir.getAbsolutePath());
+        
+        tomcat.setBaseDir(workDir.getAbsolutePath());
         tomcat.getConnector();
         
         // Buscar WAR
@@ -33,7 +40,7 @@ public class Main {
         }
         
         if (warFile == null || !warFile.exists()) {
-            System.err.println("No WAR file found");
+            System.err.println("ERROR: No WAR file found");
             System.exit(1);
         }
         
@@ -42,7 +49,7 @@ public class Main {
         // Desplegar WAR
         Context context = tomcat.addWebapp("", warFile.getAbsolutePath());
         
-        // Reducir logging verboso
+        // Reducir logging
         context.getJarScanner().setJarScanFilter((type, name) -> 
             !name.contains("jaxb") && !name.contains("activation")
         );
@@ -50,9 +57,9 @@ public class Main {
         System.out.println("Starting Tomcat...");
         tomcat.start();
         
-        System.out.println("========================================");
-        System.out.println("PawPaw is RUNNING on port " + port);
-        System.out.println("========================================");
+        System.out.println("==========================================");
+        System.out.println(" PawPaw is RUNNING on port " + port);
+        System.out.println("==========================================");
         
         tomcat.getServer().await();
     }
