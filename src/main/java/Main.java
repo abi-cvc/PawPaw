@@ -1,6 +1,9 @@
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.Context;
 import java.io.File;
+import java.util.jar.JarFile;
+import java.util.jar.JarEntry;
+import java.util.Enumeration;
 
 public class Main {
     public static void main(String[] args) throws Exception {
@@ -17,7 +20,6 @@ public class Main {
         File webappsDir = new File(workDir, "webapps");
         File rootDir = new File(webappsDir, "ROOT");
         
-        // Crear todos los directorios necesarios
         rootDir.mkdirs();
         System.out.println("Created directories:");
         System.out.println("  Work: " + workDir.getAbsolutePath());
@@ -44,6 +46,26 @@ public class Main {
             System.exit(1);
         }
         
+        // NUEVO: Listar contenido del WAR para debug
+        System.out.println("\n=== WAR CONTENTS ===");
+        try (JarFile jar = new JarFile(warFile)) {
+            Enumeration<JarEntry> entries = jar.entries();
+            int count = 0;
+            while (entries.hasMoreElements() && count < 50) {
+                JarEntry entry = entries.nextElement();
+                String name = entry.getName();
+                // Solo mostrar archivos importantes
+                if (name.endsWith(".jsp") || name.endsWith(".html") || 
+                    name.equals("WEB-INF/web.xml") || name.startsWith("view/")) {
+                    System.out.println("  " + name);
+                    count++;
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Could not read WAR: " + e.getMessage());
+        }
+        System.out.println("===================\n");
+        
         System.out.println("Deploying: " + warFile.getAbsolutePath());
         
         // Desplegar WAR
@@ -59,6 +81,8 @@ public class Main {
         
         System.out.println("==========================================");
         System.out.println(" PawPaw is RUNNING on port " + port);
+        System.out.println(" Context path: " + context.getPath());
+        System.out.println(" Try: https://your-domain.railway.app/");
         System.out.println("==========================================");
         
         tomcat.getServer().await();
