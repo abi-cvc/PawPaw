@@ -13,17 +13,34 @@ public class Main {
         tomcat.setPort(Integer.parseInt(port));
         tomcat.getConnector();
         
-        // Usar el WAR compilado en lugar de src/main/webapp
-        String warFile = "target/PawPaw.war";
-        File war = new File(warFile);
+        // Buscar cualquier archivo WAR en target/
+        File targetDir = new File("target");
+        File warFile = null;
         
-        if (!war.exists()) {
-            System.err.println("❌ WAR file not found: " + war.getAbsolutePath());
+        if (targetDir.exists() && targetDir.isDirectory()) {
+            File[] files = targetDir.listFiles((dir, name) -> name.endsWith(".war"));
+            if (files != null && files.length > 0) {
+                warFile = files[0];
+                System.out.println("📦 Found WAR: " + warFile.getName());
+            }
+        }
+        
+        if (warFile == null || !warFile.exists()) {
+            System.err.println("❌ No WAR file found in target/ directory");
+            System.err.println("📂 Listing target/ contents:");
+            if (targetDir.exists()) {
+                File[] allFiles = targetDir.listFiles();
+                if (allFiles != null) {
+                    for (File f : allFiles) {
+                        System.err.println("   - " + f.getName());
+                    }
+                }
+            }
             System.exit(1);
         }
         
-        System.out.println("📦 Loading WAR: " + war.getAbsolutePath());
-        Context context = tomcat.addWebapp("", war.getAbsolutePath());
+        System.out.println("✅ Loading WAR: " + warFile.getAbsolutePath());
+        Context context = tomcat.addWebapp("", warFile.getAbsolutePath());
         
         tomcat.start();
         System.out.println("✅ PawPaw is running at http://localhost:" + port);
