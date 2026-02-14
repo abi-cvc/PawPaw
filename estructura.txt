@@ -493,6 +493,7 @@ C:.
 |       |   |       AuthenticationController.java
 |       |   |       LogoutServlet.java
 |       |   |       PetController.java
+|       |   |       QRCodeController.java
 |       |   |       UserController.java
 |       |   |       UserPanelController.java
 |       |   |       UserProfileController.java
@@ -500,6 +501,7 @@ C:.
 |       |   +---model
 |       |   |   +---dao
 |       |   |   |       PetDAO.java
+|       |   |   |       QRCodeDAO.java
 |       |   |   |       UserDAO.java
 |       |   |   |       
 |       |   |   \---entity
@@ -513,8 +515,6 @@ C:.
 |       |           
 |       +---resources
 |       \---webapp
-|           |   test-css.html
-|           |   
 |           +---css
 |           |       styles.css
 |           |       
@@ -533,7 +533,9 @@ C:.
 |           |           login.jsp
 |           |           panel.jsp
 |           |           pet-form.jsp
+|           |           pets-list.jsp
 |           |           profile.jsp
+|           |           qr-codes.jsp
 |           |           register.jsp
 |           |           
 |           \---WEB-INF
@@ -550,6 +552,8 @@ C:.
     |   |       AuthenticationController.class
     |   |       LogoutServlet.class
     |   |       PetController.class
+    |   |       QRCodeController$QRCodeData.class
+    |   |       QRCodeController.class
     |   |       UserController.class
     |   |       UserPanelController.class
     |   |       UserProfileController.class
@@ -557,6 +561,7 @@ C:.
     |   +---model
     |   |   +---dao
     |   |   |       PetDAO.class
+    |   |   |       QRCodeDAO.class
     |   |   |       UserDAO.class
     |   |   |       
     |   |   \---entity
@@ -570,17 +575,6 @@ C:.
     |           
     +---generated-sources
     |   \---annotations
-    +---m2e-wtp
-    |   \---web-resources
-    |       \---META-INF
-    |           |   MANIFEST.MF
-    |           |   
-    |           \---maven
-    |               \---PawPaw
-    |                   \---PawPaw
-    |                           pom.properties
-    |                           pom.xml
-    |                           
     +---maven-archiver
     |       pom.properties
     |       
@@ -592,8 +586,6 @@ C:.
     |                   inputFiles.lst
     |                   
     \---PawPaw-0.0.1-SNAPSHOT
-        |   test-css.html
-        |   
         +---css
         |       styles.css
         |       
@@ -611,6 +603,9 @@ C:.
         |           login.jsp
         |           panel.jsp
         |           pet-form.jsp
+        |           pets-list.jsp
+        |           profile.jsp
+        |           qr-codes.jsp
         |           register.jsp
         |           
         \---WEB-INF
@@ -624,12 +619,16 @@ C:.
             |   |       AuthenticationController.class
             |   |       LogoutServlet.class
             |   |       PetController.class
+            |   |       QRCodeController$QRCodeData.class
+            |   |       QRCodeController.class
             |   |       UserController.class
             |   |       UserPanelController.class
+            |   |       UserProfileController.class
             |   |       
             |   +---model
             |   |   +---dao
             |   |   |       PetDAO.class
+            |   |   |       QRCodeDAO.class
             |   |   |       UserDAO.class
             |   |   |       
             |   |   \---entity
