@@ -480,7 +480,6 @@ C:.
 |       settings.json
 |       
 +---OOD
-|       .PawPaw Project.vpp.lck
 |       PawPaw Project.vpp
 |       PawPaw Project.vpp.bak_000f
 |       
@@ -493,21 +492,29 @@ C:.
 |       |   +---controller
 |       |   |       AuthenticationController.java
 |       |   |       LogoutServlet.java
-|       |   |       TestDatabaseServlet.java
+|       |   |       PetController.java
 |       |   |       UserController.java
+|       |   |       UserPanelController.java
+|       |   |       UserProfileController.java
 |       |   |       
-|       |   \---model
-|       |       +---dao
-|       |       |       UserDAO.java
-|       |       |       
-|       |       \---entity
-|       |               Pet.java
-|       |               QRcode.java
-|       |               Suggestion.java
-|       |               User.java
-|       |               
+|       |   +---model
+|       |   |   +---dao
+|       |   |   |       PetDAO.java
+|       |   |   |       UserDAO.java
+|       |   |   |       
+|       |   |   \---entity
+|       |   |           Pet.java
+|       |   |           QRcode.java
+|       |   |           Suggestion.java
+|       |   |           User.java
+|       |   |           
+|       |   \---test
+|       |           TestDatabase.java
+|       |           
 |       +---resources
 |       \---webapp
+|           |   test-css.html
+|           |   
 |           +---css
 |           |       styles.css
 |           |       
@@ -517,15 +524,21 @@ C:.
 |           +---js
 |           |       main.js
 |           |       
-|           \---view
-|               |   index.jsp
-|               |   
-|               +---admin
-|               +---externalUser
-|               \---internalUser
-|                       login.jsp
-|                       register.jsp
-|                       
+|           +---view
+|           |   |   index.jsp
+|           |   |   
+|           |   +---admin
+|           |   +---externalUser
+|           |   \---internalUser
+|           |           login.jsp
+|           |           panel.jsp
+|           |           pet-form.jsp
+|           |           profile.jsp
+|           |           register.jsp
+|           |           
+|           \---WEB-INF
+|                   web.xml
+|                   
 \---target
     |   PawPaw-0.0.1-SNAPSHOT.war
     |   
@@ -536,19 +549,25 @@ C:.
     |   +---controller
     |   |       AuthenticationController.class
     |   |       LogoutServlet.class
-    |   |       TestDatabaseServlet.class
+    |   |       PetController.class
     |   |       UserController.class
+    |   |       UserPanelController.class
+    |   |       UserProfileController.class
     |   |       
-    |   \---model
-    |       +---dao
-    |       |       UserDAO.class
-    |       |       
-    |       \---entity
-    |               Pet.class
-    |               QRcode.class
-    |               Suggestion.class
-    |               User.class
-    |               
+    |   +---model
+    |   |   +---dao
+    |   |   |       PetDAO.class
+    |   |   |       UserDAO.class
+    |   |   |       
+    |   |   \---entity
+    |   |           Pet.class
+    |   |           QRcode.class
+    |   |           Suggestion.class
+    |   |           User.class
+    |   |           
+    |   \---test
+    |           TestDatabase.class
+    |           
     +---generated-sources
     |   \---annotations
     +---m2e-wtp
@@ -572,85 +591,98 @@ C:.
     |                   createdFiles.lst
     |                   inputFiles.lst
     |                   
-    +---PawPaw-0.0.1-SNAPSHOT
-    |   +---css
-    |   |       styles.css
-    |   |       
-    |   +---images
-    |   |       logo.png
-    |   |       
-    |   +---js
-    |   |       main.js
-    |   |       
-    |   +---META-INF
-    |   +---view
-    |   |   |   index.jsp
-    |   |   |   
-    |   |   \---internalUser
-    |   |           login.jsp
-    |   |           register.jsp
-    |   |           
-    |   \---WEB-INF
-    |       +---classes
-    |       |   +---config
-    |       |   |       DatabaseConnection.class
-    |       |   |       
-    |       |   +---controller
-    |       |   |       AuthenticationController.class
-    |       |   |       LogoutServlet.class
-    |       |   |       UserController.class
-    |       |   |       
-    |       |   \---model
-    |       |       +---dao
-    |       |       |       UserDAO.class
-    |       |       |       
-    |       |       \---entity
-    |       |               Pet.class
-    |       |               QRcode.class
-    |       |               Suggestion.class
-    |       |               User.class
-    |       |               
-    |       \---lib
-    |               angus-activation-2.0.1.jar
-    |               aopalliance-repackaged-3.0.4.jar
-    |               checker-qual-3.41.0.jar
-    |               eclipselink-4.0.2.jar
-    |               gson-2.10.1.jar
-    |               HikariCP-5.1.0.jar
-    |               hk2-api-3.0.4.jar
-    |               hk2-locator-3.0.4.jar
-    |               hk2-utils-3.0.4.jar
-    |               jackson-annotations-2.14.1.jar
-    |               jackson-core-2.15.2.jar
-    |               jackson-databind-2.14.1.jar
-    |               jackson-datatype-jsr310-2.15.2.jar
-    |               jackson-module-jakarta-xmlbind-annotations-2.14.1.jar
-    |               jakarta.activation-api-2.1.2.jar
-    |               jakarta.annotation-api-2.1.1.jar
-    |               jakarta.el-api-6.0.0.jar
-    |               jakarta.inject-api-2.0.1.jar
-    |               jakarta.persistence-api-3.1.0.jar
-    |               jakarta.servlet.jsp.jstl-3.0.1.jar
-    |               jakarta.servlet.jsp.jstl-api-3.0.0.jar
-    |               jakarta.validation-api-3.0.2.jar
-    |               jakarta.ws.rs-api-3.1.0.jar
-    |               jakarta.xml.bind-api-4.0.2.jar
-    |               javassist-3.29.0-GA.jar
-    |               jaxb-core-4.0.3.jar
-    |               jaxb-osgi-4.0.5.jar
-    |               jaxb-xjc-4.0.3.jar
-    |               jbcrypt-0.4.jar
-    |               jersey-client-3.1.2.jar
-    |               jersey-common-3.1.2.jar
-    |               jersey-container-servlet-3.1.2.jar
-    |               jersey-container-servlet-core-3.1.2.jar
-    |               jersey-entity-filtering-3.1.2.jar
-    |               jersey-hk2-3.1.2.jar
-    |               jersey-media-jaxb-3.1.2.jar
-    |               jersey-media-json-jackson-3.1.2.jar
-    |               jersey-server-3.1.2.jar
-    |               osgi-resource-locator-1.0.3.jar
-    |               postgresql-42.7.1.jar
-    |               slf4j-api-1.7.36.jar
-    |               
-    \---test-classes
+    \---PawPaw-0.0.1-SNAPSHOT
+        |   test-css.html
+        |   
+        +---css
+        |       styles.css
+        |       
+        +---images
+        |       logo.png
+        |       
+        +---js
+        |       main.js
+        |       
+        +---META-INF
+        +---view
+        |   |   index.jsp
+        |   |   
+        |   \---internalUser
+        |           login.jsp
+        |           panel.jsp
+        |           pet-form.jsp
+        |           register.jsp
+        |           
+        \---WEB-INF
+            |   web.xml
+            |   
+            +---classes
+            |   +---config
+            |   |       DatabaseConnection.class
+            |   |       
+            |   +---controller
+            |   |       AuthenticationController.class
+            |   |       LogoutServlet.class
+            |   |       PetController.class
+            |   |       UserController.class
+            |   |       UserPanelController.class
+            |   |       
+            |   +---model
+            |   |   +---dao
+            |   |   |       PetDAO.class
+            |   |   |       UserDAO.class
+            |   |   |       
+            |   |   \---entity
+            |   |           Pet.class
+            |   |           QRcode.class
+            |   |           Suggestion.class
+            |   |           User.class
+            |   |           
+            |   \---test
+            |           TestDatabase.class
+            |           
+            \---lib
+                    angus-activation-2.0.1.jar
+                    aopalliance-repackaged-3.0.4.jar
+                    checker-qual-3.41.0.jar
+                    eclipselink-4.0.2.jar
+                    gson-2.10.1.jar
+                    HikariCP-5.1.0.jar
+                    hk2-api-3.0.4.jar
+                    hk2-locator-3.0.4.jar
+                    hk2-utils-3.0.4.jar
+                    jackson-annotations-2.14.1.jar
+                    jackson-core-2.15.2.jar
+                    jackson-databind-2.14.1.jar
+                    jackson-datatype-jsr310-2.15.2.jar
+                    jackson-module-jakarta-xmlbind-annotations-2.14.1.jar
+                    jakarta.activation-api-2.1.2.jar
+                    jakarta.annotation-api-2.1.1.jar
+                    jakarta.el-api-6.0.0.jar
+                    jakarta.inject-api-2.0.1.jar
+                    jakarta.persistence-api-3.1.0.jar
+                    jakarta.servlet.jsp.jstl-3.0.1.jar
+                    jakarta.servlet.jsp.jstl-api-3.0.0.jar
+                    jakarta.validation-api-3.0.2.jar
+                    jakarta.ws.rs-api-3.1.0.jar
+                    jakarta.xml.bind-api-4.0.2.jar
+                    javassist-3.29.0-GA.jar
+                    jaxb-core-4.0.3.jar
+                    jaxb-osgi-4.0.5.jar
+                    jaxb-xjc-4.0.3.jar
+                    jbcrypt-0.4.jar
+                    jersey-client-3.1.2.jar
+                    jersey-common-3.1.2.jar
+                    jersey-container-servlet-3.1.2.jar
+                    jersey-container-servlet-core-3.1.2.jar
+                    jersey-entity-filtering-3.1.2.jar
+                    jersey-hk2-3.1.2.jar
+                    jersey-media-jaxb-3.1.2.jar
+                    jersey-media-json-jackson-3.1.2.jar
+                    jersey-server-3.1.2.jar
+                    logback-classic-1.4.14.jar
+                    logback-core-1.4.14.jar
+                    osgi-resource-locator-1.0.3.jar
+                    postgresql-42.7.1.jar
+                    slf4j-api-2.0.9.jar
+                    

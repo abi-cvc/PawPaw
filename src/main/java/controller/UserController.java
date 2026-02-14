@@ -1,5 +1,8 @@
 package controller;
 
+import model.dao.UserDAO;
+import model.entity.User;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -13,7 +16,6 @@ import java.util.regex.Pattern;
 /**
  * Servlet implementation class UserController
  * Maneja el registro de nuevos usuarios
- * Basado en el diseño OOD del sistema PawPaw
  */
 @WebServlet("/register")
 public class UserController extends HttpServlet {
@@ -23,6 +25,8 @@ public class UserController extends HttpServlet {
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
         "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
     );
+    
+    private UserDAO userDAO = new UserDAO();
 
     /**
      * Muestra el formulario de registro
@@ -32,7 +36,7 @@ public class UserController extends HttpServlet {
         
         // Verificar si ya hay una sesión activa
         HttpSession session = request.getSession(false);
-        if (session != null && session.getAttribute("user") != null) {
+        if (session != null && session.getAttribute("userId") != null) {
             // Si ya está logueado, redirigir al panel
             response.sendRedirect(request.getContextPath() + "/user/panel");
             return;
@@ -44,7 +48,6 @@ public class UserController extends HttpServlet {
 
     /**
      * Procesa el formulario de registro
-     * Crea un nuevo usuario en el sistema
      */
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
@@ -55,10 +58,15 @@ public class UserController extends HttpServlet {
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
         
+        System.out.println("🔵 Intento de registro:");
+        System.out.println("   Nombre: " + name);
+        System.out.println("   Email: " + email);
+        
         // Validaciones
         String errorMessage = validateRegistration(name, email, password, confirmPassword);
         
         if (errorMessage != null) {
+            System.out.println("❌ Error de validación: " + errorMessage);
             // Hay errores, volver al formulario
             request.setAttribute("error", errorMessage);
             request.setAttribute("name", name);
@@ -67,17 +75,15 @@ public class UserController extends HttpServlet {
             return;
         }
         
-        // TODO: Crear usuario en la base de datos usando UserDAO
-        // User newUser = new User(name, email, hashedPassword);
-        // UserDAO userDAO = new UserDAO();
-        // boolean success = userDAO.createUser(newUser);
-        
-        // Simulación de registro exitoso (REEMPLAZAR CON LÓGICA REAL)
+        // Intentar registrar usuario
         if (registerUser(name, email, password)) {
+            System.out.println("✅ Usuario registrado exitosamente");
             // Registro exitoso, redirigir al login con mensaje
             request.setAttribute("success", "Cuenta creada exitosamente. Por favor inicia sesión.");
+            request.setAttribute("email", email);
             request.getRequestDispatcher("/view/internalUser/login.jsp").forward(request, response);
         } else {
+            System.out.println("❌ Error: Email ya existe o error en BD");
             // Error al registrar (ej: email ya existe)
             request.setAttribute("error", "El email ya está registrado. Intenta con otro o inicia sesión.");
             request.setAttribute("name", name);
@@ -88,8 +94,6 @@ public class UserController extends HttpServlet {
     
     /**
      * Valida los datos del registro
-     * 
-     * @return null si todo es válido, mensaje de error en caso contrario
      */
     private String validateRegistration(String name, String email, String password, String confirmPassword) {
         // Validar campos vacíos
@@ -134,45 +138,41 @@ public class UserController extends HttpServlet {
     
     /**
      * Registra un nuevo usuario en el sistema
-     * 
-     * @param name Nombre del usuario
-     * @param email Email del usuario
-     * @param password Contraseña del usuario
-     * @return true si el registro fue exitoso, false en caso contrario
+     * AHORA SÍ GUARDA EN LA BASE DE DATOS
      */
     private boolean registerUser(String name, String email, String password) {
-        // TODO: Implementar inserción en base de datos
-        // 1. Verificar que el email no exista (findUser)
-        // 2. Hashear la contraseña usando BCrypt
-        // 3. Crear objeto User con los datos
-        // 4. Insertar en la BD usando UserDAO
-        // 5. Generar fecha de registro
-        
-        // Ejemplo de implementación con DAO (a implementar):
-        /*
-        UserDAO userDAO = new UserDAO();
-        
-        // Verificar si el email ya existe
-        if (userDAO.emailExists(email)) {
+        try {
+            // 1. Verificar que el email no exista
+            if (userDAO.emailExists(email.trim())) {
+                System.out.println("   ⚠️ Email ya existe en BD");
+                return false;
+            }
+            
+            System.out.println("   📝 Email disponible, creando usuario...");
+            
+            // 2. Crear objeto User
+            User newUser = new User();
+            newUser.setNameUser(name.trim());
+            newUser.setEmail(email.trim());
+            newUser.setPassword(password); // UserDAO se encarga de hashear con BCrypt
+            newUser.setRol("user"); // Rol por defecto
+            newUser.setActive(true);
+            
+            // 3. Insertar en BD usando UserDAO
+            boolean created = userDAO.create(newUser);
+            
+            if (created) {
+                System.out.println("   ✅ Usuario guardado en BD con ID: " + newUser.getIdUser());
+                return true;
+            } else {
+                System.out.println("   ❌ Error al guardar en BD");
+                return false;
+            }
+            
+        } catch (Exception e) {
+            System.err.println("❌ Excepción al registrar usuario:");
+            e.printStackTrace();
             return false;
         }
-        
-        // Hashear contraseña
-        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
-        
-        // Crear usuario
-        User newUser = new User();
-        newUser.setNameUser(name);
-        newUser.setEmail(email);
-        newUser.setPassword(hashedPassword);
-        newUser.setRegistrationDate(new Date());
-        newUser.setRol("user"); // Rol por defecto
-        
-        // Insertar en BD
-        return userDAO.create(newUser);
-        */
-        
-        // Por ahora retorna true (éxito simulado)
-        return true;
     }
 }
