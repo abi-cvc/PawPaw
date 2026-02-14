@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ['maven', 'jdk17']
+
+[phases.build]
+cmds = ['mvn clean package -DskipTests']
+
+[phases.deploy]
+cmd = 'java -jar target/PawPaw-0.0.1-SNAPSHOT.war --server.port=$PORT'
+
+[start]
+cmd = 'java -jar target/PawPaw-0.0.1-SNAPSHOT.war --server.port=$PORT'
