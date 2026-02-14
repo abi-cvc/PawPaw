@@ -19,24 +19,7 @@
         <session-timeout>30</session-timeout>
     </session-config>
     
-    <!-- Configuración de encoding UTF-8 -->
-    <filter>
-        <filter-name>CharacterEncodingFilter</filter-name>
-        <filter-class>org.apache.catalina.filters.SetCharacterEncodingFilter</filter-class>
-        <init-param>
-            <param-name>encoding</param-name>
-            <param-value>UTF-8</param-value>
-        </init-param>
-        <init-param>
-            <param-name>ignore</param-name>
-            <param-value>false</param-value>
-        </init-param>
-    </filter>
-    
-    <filter-mapping>
-        <filter-name>CharacterEncodingFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
+    <!-- FILTRO UTF-8 REMOVIDO - Ahora se usa @WebFilter en CharacterEncodingFilter.java -->
     
     <!-- Páginas de error personalizadas -->
     <error-page>
