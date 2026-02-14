@@ -7,19 +7,20 @@ public class Main {
         String port = System.getenv("PORT");
         if (port == null) port = "8080";
         
-        System.out.println("🚀 PawPaw starting on port: " + port);
+        System.out.println("PawPaw starting on port: " + port);
         
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(Integer.parseInt(port));
         
-        // Configurar directorio base con permisos de escritura
-        String baseDir = System.getProperty("java.io.tmpdir");
-        tomcat.setBaseDir(baseDir);
-        System.out.println("📁 Base directory: " + baseDir);
+        // Usar directorio writable
+        File workDir = new File(System.getProperty("java.io.tmpdir"), "tomcat-work-" + System.currentTimeMillis());
+        workDir.mkdirs();
+        tomcat.setBaseDir(workDir.getAbsolutePath());
+        System.out.println("Work directory: " + workDir.getAbsolutePath());
         
         tomcat.getConnector();
         
-        // Buscar archivo WAR
+        // Buscar WAR
         File targetDir = new File("target");
         File warFile = null;
         
@@ -27,31 +28,31 @@ public class Main {
             File[] files = targetDir.listFiles((dir, name) -> name.endsWith(".war"));
             if (files != null && files.length > 0) {
                 warFile = files[0];
-                System.out.println("📦 Found WAR: " + warFile.getName());
+                System.out.println("Found WAR: " + warFile.getName());
             }
         }
         
         if (warFile == null || !warFile.exists()) {
-            System.err.println("❌ No WAR file found in target/");
+            System.err.println("No WAR file found");
             System.exit(1);
         }
         
-        System.out.println("✅ Loading WAR: " + warFile.getAbsolutePath());
+        System.out.println("Deploying: " + warFile.getAbsolutePath());
         
-        // Desplegar WAR con context path vacío (root)
+        // Desplegar WAR
         Context context = tomcat.addWebapp("", warFile.getAbsolutePath());
         
-        // Deshabilitar escaneo de JARs innecesarios para evitar errores
-        context.getJarScanner().setJarScanFilter((jarScanType, jarName) -> {
-            // Solo escanear JARs de tu aplicación, ignorar jaxb y otros opcionales
-            return !jarName.contains("jaxb") && !jarName.contains("activation");
-        });
+        // Reducir logging verboso
+        context.getJarScanner().setJarScanFilter((type, name) -> 
+            !name.contains("jaxb") && !name.contains("activation")
+        );
         
-        System.out.println("✅ Context configured: " + context.getPath());
-        
+        System.out.println("Starting Tomcat...");
         tomcat.start();
-        System.out.println("✅ PawPaw is RUNNING!");
-        System.out.println("🌐 Access at: http://localhost:" + port);
+        
+        System.out.println("========================================");
+        System.out.println("PawPaw is RUNNING on port " + port);
+        System.out.println("========================================");
         
         tomcat.getServer().await();
     }
