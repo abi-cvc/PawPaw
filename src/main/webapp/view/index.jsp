@@ -8,7 +8,7 @@
     <title>PawPaw - La seguridad de tu mascota</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/resources/images/logo.png">
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/logo.png">
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
