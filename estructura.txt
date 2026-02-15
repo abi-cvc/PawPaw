@@ -5,7 +5,7 @@ C:.
 |   .dockerignore
 |   .gitignore
 |   .project
-|   dockerfile
+|   Dockerfile
 |   estructura.txt
 |   pom.xml
 |   tmpclaude-1dac-cwd
