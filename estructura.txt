@@ -2,12 +2,12 @@ Listado de rutas de carpetas para el volumen Windos
 El n£mero de serie del volumen es 148F-B2F0
 C:.
 |   .classpath
+|   .dockerignore
 |   .gitignore
 |   .project
+|   dockerfile
 |   estructura.txt
-|   nixpacks.toml
 |   pom.xml
-|   Procfile
 |   tmpclaude-1dac-cwd
 |   
 +---.metadata
@@ -488,8 +488,6 @@ C:.
 +---src
 |   \---main
 |       +---java
-|       |   |   Main.java
-|       |   |   
 |       |   +---config
 |       |   |       DatabaseConnection.java
 |       |   |       
@@ -557,8 +555,6 @@ C:.
     |   PawPaw-0.0.1-SNAPSHOT.war
     |   
     +---classes
-    |   |   Main.class
-    |   |   
     |   +---config
     |   |       DatabaseConnection.class
     |   |       

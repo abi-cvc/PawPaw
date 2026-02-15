@@ -1,0 +1,11 @@
+target/
+.git/
+.gitignore
+.metadata/
+.settings/
+.classpath
+.project
+*.md
+Procfile
+nixpacks.toml
+Main.java
