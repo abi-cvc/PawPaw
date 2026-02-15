@@ -655,6 +655,17 @@ C:.
     |       tomcat-util-10.1.18.jar
     |       tomcat-util-scan-10.1.18.jar
     |       
+    +---m2e-wtp
+    |   \---web-resources
+    |       \---META-INF
+    |           |   MANIFEST.MF
+    |           |   
+    |           \---maven
+    |               \---PawPaw
+    |                   \---PawPaw
+    |                           pom.properties
+    |                           pom.xml
+    |                           
     +---maven-archiver
     |       pom.properties
     |       

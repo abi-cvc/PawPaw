@@ -1,8 +1,0 @@
-[phases.setup]
-nixPkgs = ['maven', 'jdk21']
-
-[phases.build]
-cmds = ['mvn clean package -DskipTests']
-
-[start]
-cmd = 'java -cp "target/classes:target/lib/*" Main'
