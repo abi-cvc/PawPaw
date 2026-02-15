@@ -8,6 +8,16 @@
 
     <display-name>PawPaw - Sistema de Identificación de Mascotas</display-name>
     
+    <!-- SERVLET DE PRUEBA MAPEADO MANUALMENTE -->
+    <servlet>
+        <servlet-name>HealthCheckServlet</servlet-name>
+        <servlet-class>controller.HealthCheckServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>HealthCheckServlet</servlet-name>
+        <url-pattern>/health</url-pattern>
+    </servlet-mapping>
+    
     <!-- Página de bienvenida -->
     <welcome-file-list>
         <welcome-file>view/index.jsp</welcome-file>
@@ -19,8 +29,6 @@
     <session-config>
         <session-timeout>30</session-timeout>
     </session-config>
-    
-    <!-- FILTRO UTF-8 REMOVIDO - Ahora se usa @WebFilter en CharacterEncodingFilter.java -->
     
     <!-- Páginas de error personalizadas -->
     <error-page>
