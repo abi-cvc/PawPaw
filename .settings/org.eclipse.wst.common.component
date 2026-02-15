@@ -20,7 +20,7 @@
                         
         
         <property name="java-output-path" value="/PawPaw/target/classes"/>
-        <property name="component.exclusion.patterns" value="WEB-INF/classes/Main.class"/>
+        <property name="component.exclusion.patterns"/>
                     
     
     </wb-module>
