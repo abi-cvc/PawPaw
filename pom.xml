@@ -30,6 +30,9 @@
         <!-- Agregada configuración failOnMissingWebXml -->
         <configuration>
           <failOnMissingWebXml>false</failOnMissingWebXml>
+          <packagingExcludes>
+            WEB-INF/classes/Main.class
+          </packagingExcludes>
         </configuration>
         
       </plugin>
