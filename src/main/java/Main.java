@@ -91,7 +91,42 @@ public class Main {
         
         tomcat.start();
         
+        // Verificar que los servlets se cargaron
+        System.out.println("\n" + "=".repeat(50));
+        System.out.println("POST-START VERIFICATION:");
         System.out.println("=".repeat(50));
+        
+        org.apache.catalina.Container[] children = context.findChildren();
+        int count = 0;
+        for (org.apache.catalina.Container child : children) {
+            if (child instanceof org.apache.catalina.Wrapper) {
+                org.apache.catalina.Wrapper wrapper = (org.apache.catalina.Wrapper) child;
+                String className = wrapper.getServletClass();
+                if (className != null && className.startsWith("controller.")) {
+                    count++;
+                    System.out.println("  " + wrapper.getName() + " -> " + className);
+                    
+                    // Verificar si el servlet se cargó correctamente
+                    try {
+                        jakarta.servlet.Servlet servlet = wrapper.getServlet();
+                        if (servlet != null) {
+                            System.out.println("    ✓ Loaded successfully");
+                        } else {
+                            System.out.println("    ✗ NOT loaded (servlet is null)");
+                        }
+                    } catch (Exception e) {
+                        System.out.println("    ✗ ERROR: " + e.getMessage());
+                    }
+                }
+            }
+        }
+        
+        if (count == 0) {
+            System.err.println("  ✗ NO SERVLETS FOUND AFTER START!");
+        }
+        
+        System.out.println("=".repeat(50));
+        System.out.println("\n" + "=".repeat(50));
         System.out.println("PawPaw is RUNNING on port " + port);
         System.out.println("Test: https://web-production-e92f4.up.railway.app/health");
         System.out.println("=".repeat(50));
