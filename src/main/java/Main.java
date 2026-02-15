@@ -50,27 +50,22 @@ public class Main {
             System.exit(1);
         }
         
-        // Listar TODOS los archivos del WAR (incluyendo .class)
+        // Listar archivos .class del WAR
         System.out.println("\n" + "=".repeat(60));
-        System.out.println("WAR FULL CONTENTS:");
+        System.out.println("WAR CONTENTS (classes only):");
         System.out.println("=".repeat(60));
         try (JarFile jar = new JarFile(warFile)) {
             Enumeration<JarEntry> entries = jar.entries();
-            int count = 0;
+            int classCount = 0;
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
                 String name = entry.getName();
-                // Mostrar CLASES y archivos importantes
-                if (name.endsWith(".class") || name.endsWith(".jsp") || 
-                    name.equals("WEB-INF/web.xml") || name.startsWith("view/")) {
+                if (name.endsWith(".class")) {
                     System.out.println("  " + name);
-                    count++;
-                    if (count > 100) {
-                        System.out.println("  ... (showing first 100 files)");
-                        break;
-                    }
+                    classCount++;
                 }
             }
+            System.out.println("Total classes: " + classCount);
         } catch (Exception e) {
             System.err.println("Could not read WAR: " + e.getMessage());
         }
@@ -98,7 +93,8 @@ public class Main {
         System.out.println("=".repeat(60));
         Container[] children = context.findChildren();
         if (children.length == 0) {
-            System.out.println("  *** NO SERVLETS FOUND *** ");
+            System.out.println("  *** NO SERVLETS REGISTERED *** ");
+            System.out.println("  This means web.xml was not processed or annotations not scanned.");
         } else {
             for (Container child : children) {
                 if (child instanceof Wrapper) {
@@ -108,7 +104,7 @@ public class Main {
                     String[] mappings = context.findServletMappings();
                     for (String mapping : mappings) {
                         if (mapping.equals(wrapper.getName())) {
-                            System.out.println("    Mapping: " + context.findServletMapping(mapping));
+                            System.out.println("    URL: " + context.findServletMapping(mapping));
                         }
                     }
                 }
@@ -120,13 +116,12 @@ public class Main {
         System.out.println("=".repeat(60));
         System.out.println("  Context Path: " + context.getPath());
         System.out.println("  Doc Base: " + context.getDocBase());
-        System.out.println("  Work Dir: " + context.getWorkDir());
         System.out.println("  State: " + context.getState());
-        System.out.println("  Available: " + context.getAvailable());
         
         System.out.println("\n" + "=".repeat(60));
         System.out.println(" PawPaw is RUNNING on port " + port);
-        System.out.println(" URL: https://web-production-e92f4.up.railway.app/");
+        System.out.println(" Try: https://web-production-e92f4.up.railway.app/");
+        System.out.println(" Try: https://web-production-e92f4.up.railway.app/health");
         System.out.println("=".repeat(60) + "\n");
         
         tomcat.getServer().await();
