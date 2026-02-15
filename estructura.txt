@@ -495,6 +495,7 @@ C:.
 |       |   |       
 |       |   +---controller
 |       |   |       AuthenticationController.java
+|       |   |       HealthCheckServlet.java
 |       |   |       LogoutServlet.java
 |       |   |       PetController.java
 |       |   |       PublicPetController.java
@@ -502,6 +503,9 @@ C:.
 |       |   |       UserController.java
 |       |   |       UserPanelController.java
 |       |   |       UserProfileController.java
+|       |   |       
+|       |   +---filter
+|       |   |       CharacterEncodingFilter.java
 |       |   |       
 |       |   +---model
 |       |   |   +---dao
@@ -560,6 +564,7 @@ C:.
     |   |       
     |   +---controller
     |   |       AuthenticationController.class
+    |   |       HealthCheckServlet.class
     |   |       LogoutServlet.class
     |   |       PetController.class
     |   |       PublicPetController.class
@@ -568,6 +573,9 @@ C:.
     |   |       UserController.class
     |   |       UserPanelController.class
     |   |       UserProfileController.class
+    |   |       
+    |   +---filter
+    |   |       CharacterEncodingFilter.class
     |   |       
     |   +---model
     |   |   +---dao
@@ -695,6 +703,7 @@ C:.
             |   |       
             |   +---controller
             |   |       AuthenticationController.class
+            |   |       HealthCheckServlet.class
             |   |       LogoutServlet.class
             |   |       PetController.class
             |   |       PublicPetController.class
@@ -703,6 +712,9 @@ C:.
             |   |       UserController.class
             |   |       UserPanelController.class
             |   |       UserProfileController.class
+            |   |       
+            |   +---filter
+            |   |       CharacterEncodingFilter.class
             |   |       
             |   +---model
             |   |   +---dao

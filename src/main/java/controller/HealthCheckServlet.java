@@ -8,7 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet(name = "HealthCheckServlet", urlPatterns = {"/health", "/"})
+// SOLO /health - NO mapear a /
+@WebServlet(name = "HealthCheckServlet", urlPatterns = {"/health"})
 public class HealthCheckServlet extends HttpServlet {
     
     @Override
@@ -31,13 +32,13 @@ public class HealthCheckServlet extends HttpServlet {
             out.println("</head>");
             out.println("<body>");
             out.println("<div class='container'>");
-            out.println("<h1>🐾 PawPaw is RUNNING!</h1>");
-            out.println("<div class='info'><strong>Status:</strong> ✅ ONLINE</div>");
+            out.println("<h1>PawPaw is RUNNING!</h1>");
+            out.println("<div class='info'><strong>Status:</strong> ONLINE</div>");
             out.println("<div class='info'><strong>Context Path:</strong> " + request.getContextPath() + "</div>");
             out.println("<div class='info'><strong>Servlet Path:</strong> " + request.getServletPath() + "</div>");
             out.println("<div class='info'><strong>Server Info:</strong> " + getServletContext().getServerInfo() + "</div>");
             out.println("<hr>");
-            out.println("<p>✨ PawPaw application deployed successfully on Railway!</p>");
+            out.println("<p>PawPaw application deployed successfully on Railway!</p>");
             out.println("<p><a href='/view/index.jsp'>Go to Index.jsp</a> | ");
             out.println("<a href='/view/internalUser/login.jsp'>Go to Login</a></p>");
             out.println("</div>");
