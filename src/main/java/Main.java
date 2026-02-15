@@ -1,5 +1,7 @@
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.Context;
+import org.apache.catalina.Container;
+import org.apache.catalina.Wrapper;
 import java.io.File;
 import java.util.jar.JarFile;
 import java.util.jar.JarEntry;
@@ -10,7 +12,9 @@ public class Main {
         String port = System.getenv("PORT");
         if (port == null) port = "8080";
         
+        System.out.println("=".repeat(60));
         System.out.println("PawPaw starting on port: " + port);
+        System.out.println("=".repeat(60));
         
         Tomcat tomcat = new Tomcat();
         tomcat.setPort(Integer.parseInt(port));
@@ -46,27 +50,33 @@ public class Main {
             System.exit(1);
         }
         
-        // NUEVO: Listar contenido del WAR para debug
-        System.out.println("\n=== WAR CONTENTS ===");
+        // Listar TODOS los archivos del WAR (incluyendo .class)
+        System.out.println("\n" + "=".repeat(60));
+        System.out.println("WAR FULL CONTENTS:");
+        System.out.println("=".repeat(60));
         try (JarFile jar = new JarFile(warFile)) {
             Enumeration<JarEntry> entries = jar.entries();
             int count = 0;
-            while (entries.hasMoreElements() && count < 50) {
+            while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
                 String name = entry.getName();
-                // Solo mostrar archivos importantes
-                if (name.endsWith(".jsp") || name.endsWith(".html") || 
+                // Mostrar CLASES y archivos importantes
+                if (name.endsWith(".class") || name.endsWith(".jsp") || 
                     name.equals("WEB-INF/web.xml") || name.startsWith("view/")) {
                     System.out.println("  " + name);
                     count++;
+                    if (count > 100) {
+                        System.out.println("  ... (showing first 100 files)");
+                        break;
+                    }
                 }
             }
         } catch (Exception e) {
             System.err.println("Could not read WAR: " + e.getMessage());
         }
-        System.out.println("===================\n");
+        System.out.println("=".repeat(60));
         
-        System.out.println("Deploying: " + warFile.getAbsolutePath());
+        System.out.println("\nDeploying WAR: " + warFile.getAbsolutePath());
         
         // Desplegar WAR
         Context context = tomcat.addWebapp("", warFile.getAbsolutePath());
@@ -76,14 +86,48 @@ public class Main {
             !name.contains("jaxb") && !name.contains("activation")
         );
         
+        System.out.println("\n" + "=".repeat(60));
         System.out.println("Starting Tomcat...");
+        System.out.println("=".repeat(60));
+        
         tomcat.start();
         
-        System.out.println("==========================================");
+        // DEBUGGING: Listar servlets registrados
+        System.out.println("\n" + "=".repeat(60));
+        System.out.println("REGISTERED SERVLETS:");
+        System.out.println("=".repeat(60));
+        Container[] children = context.findChildren();
+        if (children.length == 0) {
+            System.out.println("  *** NO SERVLETS FOUND *** ");
+        } else {
+            for (Container child : children) {
+                if (child instanceof Wrapper) {
+                    Wrapper wrapper = (Wrapper) child;
+                    System.out.println("  Servlet: " + wrapper.getName());
+                    System.out.println("    Class: " + wrapper.getServletClass());
+                    String[] mappings = context.findServletMappings();
+                    for (String mapping : mappings) {
+                        if (mapping.equals(wrapper.getName())) {
+                            System.out.println("    Mapping: " + context.findServletMapping(mapping));
+                        }
+                    }
+                }
+            }
+        }
+        
+        System.out.println("\n" + "=".repeat(60));
+        System.out.println("CONTEXT INFO:");
+        System.out.println("=".repeat(60));
+        System.out.println("  Context Path: " + context.getPath());
+        System.out.println("  Doc Base: " + context.getDocBase());
+        System.out.println("  Work Dir: " + context.getWorkDir());
+        System.out.println("  State: " + context.getState());
+        System.out.println("  Available: " + context.getAvailable());
+        
+        System.out.println("\n" + "=".repeat(60));
         System.out.println(" PawPaw is RUNNING on port " + port);
-        System.out.println(" Context path: " + context.getPath());
-        System.out.println(" Try: https://your-domain.railway.app/");
-        System.out.println("==========================================");
+        System.out.println(" URL: https://web-production-e92f4.up.railway.app/");
+        System.out.println("=".repeat(60) + "\n");
         
         tomcat.getServer().await();
     }
