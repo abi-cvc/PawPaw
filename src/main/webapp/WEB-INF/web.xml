@@ -6,24 +6,42 @@
          version="6.0"
          metadata-complete="false">
 
-    <display-name>PawPaw</display-name>
+    <display-name>PawPaw - Sistema de Identificación de Mascotas</display-name>
+    <description>
+        Sistema de identificación de mascotas mediante códigos QR
+    </description>
 
-    <!-- Página de inicio -->
+    <!-- ==================== WELCOME FILES ==================== -->
     <welcome-file-list>
         <welcome-file>view/index.jsp</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
+        <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 
-    <!-- ============ MIME TYPES ============ -->
+    <!-- ==================== MIME MAPPINGS ==================== -->
+    <!-- CSS -->
     <mime-mapping>
         <extension>css</extension>
         <mime-type>text/css</mime-type>
     </mime-mapping>
-    
+
+    <!-- JavaScript -->
     <mime-mapping>
         <extension>js</extension>
         <mime-type>application/javascript</mime-type>
     </mime-mapping>
     
+    <mime-mapping>
+        <extension>mjs</extension>
+        <mime-type>application/javascript</mime-type>
+    </mime-mapping>
+    
+    <mime-mapping>
+        <extension>json</extension>
+        <mime-type>application/json</mime-type>
+    </mime-mapping>
+
+    <!-- Images -->
     <mime-mapping>
         <extension>png</extension>
         <mime-type>image/png</mime-type>
@@ -40,10 +58,26 @@
     </mime-mapping>
     
     <mime-mapping>
+        <extension>gif</extension>
+        <mime-type>image/gif</mime-type>
+    </mime-mapping>
+    
+    <mime-mapping>
+        <extension>webp</extension>
+        <mime-type>image/webp</mime-type>
+    </mime-mapping>
+    
+    <mime-mapping>
         <extension>svg</extension>
         <mime-type>image/svg+xml</mime-type>
     </mime-mapping>
     
+    <mime-mapping>
+        <extension>ico</extension>
+        <mime-type>image/x-icon</mime-type>
+    </mime-mapping>
+
+    <!-- Fonts -->
     <mime-mapping>
         <extension>woff</extension>
         <mime-type>font/woff</mime-type>
@@ -53,25 +87,131 @@
         <extension>woff2</extension>
         <mime-type>font/woff2</mime-type>
     </mime-mapping>
+    
+    <mime-mapping>
+        <extension>ttf</extension>
+        <mime-type>font/ttf</mime-type>
+    </mime-mapping>
+    
+    <mime-mapping>
+        <extension>otf</extension>
+        <mime-type>font/otf</mime-type>
+    </mime-mapping>
+    
+    <mime-mapping>
+        <extension>eot</extension>
+        <mime-type>application/vnd.ms-fontobject</mime-type>
+    </mime-mapping>
 
-    <!-- ============ FILTROS ============ -->
+    <!-- Other common types -->
+    <mime-mapping>
+        <extension>pdf</extension>
+        <mime-type>application/pdf</mime-type>
+    </mime-mapping>
+    
+    <mime-mapping>
+        <extension>xml</extension>
+        <mime-type>application/xml</mime-type>
+    </mime-mapping>
+    
+    <mime-mapping>
+        <extension>html</extension>
+        <mime-type>text/html</mime-type>
+    </mime-mapping>
+    
+    <mime-mapping>
+        <extension>txt</extension>
+        <mime-type>text/plain</mime-type>
+    </mime-mapping>
+
+    <!-- ==================== FILTERS ==================== -->
+    <!-- 
+        IMPORTANTE: El orden de los filtros importa.
+        StaticResourceFilter debe ir PRIMERO para que fuerce el Content-Type
+        antes que cualquier otro filtro pueda modificarlo.
+    -->
+    
+    <!-- Static Resource Filter - DEBE IR PRIMERO -->
+    <filter>
+        <filter-name>StaticResourceFilter</filter-name>
+        <filter-class>filter.StaticResourceFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>StaticResourceFilter</filter-name>
+        <url-pattern>*.css</url-pattern>
+        <url-pattern>*.js</url-pattern>
+        <url-pattern>*.png</url-pattern>
+        <url-pattern>*.jpg</url-pattern>
+        <url-pattern>*.jpeg</url-pattern>
+        <url-pattern>*.svg</url-pattern>
+        <url-pattern>*.woff</url-pattern>
+        <url-pattern>*.woff2</url-pattern>
+        <url-pattern>*.ttf</url-pattern>
+        <url-pattern>*.otf</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+    
+    <!-- Character Encoding Filter -->
     <filter>
         <filter-name>EncodingFilter</filter-name>
         <filter-class>filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
     </filter>
     
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
     </filter-mapping>
 
-    <!-- ============ SESSION CONFIG ============ -->
+    <!-- ==================== ERROR PAGES ==================== -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/view/error/404.jsp</location>
+    </error-page>
+    
+    <error-page>
+        <error-code>500</error-code>
+        <location>/view/error/500.jsp</location>
+    </error-page>
+    
+    <error-page>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/view/error/500.jsp</location>
+    </error-page>
+
+    <!-- ==================== SESSION CONFIG ==================== -->
     <session-config>
         <session-timeout>30</session-timeout>
         <cookie-config>
+            <name>PAWPAW_SESSION</name>
             <http-only>true</http-only>
             <secure>false</secure>
+            <max-age>1800</max-age>
         </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
     </session-config>
+
+    <!-- ==================== SECURITY (HTTPS cuando se configure) ==================== -->
+    <!--
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>Secure Area</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>CONFIDENTIAL</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
+    -->
 
 </web-app>
