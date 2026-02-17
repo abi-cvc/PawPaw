@@ -575,55 +575,6 @@ a {
     flex-wrap: wrap;
 }
 
-/* ==================== RESPONSIVE LANDING PAGE ==================== */
-@media (max-width: 968px) {
-    .hero-contenedor {
-        grid-template-columns: 1fr;
-        gap: 2rem;
-    }
-    
-    .hero-titulo {
-        font-size: 2.5rem;
-    }
-    
-    .hero-botones {
-        flex-direction: column;
-    }
-    
-    .caracteristicas-grid,
-    .pasos-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .seccion-titulo {
-        font-size: 2rem;
-    }
-    
-    .cta-titulo {
-        font-size: 2rem;
-    }
-    
-    .cta-botones {
-        flex-direction: column;
-        align-items: stretch;
-    }
-}
-
-@media (max-width: 640px) {
-    .hero-titulo {
-        font-size: 2rem;
-    }
-    
-    .seccion-contenedor {
-        padding: 2rem 1rem;
-    }
-    
-    .navbar-botones {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-}
-
 /* ==================== FORMULARIOS ==================== */
 .contenedor-formulario {
     min-height: 100vh;
@@ -1927,6 +1878,180 @@ a {
     text-decoration: underline;
 }
 
+.qr-page-wrapper {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Container para contenido QR cuando hay sidebar */
+.qr-content-wrapper {
+    margin-left: 260px;
+    flex: 1;
+    padding: 2rem;
+    background: var(--color-5);
+}
+
+/* Header de card QR */
+.qr-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-4);
+}
+
+/* Ajuste de .qr-pet-photo para que sea contenedor */
+.qr-pet-photo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid var(--color-3);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.qr-pet-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Placeholder de foto */
+.pet-photo-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-3);
+    font-size: 1.5rem;
+}
+
+/* Raza de mascota */
+.qr-pet-breed {
+    margin: 0.25rem 0 0.5rem 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Badge de estado */
+.pet-status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radio-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.pet-status-badge.lost {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.pet-status-badge.found {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.pet-status-badge.safe {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+/* Botón pequeño */
+.btn-small {
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+}
+
+/* Ajuste para stats - usar grid en vez de flex */
+.qr-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: white;
+    border-radius: var(--radio-md);
+}
+
+/* Sección de información educativa */
+.qr-info-section {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: white;
+    border-radius: var(--radio-lg);
+    box-shadow: var(--sombra-sm);
+}
+
+.qr-info-section h2 {
+    font-family: var(--fuente-titulos);
+    color: var(--color-1);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.info-card {
+    padding: 1.5rem;
+    background: var(--color-5);
+    border-radius: var(--radio-md);
+    text-align: center;
+    transition: var(--transicion);
+    border: 2px solid var(--color-4);
+}
+
+.info-card:hover {
+    border-color: var(--color-3);
+    transform: translateY(-4px);
+    box-shadow: var(--sombra-md);
+}
+
+.info-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.info-card h3 {
+    font-family: var(--fuente-titulos);
+    color: var(--color-1);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.info-card p {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* Page header (para títulos de página) */
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-family: var(--fuente-titulos);
+    font-size: 2.5rem;
+    color: var(--color-1);
+    margin: 0 0 0.5rem 0;
+}
+
+.page-subtitle {
+    color: #666;
+    font-size: 1.1rem;
+    margin: 0;
+}
+
 /* ==================== PÁGINA DE PERFIL ==================== */
 .profile-container {
     display: grid;
@@ -1993,8 +2118,139 @@ a {
     color: #2e7d32;
 }
 
-/* Responsive */
+
+/* ==================== CONSOLIDACIÓN DE RESPONSIVE ==================== */
+/* NOTA: Reemplazar TODAS las @media queries existentes con esto */
+
+/* Tablet y pantallas medianas (máx 968px) */
+@media (max-width: 968px) {
+    /* Navbar principal */
+    .navbar-contenedor {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .navbar-botones {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Hero */
+    .hero-contenedor {
+        padding: 3rem 1.5rem;
+    }
+    
+    .hero-titulo {
+        font-size: 2.5rem;
+    }
+    
+    /* Dashboard */
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.active {
+        transform: translateX(0);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .qr-content-wrapper {
+        margin-left: 0;
+    }
+    
+    /* Stats */
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Mobile (máx 768px) */
+@media (max-width: 768px) {
+    /* QR Codes */
+    .qr-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .qr-actions {
+        flex-direction: column;
+    }
+    
+    .qr-actions .btn {
+        width: 100%;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Pets grid */
+    .pets-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    /* Features */
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .pasos-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .caracteristicas-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Mobile pequeño (máx 640px) */
 @media (max-width: 640px) {
+    /* Tipografía */
+    .hero-titulo {
+        font-size: 2rem;
+    }
+    
+    h1 {
+        font-size: 2rem !important;
+    }
+    
+    h2 {
+        font-size: 1.5rem !important;
+    }
+    
+    /* Botones */
+    .hero-botones {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .hero-botones .btn {
+        width: 100%;
+    }
+    
+    /* Confianza */
+    .hero-confianza {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    /* Formularios */
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
+    
+    /* Página pública de mascota */
     .pet-public-photo {
         height: 300px;
     }
@@ -2014,7 +2270,12 @@ a {
         font-size: 0.9rem;
     }
     
+    /* Layout general */
     .content {
+        padding: 1rem;
+    }
+    
+    .qr-content-wrapper {
         padding: 1rem;
     }
     
@@ -2022,30 +2283,7 @@ a {
         padding: 0 1rem;
     }
     
-    .form-actions {
-        flex-direction: column;
-    }
-}
-
-/* ==================== RESPONSIVE ==================== */
-@media (max-width: 968px) {
-    .sidebar {
-        transform: translateX(-100%);
-    }
-    
-    .main-content {
-        margin-left: 0;
-    }
-    
-    .navbar-botones {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-    
+    /* Tarjetas */
     .tarjeta-formulario {
         padding: 2rem 1.5rem;
     }
@@ -2053,23 +2291,14 @@ a {
     .profile-container {
         grid-template-columns: 1fr;
     }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-    .qr-grid {
-        grid-template-columns: 1fr;
-    }
     
-    .qr-actions {
+    /* Navbar */
+    .navbar-botones {
         flex-direction: column;
-    }
-    
-    .qr-actions .btn {
         width: 100%;
     }
     
-    .info-grid {
-        grid-template-columns: 1fr;
+    .navbar-botones .btn {
+        width: 100%;
     }
 }
