@@ -1538,6 +1538,150 @@ a {
     padding: 0.875rem;
 }
 
+/* Header de la card QR (estructura con foto + info) */
+.qr-card-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-4);
+}
+
+/* Reutilizar .qr-pet-photo pero ahora es un contenedor, no la imagen */
+.qr-pet-photo {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    border: 3px solid var(--color-3);
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.qr-pet-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Placeholder cuando no hay foto */
+.pet-photo-placeholder {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: var(--color-3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+}
+
+/* Raza de la mascota */
+.qr-pet-breed {
+    margin: 0.25rem 0 0.5rem 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Badge de estado de mascota */
+.pet-status-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: var(--radio-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.pet-status-badge.lost {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.pet-status-badge.found {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.pet-status-badge.safe {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+/* Botones pequeños */
+.btn-small {
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+}
+
+/* Ajuste para qr-stats - cambiar de flex a grid como en el JSP */
+.qr-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin: 1.5rem 0;
+    padding: 1rem;
+    background: white;
+    border-radius: var(--radio-md);
+}
+
+/* Sección de información (parte educativa) */
+.qr-info-section {
+    margin-top: 3rem;
+    padding: 2rem;
+    background: white;
+    border-radius: var(--radio-lg);
+    box-shadow: var(--sombra-sm);
+}
+
+.qr-info-section h2 {
+    font-family: var(--fuente-titulos);
+    color: var(--color-1);
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 2rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.info-card {
+    padding: 1.5rem;
+    background: var(--color-5);
+    border-radius: var(--radio-md);
+    text-align: center;
+    transition: var(--transicion);
+    border: 2px solid var(--color-4);
+}
+
+.info-card:hover {
+    border-color: var(--color-3);
+    transform: translateY(-4px);
+    box-shadow: var(--sombra-md);
+}
+
+.info-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.info-card h3 {
+    font-family: var(--fuente-titulos);
+    color: var(--color-1);
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.info-card p {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
 /* ==================== PUBLIC PET PAGE ==================== */
 .public-page {
     background: linear-gradient(135deg, var(--color-5) 0%, #FFF 100%);
@@ -1783,70 +1927,6 @@ a {
     text-decoration: underline;
 }
 
-/* Responsive para página pública */
-@media (max-width: 640px) {
-    .pet-public-photo {
-        height: 300px;
-    }
-    
-    .pet-public-info h1 {
-        font-size: 2rem;
-    }
-    
-    .pet-public-info {
-        padding: 1.5rem;
-    }
-    
-    .pet-public-status {
-        top: 10px;
-        right: 10px;
-        padding: 0.75rem 1.5rem;
-        font-size: 0.9rem;
-    }
-}
-
-/* ==================== RESPONSIVE ==================== */
-@media (max-width: 968px) {
-    .sidebar {
-        transform: translateX(-100%);
-    }
-    
-    .main-content {
-        margin-left: 0;
-    }
-    
-    .navbar-botones {
-        flex-direction: column;
-        gap: 0.5rem;
-    }
-    
-    .form-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .tarjeta-formulario {
-        padding: 2rem 1.5rem;
-    }
-    
-    .profile-container {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 640px) {
-    .content {
-        padding: 1rem;
-    }
-    
-    .topbar {
-        padding: 0 1rem;
-    }
-    
-    .form-actions {
-        flex-direction: column;
-    }
-}
-
 /* ==================== PÁGINA DE PERFIL ==================== */
 .profile-container {
     display: grid;
@@ -1911,4 +1991,85 @@ a {
 .badge-success {
     background: #e8f5e9;
     color: #2e7d32;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+    .pet-public-photo {
+        height: 300px;
+    }
+    
+    .pet-public-info h1 {
+        font-size: 2rem;
+    }
+    
+    .pet-public-info {
+        padding: 1.5rem;
+    }
+    
+    .pet-public-status {
+        top: 10px;
+        right: 10px;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .content {
+        padding: 1rem;
+    }
+    
+    .topbar {
+        padding: 0 1rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 968px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+    
+    .main-content {
+        margin-left: 0;
+    }
+    
+    .navbar-botones {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tarjeta-formulario {
+        padding: 2rem 1.5rem;
+    }
+    
+    .profile-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .qr-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .qr-actions {
+        flex-direction: column;
+    }
+    
+    .qr-actions .btn {
+        width: 100%;
+    }
+    
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
 }
