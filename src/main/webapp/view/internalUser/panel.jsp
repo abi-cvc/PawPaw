@@ -228,7 +228,7 @@
                                         <a href="<%= request.getContextPath() %>/user/pets/edit?id=<%= pet.getIdPet() %>" class="btn btn-secundario">
                                             Editar
                                         </a>
-                                        <a href="<%= request.getContextPath() %>/pet/qr/<%= pet.getIdPet() %>" class="btn btn-primario">
+                                        <a href="<%= request.getContextPath() %>/pet/<%= pet.getIdPet() %>" target="_blank" class="btn btn-primario">
                                             Ver QR
                                         </a>
                                     </div>
