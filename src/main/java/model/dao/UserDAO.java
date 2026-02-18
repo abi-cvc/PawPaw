@@ -256,6 +256,37 @@ public class UserDAO {
     }
     
     /**
+     * Actualiza solo la contraseña de un usuario
+     * 
+     * @param userId ID del usuario
+     * @param newHashedPassword Nueva contraseña hasheada
+     * @return true si se actualizó correctamente
+     */
+    public boolean ressetPassword(Integer userId, String newHashedPassword) {
+        String sql = "UPDATE users SET password = ? WHERE id_user = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, newHashedPassword);
+            pstmt.setInt(2, userId);
+            
+            int affectedRows = pstmt.executeUpdate();
+            
+            if (affectedRows > 0) {
+                System.out.println("✅ Contraseña actualizada para usuario ID: " + userId);
+                return true;
+            }
+            
+        } catch (SQLException e) {
+            System.err.println("❌ Error al actualizar contraseña: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return false;
+    }
+    
+    /**
      * Elimina un usuario (eliminación física)
      * 
      * @param idUser ID del usuario a eliminar
