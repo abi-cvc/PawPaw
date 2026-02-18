@@ -25,6 +25,11 @@
             <% 
                 String error = (String) request.getAttribute("error");
                 String success = (String) request.getAttribute("success");
+                String passwordChanged = request.getParameter("passwordChanged");
+                
+                if (passwordChanged != null && passwordChanged.equals("true")) {
+                    success = "¡Contraseña actualizada exitosamente! Ya puedes iniciar sesión.";
+                }
                 
                 if (error != null && !error.isEmpty()) {
             %>
@@ -64,6 +69,12 @@
                         placeholder="••••••••"
                         required
                         autocomplete="current-password">
+                </div>
+                
+                <div style="text-align: right; margin-top: 0.5rem;">
+                    <a href="<%= request.getContextPath() %>/forgot-password" style="color: var(--color-2); text-decoration: none; font-size: 0.9rem;">
+                        ¿Olvidaste tu contraseña?
+                    </a>
                 </div>
                 
                 <button type="submit" class="btn btn-primario btn-grande" style="width: 100%; margin-top: 1rem;">
