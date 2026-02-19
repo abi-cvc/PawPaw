@@ -26,6 +26,8 @@
                 String error = (String) request.getAttribute("error");
                 String success = (String) request.getAttribute("success");
                 Boolean emailSent = (Boolean) request.getAttribute("emailSent");
+                Boolean resent = (Boolean) request.getAttribute("resent");
+                String email = (String) request.getAttribute("email");
                 
                 if (error != null && !error.isEmpty()) {
             %>
@@ -41,17 +43,49 @@
             <% } %>
             
             <% if (emailSent != null && emailSent) { %>
-                <!-- Si el email fue enviado, mostrar instrucciones -->
+                <!-- Si el email fue enviado, mostrar instrucciones y opción de reenviar -->
                 <div style="text-align: center; padding: 2rem 0;">
                     <div style="font-size: 4rem; margin-bottom: 1rem;">📧</div>
-                    <h3 style="color: var(--color-1); margin-bottom: 1rem;">Revisa tu email</h3>
-                    <p style="color: #666; margin-bottom: 2rem;">
-                        Si el email existe en nuestro sistema, recibirás un enlace para restablecer tu contraseña.<br>
+                    
+                    <% if (resent != null && resent) { %>
+                        <h3 style="color: var(--color-1); margin-bottom: 1rem;">¡Enlace reenviado!</h3>
+                        <p style="color: #666; margin-bottom: 1rem;">
+                            Hemos enviado un nuevo enlace de recuperación a tu correo.
+                        </p>
+                    <% } else { %>
+                        <h3 style="color: var(--color-1); margin-bottom: 1rem;">Revisa tu email</h3>
+                        <p style="color: #666; margin-bottom: 1rem;">
+                            Si el email existe en nuestro sistema, recibirás un enlace para restablecer tu contraseña.
+                        </p>
+                    <% } %>
+                    
+                    <p style="color: #666; margin-bottom: 1.5rem;">
                         <strong>Revisa tu bandeja de entrada y spam.</strong>
                     </p>
-                    <p style="color: #999; font-size: 0.9rem;">
-                        El enlace expirará en <strong>1 hora</strong>.
-                    </p>
+                    
+                    <div style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; text-align: left;">
+                        <p style="margin: 0; color: #856404; font-size: 0.9rem;">
+                            ⚠️ <strong>El enlace expirará en 1 hora.</strong>
+                        </p>
+                    </div>
+                    
+                    <!-- Opción para reenviar -->
+                    <div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e0e0e0;">
+                        <p style="color: #666; margin-bottom: 1rem; font-size: 0.95rem;">
+                            ¿No recibiste el email?
+                        </p>
+                        
+                        <form action="<%= request.getContextPath() %>/resend-password-reset" method="post" style="margin-bottom: 1rem;">
+                            <input type="hidden" name="email" value="<%= email != null ? email : "" %>">
+                            <button type="submit" class="btn btn-secundario" id="resendBtn" style="width: 100%;">
+                                🔄 Reenviar Enlace
+                            </button>
+                        </form>
+                        
+                        <p style="color: #999; font-size: 0.85rem; margin-top: 0.5rem;">
+                            Puedes reenviar el enlace después de 1 minuto
+                        </p>
+                    </div>
                 </div>
                 
                 <div style="text-align: center; margin-top: 2rem;">
@@ -72,6 +106,7 @@
                             name="email" 
                             class="form-input" 
                             placeholder="tucorreo@ejemplo.com"
+                            value="<%= email != null ? email : "" %>"
                             required
                             autocomplete="email"
                             autofocus>
@@ -95,6 +130,35 @@
             
         </div>
     </div>
+    
+    <script>
+        // Deshabilitar botón de reenviar por 60 segundos después de hacer click
+        const resendBtn = document.getElementById('resendBtn');
+        if (resendBtn) {
+            resendBtn.addEventListener('click', function() {
+                // Deshabilitar botón
+                this.disabled = true;
+                this.style.opacity = '0.6';
+                this.style.cursor = 'not-allowed';
+                
+                let countdown = 60;
+                const originalText = this.innerHTML;
+                
+                const timer = setInterval(() => {
+                    countdown--;
+                    this.innerHTML = `⏳ Espera ${countdown}s`;
+                    
+                    if (countdown <= 0) {
+                        clearInterval(timer);
+                        this.disabled = false;
+                        this.style.opacity = '1';
+                        this.style.cursor = 'pointer';
+                        this.innerHTML = originalText;
+                    }
+                }, 1000);
+            });
+        }
+    </script>
     
     <script src="<%= request.getContextPath() %>/js/main.js"></script>
 </body>
