@@ -229,7 +229,7 @@
                                             Editar
                                         </a>
                                         <a href="<%= request.getContextPath() %>/pet/<%= pet.getIdPet() %>" target="_blank" class="btn btn-primario">
-                                            Ver QR
+                                            Ver Perfil
                                         </a>
                                     </div>
                                 </div>
