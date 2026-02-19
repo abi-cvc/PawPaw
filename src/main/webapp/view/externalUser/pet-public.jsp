@@ -116,6 +116,16 @@
                             </div>
                         </div>
                         <% } %>
+                        
+                        <% if (pet.getExtraComments() != null && !pet.getExtraComments().isEmpty()) { %>
+                        <div class="detail-row important">
+                            <span class="detail-icon">⚕️</span>
+                            <div class="detail-content">
+                                <span class="detail-label">Comentarios Extras</span>
+                                <span class="detail-value"><%= pet.getExtraComments() %></span>
+                            </div>
+                        </div>
+                        <% } %>
                     </div>
                     
                     <!-- Información del dueño -->
