@@ -1,114 +1,135 @@
 package service;
 
-import jakarta.mail.*;
-import jakarta.mail.internet.*;
-import java.util.Properties;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 /**
- * Servicio para enviar emails usando Brevo SMTP
+ * Servicio para enviar emails usando Brevo API v3 (HTTP)
+ * Esta versión NO usa SMTP, por lo que funciona en Railway
  */
 public class EmailService {
     
-    private static final String SMTP_HOST = "smtp-relay.brevo.com";
-    private static final String SMTP_PORT = "465"; // CAMBIADO: Puerto SSL en vez de STARTTLS
-    private static final String SMTP_USERNAME = System.getenv("BREVO_SMTP_USERNAME");
-    private static final String SMTP_PASSWORD = System.getenv("BREVO_API_KEY");
+    private static final String API_KEY = System.getenv("BREVO_API_KEY");
     private static final String FROM_EMAIL = System.getenv("BREVO_FROM_EMAIL");
     private static final String FROM_NAME = System.getenv("BREVO_FROM_NAME");
     private static final String APP_BASE_URL = System.getenv("APP_BASE_URL");
+    private static final String BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
     
     /**
-     * Envía email de recuperación de contraseña
+     * Envía email de recuperación de contraseña usando Brevo API
      */
     public boolean sendPasswordResetEmail(String toEmail, String toName, String resetToken) {
-        System.out.println("📧 Iniciando envío de email de recuperación");
+        System.out.println("📧 Iniciando envío de email vía Brevo API");
         System.out.println("   Destinatario: " + toEmail);
         
         // Verificar configuración
-        if (SMTP_USERNAME == null || SMTP_PASSWORD == null || FROM_EMAIL == null) {
+        if (API_KEY == null || FROM_EMAIL == null || APP_BASE_URL == null) {
             System.err.println("❌ ERROR: Variables de entorno no configuradas");
-            System.err.println("   SMTP_USERNAME: " + (SMTP_USERNAME != null ? "✅" : "❌ NULL"));
-            System.err.println("   SMTP_PASSWORD: " + (SMTP_PASSWORD != null ? "✅" : "❌ NULL"));
+            System.err.println("   API_KEY: " + (API_KEY != null ? "✅" : "❌ NULL"));
             System.err.println("   FROM_EMAIL: " + (FROM_EMAIL != null ? "✅" : "❌ NULL"));
+            System.err.println("   APP_BASE_URL: " + (APP_BASE_URL != null ? "✅" : "❌ NULL"));
             return false;
         }
         
         try {
             String resetUrl = APP_BASE_URL + "/reset-password?token=" + resetToken;
             
-            // Configurar propiedades SMTP con SSL (puerto 465)
-            Properties props = new Properties();
-            props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.ssl.enable", "true"); // SSL directo
-            props.put("mail.smtp.host", SMTP_HOST);
-            props.put("mail.smtp.port", SMTP_PORT);
-            props.put("mail.smtp.ssl.protocols", "TLSv1.2");
-            
-            // TIMEOUTS importantes para evitar que se cuelgue
-            props.put("mail.smtp.connectiontimeout", "10000"); // 10 segundos
-            props.put("mail.smtp.timeout", "10000"); // 10 segundos
-            props.put("mail.smtp.writetimeout", "10000"); // 10 segundos
-            
-            System.out.println("   Conectando a SMTP: " + SMTP_HOST + ":" + SMTP_PORT);
-            
-            // Crear sesión
-            Session session = Session.getInstance(props, new Authenticator() {
-                @Override
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(SMTP_USERNAME, SMTP_PASSWORD);
-                }
-            });
-            
-            // Habilitar debug solo si es necesario
-            // session.setDebug(true);
-            
-            System.out.println("   Creando mensaje...");
-            
-            // Crear mensaje
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(FROM_EMAIL, FROM_NAME));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-            message.setSubject("Recuperar contraseña - PawPaw");
-            
-            // HTML del email
+            // Construir JSON del email
             String htmlContent = buildPasswordResetEmailHtml(toName, resetUrl);
-            message.setContent(htmlContent, "text/html; charset=UTF-8");
+            String textContent = "Hola " + toName + ",\n\n" +
+                    "Recibimos una solicitud para restablecer tu contraseña en PawPaw.\n\n" +
+                    "Para crear una nueva contraseña, visita:\n" +
+                    resetUrl + "\n\n" +
+                    "Este enlace expirará en 1 hora.\n\n" +
+                    "Si no solicitaste restablecer tu contraseña, ignora este email.\n\n" +
+                    "Saludos,\n" +
+                    "Equipo PawPaw";
             
-            System.out.println("   Enviando mensaje...");
+            String jsonPayload = buildJsonPayload(toEmail, toName, "Recuperar contraseña - PawPaw", htmlContent, textContent);
             
-            // Enviar
-            Transport.send(message);
+            System.out.println("   Enviando request a Brevo API...");
             
-            System.out.println("✅ Email enviado exitosamente a: " + toEmail);
-            return true;
+            // Crear conexión HTTP
+            URL url = new URL(BREVO_API_URL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             
-        } catch (MessagingException e) {
-            System.err.println("❌ MessagingException al enviar email:");
-            System.err.println("   Tipo: " + e.getClass().getSimpleName());
-            System.err.println("   Mensaje: " + e.getMessage());
+            // Configurar request
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("accept", "application/json");
+            conn.setRequestProperty("api-key", API_KEY);
+            conn.setRequestProperty("content-type", "application/json");
+            conn.setDoOutput(true);
+            conn.setConnectTimeout(15000); // 15 segundos
+            conn.setReadTimeout(15000);
             
-            // Detallar el error específico
-            if (e instanceof AuthenticationFailedException) {
-                System.err.println("   Causa: Credenciales incorrectas");
-                System.err.println("   Verifica BREVO_SMTP_USERNAME y BREVO_API_KEY");
-            } else if (e.getMessage() != null && e.getMessage().contains("timeout")) {
-                System.err.println("   Causa: Timeout de conexión");
-                System.err.println("   El servidor SMTP no responde");
-            } else if (e.getMessage() != null && e.getMessage().contains("Connection refused")) {
-                System.err.println("   Causa: Conexión rechazada");
-                System.err.println("   Verifica el host y puerto SMTP");
+            // Enviar JSON
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = jsonPayload.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
             }
             
-            e.printStackTrace();
-            return false;
+            // Leer respuesta
+            int responseCode = conn.getResponseCode();
+            
+            if (responseCode >= 200 && responseCode < 300) {
+                System.out.println("✅ Email enviado exitosamente vía Brevo API");
+                System.out.println("   Response code: " + responseCode);
+                return true;
+            } else {
+                System.err.println("❌ Error en Brevo API:");
+                System.err.println("   Response code: " + responseCode);
+                System.err.println("   Message: " + conn.getResponseMessage());
+                return false;
+            }
             
         } catch (Exception e) {
-            System.err.println("❌ Error inesperado al enviar email:");
+            System.err.println("❌ Excepción al enviar email:");
             System.err.println("   Tipo: " + e.getClass().getName());
             System.err.println("   Mensaje: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
+    }
+    
+    /**
+     * Construye el payload JSON para Brevo API
+     */
+    private String buildJsonPayload(String toEmail, String toName, String subject, String htmlContent, String textContent) {
+        // Escapar comillas en el contenido
+        htmlContent = escapeJson(htmlContent);
+        textContent = escapeJson(textContent);
+        toName = escapeJson(toName);
+        subject = escapeJson(subject);
+        String fromName = escapeJson(FROM_NAME != null ? FROM_NAME : "PawPaw");
+        
+        return "{" +
+                "\"sender\":{" +
+                    "\"name\":\"" + fromName + "\"," +
+                    "\"email\":\"" + FROM_EMAIL + "\"" +
+                "}," +
+                "\"to\":[{" +
+                    "\"email\":\"" + toEmail + "\"," +
+                    "\"name\":\"" + toName + "\"" +
+                "}]," +
+                "\"subject\":\"" + subject + "\"," +
+                "\"htmlContent\":\"" + htmlContent + "\"," +
+                "\"textContent\":\"" + textContent + "\"" +
+                "}";
+    }
+    
+    /**
+     * Escapa caracteres especiales para JSON
+     */
+    private String escapeJson(String str) {
+        if (str == null) return "";
+        return str
+                .replace("\\", "\\\\")
+                .replace("\"", "\\\"")
+                .replace("\n", "\\n")
+                .replace("\r", "\\r")
+                .replace("\t", "\\t");
     }
     
     /**
@@ -200,29 +221,9 @@ public class EmailService {
      * Envía email de confirmación de cambio de contraseña
      */
     public boolean sendPasswordChangedEmail(String toEmail, String toName) {
+        System.out.println("📧 Enviando email de confirmación vía Brevo API");
+        
         try {
-            Properties props = new Properties();
-            props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.ssl.enable", "true"); // SSL directo
-            props.put("mail.smtp.host", SMTP_HOST);
-            props.put("mail.smtp.port", SMTP_PORT);
-            props.put("mail.smtp.ssl.protocols", "TLSv1.2");
-            props.put("mail.smtp.connectiontimeout", "10000");
-            props.put("mail.smtp.timeout", "10000");
-            props.put("mail.smtp.writetimeout", "10000");
-            
-            Session session = Session.getInstance(props, new Authenticator() {
-                @Override
-                protected PasswordAuthentication getPasswordAuthentication() {
-                    return new PasswordAuthentication(SMTP_USERNAME, SMTP_PASSWORD);
-                }
-            });
-            
-            Message message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(FROM_EMAIL, FROM_NAME));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toEmail));
-            message.setSubject("Contraseña actualizada - PawPaw");
-            
             String htmlContent = "<!DOCTYPE html>" +
                     "<html lang='es'>" +
                     "<body style='font-family: Arial, sans-serif; padding: 20px;'>" +
@@ -233,11 +234,37 @@ public class EmailService {
                     "</body>" +
                     "</html>";
             
-            message.setContent(htmlContent, "text/html; charset=UTF-8");
-            Transport.send(message);
+            String textContent = "Hola " + toName + ",\n\n" +
+                    "Tu contraseña ha sido actualizada exitosamente.\n\n" +
+                    "Si no realizaste este cambio, por favor contacta a soporte inmediatamente.\n\n" +
+                    "Saludos,\nEquipo PawPaw";
             
-            System.out.println("✅ Email de confirmación enviado a: " + toEmail);
-            return true;
+            String jsonPayload = buildJsonPayload(toEmail, toName, "Contraseña actualizada - PawPaw", htmlContent, textContent);
+            
+            URL url = new URL(BREVO_API_URL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("accept", "application/json");
+            conn.setRequestProperty("api-key", API_KEY);
+            conn.setRequestProperty("content-type", "application/json");
+            conn.setDoOutput(true);
+            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(15000);
+            
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = jsonPayload.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+            
+            int responseCode = conn.getResponseCode();
+            
+            if (responseCode >= 200 && responseCode < 300) {
+                System.out.println("✅ Email de confirmación enviado exitosamente");
+                return true;
+            } else {
+                System.err.println("❌ Error al enviar email de confirmación: " + responseCode);
+                return false;
+            }
             
         } catch (Exception e) {
             System.err.println("❌ Error al enviar email de confirmación: " + e.getMessage());
