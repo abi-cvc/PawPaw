@@ -6,14 +6,13 @@ import java.util.Properties;
 
 /**
  * Servicio para enviar emails usando Brevo SMTP
- * (Alternativa más simple y estable que el SDK)
  */
 public class EmailService {
     
     private static final String SMTP_HOST = "smtp-relay.brevo.com";
-    private static final String SMTP_PORT = "587";
-    private static final String SMTP_USERNAME = System.getenv("BREVO_SMTP_USERNAME"); // Tu email en Brevo
-    private static final String SMTP_PASSWORD = System.getenv("BREVO_API_KEY"); // Tu API Key
+    private static final String SMTP_PORT = "465"; // CAMBIADO: Puerto SSL en vez de STARTTLS
+    private static final String SMTP_USERNAME = System.getenv("BREVO_SMTP_USERNAME");
+    private static final String SMTP_PASSWORD = System.getenv("BREVO_API_KEY");
     private static final String FROM_EMAIL = System.getenv("BREVO_FROM_EMAIL");
     private static final String FROM_NAME = System.getenv("BREVO_FROM_NAME");
     private static final String APP_BASE_URL = System.getenv("APP_BASE_URL");
@@ -22,17 +21,35 @@ public class EmailService {
      * Envía email de recuperación de contraseña
      */
     public boolean sendPasswordResetEmail(String toEmail, String toName, String resetToken) {
+        System.out.println("📧 Iniciando envío de email de recuperación");
+        System.out.println("   Destinatario: " + toEmail);
+        
+        // Verificar configuración
+        if (SMTP_USERNAME == null || SMTP_PASSWORD == null || FROM_EMAIL == null) {
+            System.err.println("❌ ERROR: Variables de entorno no configuradas");
+            System.err.println("   SMTP_USERNAME: " + (SMTP_USERNAME != null ? "✅" : "❌ NULL"));
+            System.err.println("   SMTP_PASSWORD: " + (SMTP_PASSWORD != null ? "✅" : "❌ NULL"));
+            System.err.println("   FROM_EMAIL: " + (FROM_EMAIL != null ? "✅" : "❌ NULL"));
+            return false;
+        }
+        
         try {
-            // Construir URL de reset
             String resetUrl = APP_BASE_URL + "/reset-password?token=" + resetToken;
             
-            // Configurar propiedades SMTP
+            // Configurar propiedades SMTP con SSL (puerto 465)
             Properties props = new Properties();
             props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.ssl.enable", "true"); // SSL directo
             props.put("mail.smtp.host", SMTP_HOST);
             props.put("mail.smtp.port", SMTP_PORT);
             props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+            
+            // TIMEOUTS importantes para evitar que se cuelgue
+            props.put("mail.smtp.connectiontimeout", "10000"); // 10 segundos
+            props.put("mail.smtp.timeout", "10000"); // 10 segundos
+            props.put("mail.smtp.writetimeout", "10000"); // 10 segundos
+            
+            System.out.println("   Conectando a SMTP: " + SMTP_HOST + ":" + SMTP_PORT);
             
             // Crear sesión
             Session session = Session.getInstance(props, new Authenticator() {
@@ -41,6 +58,11 @@ public class EmailService {
                     return new PasswordAuthentication(SMTP_USERNAME, SMTP_PASSWORD);
                 }
             });
+            
+            // Habilitar debug solo si es necesario
+            // session.setDebug(true);
+            
+            System.out.println("   Creando mensaje...");
             
             // Crear mensaje
             Message message = new MimeMessage(session);
@@ -52,14 +74,38 @@ public class EmailService {
             String htmlContent = buildPasswordResetEmailHtml(toName, resetUrl);
             message.setContent(htmlContent, "text/html; charset=UTF-8");
             
+            System.out.println("   Enviando mensaje...");
+            
             // Enviar
             Transport.send(message);
             
             System.out.println("✅ Email enviado exitosamente a: " + toEmail);
             return true;
             
+        } catch (MessagingException e) {
+            System.err.println("❌ MessagingException al enviar email:");
+            System.err.println("   Tipo: " + e.getClass().getSimpleName());
+            System.err.println("   Mensaje: " + e.getMessage());
+            
+            // Detallar el error específico
+            if (e instanceof AuthenticationFailedException) {
+                System.err.println("   Causa: Credenciales incorrectas");
+                System.err.println("   Verifica BREVO_SMTP_USERNAME y BREVO_API_KEY");
+            } else if (e.getMessage() != null && e.getMessage().contains("timeout")) {
+                System.err.println("   Causa: Timeout de conexión");
+                System.err.println("   El servidor SMTP no responde");
+            } else if (e.getMessage() != null && e.getMessage().contains("Connection refused")) {
+                System.err.println("   Causa: Conexión rechazada");
+                System.err.println("   Verifica el host y puerto SMTP");
+            }
+            
+            e.printStackTrace();
+            return false;
+            
         } catch (Exception e) {
-            System.err.println("❌ Error al enviar email: " + e.getMessage());
+            System.err.println("❌ Error inesperado al enviar email:");
+            System.err.println("   Tipo: " + e.getClass().getName());
+            System.err.println("   Mensaje: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
@@ -157,10 +203,13 @@ public class EmailService {
         try {
             Properties props = new Properties();
             props.put("mail.smtp.auth", "true");
-            props.put("mail.smtp.starttls.enable", "true");
+            props.put("mail.smtp.ssl.enable", "true"); // SSL directo
             props.put("mail.smtp.host", SMTP_HOST);
             props.put("mail.smtp.port", SMTP_PORT);
             props.put("mail.smtp.ssl.protocols", "TLSv1.2");
+            props.put("mail.smtp.connectiontimeout", "10000");
+            props.put("mail.smtp.timeout", "10000");
+            props.put("mail.smtp.writetimeout", "10000");
             
             Session session = Session.getInstance(props, new Authenticator() {
                 @Override
