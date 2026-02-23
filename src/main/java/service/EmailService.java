@@ -24,6 +24,8 @@ public class EmailService {
         System.out.println("📧 Iniciando envío de email vía Brevo API");
         System.out.println("   Destinatario: " + toEmail);
         
+        System.out.println("   API_KEY: " + (API_KEY != null ? API_KEY.substring(0, Math.min(20, API_KEY.length())) + "..." : "NULL"));
+        
         // Verificar configuración
         if (API_KEY == null || FROM_EMAIL == null || APP_BASE_URL == null) {
             System.err.println("❌ ERROR: Variables de entorno no configuradas");
