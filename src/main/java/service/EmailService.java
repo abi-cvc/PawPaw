@@ -12,9 +12,9 @@ public class EmailService {
     
     private static final String SMTP_HOST = "smtp-relay.brevo.com";
     private static final String SMTP_PORT = "587";
-    private static final String SMTP_USERNAME = "pawpawsystem@gmail.com"; // Tu email en Brevo
+    private static final String SMTP_USERNAME = System.getenv("BREVO_SMTP_USERNAME"); // Tu email en Brevo
     private static final String SMTP_PASSWORD = System.getenv("BREVO_API_KEY"); // Tu API Key
-    private static final String FROM_EMAIL = "pawpawsystem@gmail.com";
+    private static final String FROM_EMAIL = System.getenv("BREVO_FROM_EMAIL");
     private static final String FROM_NAME = System.getenv("BREVO_FROM_NAME");
     private static final String APP_BASE_URL = System.getenv("APP_BASE_URL");
     
