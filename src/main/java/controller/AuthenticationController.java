@@ -32,7 +32,7 @@ public class AuthenticationController extends HttpServlet {
         HttpSession session = request.getSession(false);
         if (session != null && session.getAttribute("userId") != null) {
             // Si ya está logueado, redirigir al panel correspondiente
-            String rol = (String) session.getAttribute("rol");
+            String rol = (String) session.getAttribute("userRole");  // ✅ CORREGIDO
             if ("admin".equals(rol)) {
                 response.sendRedirect(request.getContextPath() + "/admin/panel");
             } else {
@@ -72,7 +72,7 @@ public class AuthenticationController extends HttpServlet {
             session.setAttribute("userId", user.getIdUser());
             session.setAttribute("user", user.getEmail());
             session.setAttribute("userName", user.getNameUser());
-            session.setAttribute("rol", user.getRol());
+            session.setAttribute("userRole", user.getRol());  // ✅ CORREGIDO: usar "userRole"
             
             System.out.println("✅ Login exitoso - Usuario: " + user.getEmail() + " - Rol: " + user.getRol());
             
