@@ -482,7 +482,6 @@ C:.
 |       settings.json
 |       
 +---OOD
-|       .PawPaw Project.vpp.lck
 |       PawPaw Project.vpp
 |       PawPaw Project.vpp.bak_000f
 |       
@@ -493,6 +492,7 @@ C:.
 |       |   |       DatabaseConnection.java
 |       |   |       
 |       |   +---controller
+|       |   |       AdminPanelServlet.java
 |       |   |       AuthenticationController.java
 |       |   |       DiagnosticServlet.java
 |       |   |       ForgotPasswordServlet.java
@@ -515,6 +515,7 @@ C:.
 |       |   |       
 |       |   +---model
 |       |   |   +---dao
+|       |   |   |       AdminAuditLogDAO.java
 |       |   |   |       PasswordResetTokenDAO.java
 |       |   |   |       PetDAO.java
 |       |   |   |       QRCodeDAO.java
@@ -522,6 +523,7 @@ C:.
 |       |   |   |       UserDAO.java
 |       |   |   |       
 |       |   |   \---entity
+|       |   |           AdminAuditLog.java
 |       |   |           PasswordResetToken.java
 |       |   |           Pet.java
 |       |   |           QRcode.java
@@ -549,6 +551,9 @@ C:.
 |           |   |   index.jsp
 |           |   |   
 |           |   +---admin
+|           |   |       admin-panel.jsp
+|           |   |       manage-suggestions.jsp
+|           |   |       
 |           |   +---externalUser
 |           |   |       pet-not-found.jsp
 |           |   |       pet-public.jsp
@@ -576,6 +581,7 @@ C:.
     |   |       DatabaseConnection.class
     |   |       
     |   +---controller
+    |   |       AdminPanelServlet.class
     |   |       AuthenticationController.class
     |   |       DiagnosticServlet.class
     |   |       ForgotPasswordServlet.class
@@ -600,6 +606,7 @@ C:.
     |   |       
     |   +---model
     |   |   +---dao
+    |   |   |       AdminAuditLogDAO.class
     |   |   |       PasswordResetTokenDAO.class
     |   |   |       PetDAO.class
     |   |   |       QRCodeDAO.class
@@ -607,6 +614,7 @@ C:.
     |   |   |       UserDAO.class
     |   |   |       
     |   |   \---entity
+    |   |           AdminAuditLog.class
     |   |           PasswordResetToken.class
     |   |           Pet.class
     |   |           QRcode.class

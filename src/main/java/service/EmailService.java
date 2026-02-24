@@ -24,8 +24,6 @@ public class EmailService {
         System.out.println("📧 Iniciando envío de email vía Brevo API");
         System.out.println("   Destinatario: " + toEmail);
         
-        System.out.println("   API_KEY: " + (API_KEY != null ? API_KEY.substring(0, Math.min(20, API_KEY.length())) + "..." : "NULL"));
-        
         // Verificar configuración
         if (API_KEY == null || FROM_EMAIL == null || APP_BASE_URL == null) {
             System.err.println("❌ ERROR: Variables de entorno no configuradas");
@@ -272,5 +270,85 @@ public class EmailService {
             System.err.println("❌ Error al enviar email de confirmación: " + e.getMessage());
             return false;
         }
+    }
+    
+    /**
+     * Envía email de notificación administrativa a pawpawsystem@gmail.com
+     */
+    public boolean sendNotificationEmail(String toEmail, String toName, String subject, String message) {
+        System.out.println("📧 Enviando notificación administrativa a " + toEmail);
+        
+        if (API_KEY == null || FROM_EMAIL == null) {
+            System.err.println("❌ ERROR: Variables de entorno no configuradas");
+            return false;
+        }
+        
+        try {
+            // Construir HTML simple pero claro
+            String htmlContent = "<!DOCTYPE html>" +
+                    "<html lang='es'>" +
+                    "<head>" +
+                    "    <meta charset='UTF-8'>" +
+                    "</head>" +
+                    "<body style='font-family: Arial, sans-serif; padding: 20px; background-color: #f5f5f5;'>" +
+                    "    <div style='max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);'>" +
+                    "        <h2 style='color: #884A39; margin-top: 0;'>🔔 Notificación Administrativa</h2>" +
+                    "        <div style='background: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 4px solid #884A39;'>" +
+                    "            <pre style='font-family: monospace; font-size: 14px; line-height: 1.6; margin: 0; white-space: pre-wrap; word-wrap: break-word;'>" + 
+                    escapeHtml(message) + 
+                    "</pre>" +
+                    "        </div>" +
+                    "        <p style='margin-top: 20px; color: #999; font-size: 12px;'>" +
+                    "            Este es un email automático de PawPaw. Solo el administrador principal recibe estas notificaciones." +
+                    "        </p>" +
+                    "    </div>" +
+                    "</body>" +
+                    "</html>";
+            
+            String jsonPayload = buildJsonPayload(toEmail, toName, subject, htmlContent, message);
+            
+            URL url = new URL(BREVO_API_URL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("accept", "application/json");
+            conn.setRequestProperty("api-key", API_KEY);
+            conn.setRequestProperty("content-type", "application/json");
+            conn.setDoOutput(true);
+            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(15000);
+            
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = jsonPayload.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+            
+            int responseCode = conn.getResponseCode();
+            
+            if (responseCode >= 200 && responseCode < 300) {
+                System.out.println("✅ Notificación administrativa enviada exitosamente");
+                return true;
+            } else {
+                System.err.println("❌ Error al enviar notificación: " + responseCode);
+                return false;
+            }
+            
+        } catch (Exception e) {
+            System.err.println("❌ Error al enviar notificación: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+    
+    /**
+     * Escapa caracteres HTML para evitar problemas en el email
+     */
+    private String escapeHtml(String text) {
+        if (text == null) return "";
+        return text
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
     }
 }
