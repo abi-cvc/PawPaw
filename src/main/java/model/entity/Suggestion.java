@@ -3,8 +3,7 @@ package model.entity;
 import java.sql.Timestamp;
 
 /**
- * Modelo de entidad Suggestion
- * Representa una sugerencia enviada por un usuario
+ * Entidad que representa una sugerencia enviada por un usuario
  */
 public class Suggestion {
     
@@ -12,11 +11,13 @@ public class Suggestion {
     private Integer idUser;
     private String message;
     private Timestamp submissionDate;
-    private String statusSuggestion;
+    private String statusSuggestion; // pending, reviewed, resolved, rejected
     private String adminResponse;
     private Timestamp responseDate;
     
-    // Constructores
+    // Información adicional del usuario (para mostrar en listados)
+    private String userName;
+    private String userEmail;
     
     /**
      * Constructor vacío
@@ -25,27 +26,12 @@ public class Suggestion {
     }
     
     /**
-     * Constructor para nueva sugerencia
+     * Constructor para crear nueva sugerencia
      */
     public Suggestion(Integer idUser, String message) {
         this.idUser = idUser;
         this.message = message;
-        this.statusSuggestion = "pending"; // Estado por defecto
-    }
-    
-    /**
-     * Constructor completo
-     */
-    public Suggestion(Integer idSuggestion, Integer idUser, String message, 
-                     Timestamp submissionDate, String statusSuggestion, 
-                     String adminResponse, Timestamp responseDate) {
-        this.idSuggestion = idSuggestion;
-        this.idUser = idUser;
-        this.message = message;
-        this.submissionDate = submissionDate;
-        this.statusSuggestion = statusSuggestion;
-        this.adminResponse = adminResponse;
-        this.responseDate = responseDate;
+        this.statusSuggestion = "pending";
     }
     
     // Getters y Setters
@@ -106,29 +92,59 @@ public class Suggestion {
         this.responseDate = responseDate;
     }
     
-    // Métodos útiles
-    
-    public boolean isPending() {
-        return "pending".equalsIgnoreCase(this.statusSuggestion);
+    public String getUserName() {
+        return userName;
     }
     
-    public boolean isResolved() {
-        return "resolved".equalsIgnoreCase(this.statusSuggestion);
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
     
-    public boolean hasResponse() {
-        return adminResponse != null && !adminResponse.trim().isEmpty();
+    public String getUserEmail() {
+        return userEmail;
     }
     
-    @Override
-    public String toString() {
-        return "Suggestion{" +
-                "idSuggestion=" + idSuggestion +
-                ", idUser=" + idUser +
-                ", message='" + message + '\'' +
-                ", submissionDate=" + submissionDate +
-                ", statusSuggestion='" + statusSuggestion + '\'' +
-                ", hasResponse=" + hasResponse() +
-                '}';
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+    
+    /**
+     * Obtiene el texto en español del estado
+     */
+    public String getStatusText() {
+        if (statusSuggestion == null) return "Desconocido";
+        
+        switch (statusSuggestion.toLowerCase()) {
+            case "pending":
+                return "Pendiente";
+            case "reviewed":
+                return "Revisada";
+            case "resolved":
+                return "Resuelta";
+            case "rejected":
+                return "Rechazada";
+            default:
+                return statusSuggestion;
+        }
+    }
+    
+    /**
+     * Obtiene la clase CSS según el estado
+     */
+    public String getStatusClass() {
+        if (statusSuggestion == null) return "status-default";
+        
+        switch (statusSuggestion.toLowerCase()) {
+            case "pending":
+                return "status-pending";
+            case "reviewed":
+                return "status-reviewed";
+            case "resolved":
+                return "status-resolved";
+            case "rejected":
+                return "status-rejected";
+            default:
+                return "status-default";
+        }
     }
 }
