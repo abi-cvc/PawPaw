@@ -498,11 +498,13 @@ C:.
 |       |   |       ForgotPasswordServlet.java
 |       |   |       HealthCheckServlet.java
 |       |   |       LogoutServlet.java
+|       |   |       ManageSuggestionsServlet.java
 |       |   |       PetController.java
 |       |   |       PublicPetController.java
 |       |   |       QRCodeController.java
 |       |   |       ResendPasswordResetServlet.java
 |       |   |       ResetPasswordServlet.java
+|       |   |       SendSuggestionServlet.java
 |       |   |       UserController.java
 |       |   |       UserPanelController.java
 |       |   |       UserProfileController.java
@@ -516,6 +518,7 @@ C:.
 |       |   |   |       PasswordResetTokenDAO.java
 |       |   |   |       PetDAO.java
 |       |   |   |       QRCodeDAO.java
+|       |   |   |       SuggestionDAO.java
 |       |   |   |       UserDAO.java
 |       |   |   |       
 |       |   |   \---entity
@@ -560,6 +563,7 @@ C:.
 |           |           qr-codes.jsp
 |           |           register.jsp
 |           |           reset-password.jsp
+|           |           send-suggestion.jsp
 |           |           
 |           \---WEB-INF
 |                   web.xml
@@ -577,12 +581,14 @@ C:.
     |   |       ForgotPasswordServlet.class
     |   |       HealthCheckServlet.class
     |   |       LogoutServlet.class
+    |   |       ManageSuggestionsServlet.class
     |   |       PetController.class
     |   |       PublicPetController.class
     |   |       QRCodeController$QRCodeData.class
     |   |       QRCodeController.class
     |   |       ResendPasswordResetServlet.class
     |   |       ResetPasswordServlet.class
+    |   |       SendSuggestionServlet.class
     |   |       UserController.class
     |   |       UserPanelController.class
     |   |       UserProfileController.class
@@ -597,6 +603,7 @@ C:.
     |   |   |       PasswordResetTokenDAO.class
     |   |   |       PetDAO.class
     |   |   |       QRCodeDAO.class
+    |   |   |       SuggestionDAO.class
     |   |   |       UserDAO.class
     |   |   |       
     |   |   \---entity
