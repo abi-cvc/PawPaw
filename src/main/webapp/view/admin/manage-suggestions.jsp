@@ -51,6 +51,46 @@
     <link rel="icon" type="image/png" href="<%= request.getContextPath() %>/images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
+    
+    <style>
+        /* Dropdown elegante */
+        .custom-select {
+            transition: all 0.3s ease;
+        }
+        
+        .custom-select:hover {
+            border-color: var(--color-2) !important;
+            box-shadow: 0 2px 8px rgba(136, 74, 57, 0.15);
+        }
+        
+        .custom-select:focus {
+            outline: none;
+            border-color: var(--color-1) !important;
+            box-shadow: 0 0 0 3px rgba(136, 74, 57, 0.1);
+        }
+        
+        /* Opciones del select */
+        .custom-select option {
+            padding: 0.75rem;
+            font-size: 1rem;
+        }
+        
+        /* Animación suave */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .custom-select-wrapper {
+            animation: fadeIn 0.3s ease;
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard">
@@ -82,13 +122,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                     </svg>
                     Dashboard
-                </a>
-                
-                <a href="<%= request.getContextPath() %>/admin/users" class="nav-item">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                    Usuarios
                 </a>
                 
                 <a href="<%= request.getContextPath() %>/admin/suggestions" class="nav-item active">
@@ -168,28 +201,31 @@
                     </div>
                 </div>
                 
-                <!-- Filtros -->
-                <div class="filter-tabs">
-                    <a href="<%= request.getContextPath() %>/admin/suggestions" 
-                       class="filter-tab <%= currentFilter == null || currentFilter.isEmpty() ? "active" : "" %>">
-                        Todas
-                    </a>
-                    <a href="<%= request.getContextPath() %>/admin/suggestions?filter=pending" 
-                       class="filter-tab <%= "pending".equals(currentFilter) ? "active" : "" %>">
-                        Pendientes
-                    </a>
-                    <a href="<%= request.getContextPath() %>/admin/suggestions?filter=reviewed" 
-                       class="filter-tab <%= "reviewed".equals(currentFilter) ? "active" : "" %>">
-                        Revisadas
-                    </a>
-                    <a href="<%= request.getContextPath() %>/admin/suggestions?filter=resolved" 
-                       class="filter-tab <%= "resolved".equals(currentFilter) ? "active" : "" %>">
-                        Resueltas
-                    </a>
-                    <a href="<%= request.getContextPath() %>/admin/suggestions?filter=rejected" 
-                       class="filter-tab <%= "rejected".equals(currentFilter) ? "active" : "" %>">
-                        Rechazadas
-                    </a>
+                <!-- Filtro Dropdown -->
+                <div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem;">
+                    <label for="suggestionFilter" style="font-weight: 600; color: var(--color-2); font-size: 1rem;">
+                        Filtrar por:
+                    </label>
+                    <div class="custom-select-wrapper" style="position: relative; min-width: 250px;">
+                        <select id="suggestionFilter" class="custom-select" onchange="window.location.href='<%= request.getContextPath() %>/admin/suggestions?filter=' + this.value" 
+                                style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #e0e0e0; border-radius: var(--radio-md); background: white; font-size: 1rem; cursor: pointer; appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill=\"%23884A39\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7 10l5 5 5-5z\"/></svg>'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.5rem; transition: all 0.3s ease;">
+                            <option value="" <%= currentFilter == null || currentFilter.isEmpty() ? "selected" : "" %>>
+                                ✓ Todas (<%= totalSuggestions %>)
+                            </option>
+                            <option value="pending" <%= "pending".equals(currentFilter) ? "selected" : "" %>>
+                                ⏳ Pendientes (<%= pendingSuggestions %>)
+                            </option>
+                            <option value="reviewed" <%= "reviewed".equals(currentFilter) ? "selected" : "" %>>
+                                👁️ Revisadas (<%= reviewedSuggestions %>)
+                            </option>
+                            <option value="resolved" <%= "resolved".equals(currentFilter) ? "selected" : "" %>>
+                                ✅ Resueltas (<%= resolvedSuggestions %>)
+                            </option>
+                            <option value="rejected" <%= "rejected".equals(currentFilter) ? "selected" : "" %>>
+                                ❌ Rechazadas (<%= totalSuggestions - pendingSuggestions - reviewedSuggestions - resolvedSuggestions %>)
+                            </option>
+                        </select>
+                    </div>
                 </div>
                 
                 <!-- Lista de Sugerencias -->
