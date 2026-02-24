@@ -56,6 +56,46 @@
     <link rel="icon" type="image/png" href="<%= request.getContextPath() %>/images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
+    
+    <style>
+        /* Dropdown elegante */
+        .custom-select {
+            transition: all 0.3s ease;
+        }
+        
+        .custom-select:hover {
+            border-color: var(--color-2) !important;
+            box-shadow: 0 2px 8px rgba(136, 74, 57, 0.15);
+        }
+        
+        .custom-select:focus {
+            outline: none;
+            border-color: var(--color-1) !important;
+            box-shadow: 0 0 0 3px rgba(136, 74, 57, 0.1);
+        }
+        
+        /* Opciones del select */
+        .custom-select option {
+            padding: 0.75rem;
+            font-size: 1rem;
+        }
+        
+        /* Animación suave */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .custom-select-wrapper {
+            animation: fadeIn 0.3s ease;
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard">
@@ -170,28 +210,31 @@
                     </div>
                 </div>
                 
-                <!-- Filtros -->
-                <div class="filter-tabs">
-                    <a href="<%= request.getContextPath() %>/admin/users" 
-                       class="filter-tab <%= currentFilter == null || currentFilter.isEmpty() ? "active" : "" %>">
-                        Todos
-                    </a>
-                    <a href="<%= request.getContextPath() %>/admin/users?filter=active" 
-                       class="filter-tab <%= "active".equals(currentFilter) ? "active" : "" %>">
-                        Activos
-                    </a>
-                    <a href="<%= request.getContextPath() %>/admin/users?filter=inactive" 
-                       class="filter-tab <%= "inactive".equals(currentFilter) ? "active" : "" %>">
-                        Inactivos
-                    </a>
-                    <a href="<%= request.getContextPath() %>/admin/users?filter=admin" 
-                       class="filter-tab <%= "admin".equals(currentFilter) ? "active" : "" %>">
-                        Admins
-                    </a>
-                    <a href="<%= request.getContextPath() %>/admin/users?filter=user" 
-                       class="filter-tab <%= "user".equals(currentFilter) ? "active" : "" %>">
-                        Users
-                    </a>
+                <!-- Filtro Dropdown -->
+                <div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem;">
+                    <label for="userFilter" style="font-weight: 600; color: var(--color-2); font-size: 1rem;">
+                        Filtrar por:
+                    </label>
+                    <div class="custom-select-wrapper" style="position: relative; min-width: 250px;">
+                        <select id="userFilter" class="custom-select" onchange="window.location.href='<%= request.getContextPath() %>/admin/users?filter=' + this.value" 
+                                style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #e0e0e0; border-radius: var(--radio-md); background: white; font-size: 1rem; cursor: pointer; appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill=\"%23884A39\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7 10l5 5 5-5z\"/></svg>'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.5rem; transition: all 0.3s ease;">
+                            <option value="" <%= currentFilter == null || currentFilter.isEmpty() ? "selected" : "" %>>
+                                ✓ Todos (<%= totalUsers %>)
+                            </option>
+                            <option value="active" <%= "active".equals(currentFilter) ? "selected" : "" %>>
+                                ✅ Activos (<%= activeUsers %>)
+                            </option>
+                            <option value="inactive" <%= "inactive".equals(currentFilter) ? "selected" : "" %>>
+                                ❌ Inactivos (<%= inactiveUsers %>)
+                            </option>
+                            <option value="admin" <%= "admin".equals(currentFilter) ? "selected" : "" %>>
+                                👑 Administradores (<%= adminUsers %>)
+                            </option>
+                            <option value="user" <%= "user".equals(currentFilter) ? "selected" : "" %>>
+                                👤 Usuarios (<%= totalUsers - adminUsers.intValue() %>)
+                            </option>
+                        </select>
+                    </div>
                 </div>
                 
                 <!-- Tabla de Usuarios -->
