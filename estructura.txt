@@ -499,6 +499,8 @@ C:.
 |       |   |       HealthCheckServlet.java
 |       |   |       LogoutServlet.java
 |       |   |       ManageSuggestionsServlet.java
+|       |   |       ManageUsersServlet.java
+|       |   |       MySuggestionsServlet.java
 |       |   |       PetController.java
 |       |   |       PublicPetController.java
 |       |   |       QRCodeController.java
@@ -524,8 +526,11 @@ C:.
 |       |   |   |       
 |       |   |   \---entity
 |       |   |           AdminAuditLog.java
+|       |   |           FoundationRequest.java
 |       |   |           PasswordResetToken.java
+|       |   |           PaymentRequest.java
 |       |   |           Pet.java
+|       |   |           Promotion.java
 |       |   |           QRcode.java
 |       |   |           Suggestion.java
 |       |   |           User.java
@@ -553,6 +558,7 @@ C:.
 |           |   +---admin
 |           |   |       admin-panel.jsp
 |           |   |       manage-suggestions.jsp
+|           |   |       manage-users.jsp
 |           |   |       
 |           |   +---externalUser
 |           |   |       pet-not-found.jsp
@@ -561,6 +567,7 @@ C:.
 |           |   \---internalUser
 |           |           forgot-password.jsp
 |           |           login.jsp
+|           |           my-suggestions.jsp
 |           |           panel.jsp
 |           |           pet-form.jsp
 |           |           pets-list.jsp
@@ -588,6 +595,8 @@ C:.
     |   |       HealthCheckServlet.class
     |   |       LogoutServlet.class
     |   |       ManageSuggestionsServlet.class
+    |   |       ManageUsersServlet.class
+    |   |       MySuggestionsServlet.class
     |   |       PetController.class
     |   |       PublicPetController.class
     |   |       QRCodeController$QRCodeData.class
@@ -615,8 +624,11 @@ C:.
     |   |   |       
     |   |   \---entity
     |   |           AdminAuditLog.class
+    |   |           FoundationRequest.class
     |   |           PasswordResetToken.class
+    |   |           PaymentRequest.class
     |   |           Pet.class
+    |   |           Promotion.class
     |   |           QRcode.class
     |   |           Suggestion.class
     |   |           User.class
