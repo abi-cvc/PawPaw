@@ -16,6 +16,11 @@ public class User {
     private String rol;
     private Boolean active;
     
+    // ✅ NUEVOS CAMPOS para sistema de límites y partners
+    private Integer petLimit;
+    private Boolean isPartner;
+    private String partnerBadge;
+    
     // Constructores
     
     /**
@@ -33,6 +38,8 @@ public class User {
         this.password = password;
         this.rol = "user"; // Rol por defecto
         this.active = true; // Activo por defecto
+        this.petLimit = 2; // ✅ Límite por defecto: 2 mascotas gratis
+        this.isPartner = false; // ✅ Por defecto no es partner
     }
     
     /**
@@ -47,9 +54,11 @@ public class User {
         this.registrationDate = registrationDate;
         this.rol = rol;
         this.active = active;
+        this.petLimit = 2; // ✅ Default
+        this.isPartner = false; // ✅ Default
     }
     
-    // Getters y Setters
+    // Getters y Setters ORIGINALES
     
     public Integer getIdUser() {
         return idUser;
@@ -107,10 +116,67 @@ public class User {
         this.active = active;
     }
     
-    // Métodos útiles
+    // ✅ NUEVOS Getters y Setters para límites y partners
+    
+    public Integer getPetLimit() {
+        return petLimit;
+    }
+    
+    public void setPetLimit(Integer petLimit) {
+        this.petLimit = petLimit;
+    }
+    
+    public Boolean getIsPartner() {
+        return isPartner;
+    }
+    
+    public void setIsPartner(Boolean isPartner) {
+        this.isPartner = isPartner;
+    }
+    
+    public String getPartnerBadge() {
+        return partnerBadge;
+    }
+    
+    public void setPartnerBadge(String partnerBadge) {
+        this.partnerBadge = partnerBadge;
+    }
+    
+    // Métodos útiles ORIGINALES
     
     public boolean isAdmin() {
         return "admin".equalsIgnoreCase(this.rol);
+    }
+    
+    // ✅ NUEVOS Métodos útiles para límites y partners
+    
+    /**
+     * Verifica si el usuario es un partner/aliado
+     */
+    public boolean isPartnerUser() {
+        return isPartner != null && isPartner;
+    }
+    
+    /**
+     * Obtiene el límite de mascotas (default: 2 si es null)
+     */
+    public int getPetLimitValue() {
+        return petLimit != null ? petLimit : 2;
+    }
+    
+    /**
+     * Verifica si el usuario ha alcanzado su límite de mascotas
+     * (Necesita la cantidad actual de mascotas como parámetro)
+     */
+    public boolean hasReachedLimit(int currentPets) {
+        return currentPets >= getPetLimitValue();
+    }
+    
+    /**
+     * Calcula cuántos slots disponibles tiene el usuario
+     */
+    public int getAvailableSlots(int currentPets) {
+        return getPetLimitValue() - currentPets;
     }
     
     @Override
@@ -121,6 +187,9 @@ public class User {
                 ", email='" + email + '\'' +
                 ", rol='" + rol + '\'' +
                 ", active=" + active +
+                ", petLimit=" + petLimit +
+                ", isPartner=" + isPartner +
+                ", partnerBadge='" + partnerBadge + '\'' +
                 ", registrationDate=" + registrationDate +
                 '}';
     }

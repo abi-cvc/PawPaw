@@ -227,6 +227,56 @@ public class UserDAO {
         return false;
     }
     
+    // ✅ NUEVO: Actualizar límite de mascotas
+    public boolean updatePetLimit(Integer userId, Integer newLimit) {
+        String sql = "UPDATE users SET pet_limit = ? WHERE id_user = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, newLimit);
+            pstmt.setInt(2, userId);
+            
+            int affected = pstmt.executeUpdate();
+            
+            if (affected > 0) {
+                System.out.println("✅ Límite actualizado para usuario " + userId + ": " + newLimit);
+                return true;
+            }
+            
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar límite: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return false;
+    }
+    
+    // ✅ NUEVO: Incrementar límite de mascotas (al comprar slots)
+    public boolean incrementPetLimit(Integer userId, Integer slotsToAdd) {
+        String sql = "UPDATE users SET pet_limit = pet_limit + ? WHERE id_user = ?";
+        
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, slotsToAdd);
+            pstmt.setInt(2, userId);
+            
+            int affected = pstmt.executeUpdate();
+            
+            if (affected > 0) {
+                System.out.println("✅ Se agregaron " + slotsToAdd + " slots al usuario " + userId);
+                return true;
+            }
+            
+        } catch (SQLException e) {
+            System.err.println("Error al incrementar límite: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return false;
+    }
+    
     /**
      * Actualiza la contraseña de un usuario
      * 
@@ -358,6 +408,7 @@ public class UserDAO {
     
     /**
      * Extrae un objeto User desde un ResultSet
+     * ✅ ACTUALIZADO: Incluye nuevos campos pet_limit, is_partner, partner_badge
      * 
      * @param rs ResultSet con los datos del usuario
      * @return Usuario creado desde el ResultSet
@@ -372,6 +423,26 @@ public class UserDAO {
         user.setRegistrationDate(rs.getTimestamp("registration_date"));
         user.setRol(rs.getString("rol"));
         user.setActive(rs.getBoolean("active"));
+        
+        // ✅ AGREGAR: Campos nuevos con manejo de NULL
+        try {
+            user.setPetLimit(rs.getObject("pet_limit") != null ? rs.getInt("pet_limit") : 2);
+        } catch (SQLException e) {
+            user.setPetLimit(2); // Default si la columna no existe aún
+        }
+        
+        try {
+            user.setIsPartner(rs.getObject("is_partner") != null ? rs.getBoolean("is_partner") : false);
+        } catch (SQLException e) {
+            user.setIsPartner(false); // Default
+        }
+        
+        try {
+            user.setPartnerBadge(rs.getString("partner_badge"));
+        } catch (SQLException e) {
+            user.setPartnerBadge(null); // Puede ser null
+        }
+        
         return user;
     }
 }

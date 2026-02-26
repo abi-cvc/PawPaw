@@ -518,8 +518,11 @@ C:.
 |       |   +---model
 |       |   |   +---dao
 |       |   |   |       AdminAuditLogDAO.java
+|       |   |   |       FoundationRequestDAO.java
 |       |   |   |       PasswordResetTokenDAO.java
+|       |   |   |       PaymentRequestDAO.java
 |       |   |   |       PetDAO.java
+|       |   |   |       PromotionDAO.java
 |       |   |   |       QRCodeDAO.java
 |       |   |   |       SuggestionDAO.java
 |       |   |   |       UserDAO.java
@@ -564,6 +567,7 @@ C:.
 |           |   |       pet-not-found.jsp
 |           |   |       pet-public.jsp
 |           |   |       
+|           |   +---foundations
 |           |   \---internalUser
 |           |           forgot-password.jsp
 |           |           login.jsp
@@ -616,8 +620,11 @@ C:.
     |   +---model
     |   |   +---dao
     |   |   |       AdminAuditLogDAO.class
+    |   |   |       FoundationRequestDAO.class
     |   |   |       PasswordResetTokenDAO.class
+    |   |   |       PaymentRequestDAO.class
     |   |   |       PetDAO.class
+    |   |   |       PromotionDAO.class
     |   |   |       QRCodeDAO.class
     |   |   |       SuggestionDAO.class
     |   |   |       UserDAO.class
