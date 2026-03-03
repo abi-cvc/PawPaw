@@ -2452,6 +2452,71 @@ a {
     margin-bottom: var(--espaciado-xl);
 }
 
+.filter-section {
+    background: white;
+    padding: var(--espaciado-lg);
+    border-radius: var(--radio-lg);
+    box-shadow: var(--sombra-sm);
+    margin-bottom: var(--espaciado-xl);
+    display: flex;
+    align-items: center;
+    gap: var(--espaciado-md);
+}
+
+.filter-section label {
+    font-weight: 600;
+    color: var(--color-1);
+}
+
+.filter-select {
+    padding: var(--espaciado-sm) var(--espaciado-md);
+    border: 2px solid var(--color-4);
+    border-radius: var(--radio-md);
+    font-family: var(--fuente-texto);
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transicion);
+    background: white;
+}
+
+.filter-select:hover {
+    border-color: var(--color-2);
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: var(--color-1);
+    box-shadow: 0 0 0 3px rgba(136, 74, 57, 0.1);
+}
+
+/* Payment Status Colors */
+.status-pending {
+    background: #FFF3E0;
+    color: #E65100;
+}
+
+.status-completed {
+    background: #e8f5e9;
+    color: #2e7d32;
+}
+
+.status-rejected {
+    background: #FFEBEE;
+    color: #C62828;
+}
+
+/* Amount Cell */
+.amount-cell {
+    font-weight: 600;
+    color: var(--color-1);
+    font-size: 1.1rem;
+}
+
+/* Button Success */
+.btn-success:hover {
+    filter: brightness(1.1);
+}
+
 
 /* ==================== CONSOLIDACIÓN DE RESPONSIVE ==================== */
 /* NOTA: Reemplazar TODAS las @media queries existentes con esto */
