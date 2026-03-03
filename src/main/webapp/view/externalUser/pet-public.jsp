@@ -5,8 +5,12 @@
     Pet pet = (Pet) request.getAttribute("pet");
     User owner = (User) request.getAttribute("owner");
     String ownerName = (String) request.getAttribute("ownerName");
-    String success = (String) request.getAttribute("success");
-    String error = (String) request.getAttribute("error");
+    
+    // Mensajes de sesión (después de POST)
+    String successMessage = (String) session.getAttribute("successMessage");
+    String errorMessage = (String) session.getAttribute("errorMessage");
+    session.removeAttribute("successMessage");
+    session.removeAttribute("errorMessage");
     
     if (pet == null) {
         response.sendRedirect(request.getContextPath() + "/");
@@ -41,15 +45,15 @@
         <div class="public-container">
             
             <!-- Mensajes -->
-            <% if (success != null) { %>
-                <div class="mensaje mensaje-exito">
-                    ✅ <%= success %>
+            <% if (successMessage != null) { %>
+                <div class="alert alert-success">
+                    ✅ <%= successMessage %>
                 </div>
             <% } %>
             
-            <% if (error != null) { %>
-                <div class="mensaje mensaje-error">
-                    ⚠️ <%= error %>
+            <% if (errorMessage != null) { %>
+                <div class="alert alert-error">
+                    ⚠️ <%= errorMessage %>
                 </div>
             <% } %>
             
@@ -170,32 +174,35 @@
                             <input type="hidden" name="petId" value="<%= pet.getIdPet() %>">
                             
                             <div class="form-group">
-                                <label for="senderName" class="form-label required">Tu nombre</label>
+                                <label for="senderName" class="form-label required">Tu nombre *</label>
                                 <input type="text" 
                                        id="senderName" 
                                        name="senderName" 
                                        class="form-input" 
                                        required
+                                       maxlength="100"
                                        placeholder="Ej: Juan Pérez">
                             </div>
                             
                             <div class="form-group">
-                                <label for="senderPhone" class="form-label required">Tu teléfono</label>
+                                <label for="senderPhone" class="form-label required">Tu teléfono *</label>
                                 <input type="tel" 
                                        id="senderPhone" 
                                        name="senderPhone" 
                                        class="form-input" 
                                        required
+                                       maxlength="20"
                                        placeholder="Ej: 099 123 456">
                             </div>
                             
                             <div class="form-group">
-                                <label for="message" class="form-label required">Mensaje</label>
+                                <label for="message" class="form-label required">Mensaje *</label>
                                 <textarea id="message" 
                                           name="message" 
                                           class="form-textarea" 
                                           rows="4" 
                                           required
+                                          maxlength="500"
                                           placeholder="Cuéntale al dueño dónde viste a <%= pet.getNamePet() %> o cómo pueden contactarte..."></textarea>
                             </div>
                             

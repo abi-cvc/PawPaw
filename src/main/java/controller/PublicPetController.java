@@ -4,6 +4,7 @@ import model.dao.PetDAO;
 import model.dao.UserDAO;
 import model.entity.Pet;
 import model.entity.User;
+import service.EmailService;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -14,22 +15,22 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * Controlador público para mostrar información de mascotas
- * Accesible sin login - usado cuando alguien escanea un QR
+ * Controlador para vista pública de mascotas (QR Code)
+ * Maneja visualización y envío de mensajes
  */
 @WebServlet("/pet/*")
 public class PublicPetController extends HttpServlet {
-    private static final long serialVersionUID = 1L;
     
     private PetDAO petDAO = new PetDAO();
     private UserDAO userDAO = new UserDAO();
+    private EmailService emailService = new EmailService();
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
         // Obtener ID de la mascota desde la URL
-        String pathInfo = request.getPathInfo(); // Ejemplo: "/1"
+        String pathInfo = request.getPathInfo();
         
         if (pathInfo == null || pathInfo.equals("/")) {
             response.sendRedirect(request.getContextPath() + "/");
@@ -37,44 +38,32 @@ public class PublicPetController extends HttpServlet {
         }
         
         try {
-            // Extraer ID de la mascota
-            String petIdStr = pathInfo.substring(1); // Quitar el "/"
+            // Extraer ID (formato: /pet/123)
+            String petIdStr = pathInfo.substring(1);
             Integer petId = Integer.parseInt(petIdStr);
-            
-            System.out.println("🔵 Vista pública de mascota ID: " + petId);
             
             // Buscar mascota
             Pet pet = petDAO.findById(petId);
             
             if (pet == null) {
-                System.out.println("❌ Mascota no encontrada: " + petId);
-                request.setAttribute("error", "Mascota no encontrada");
                 request.getRequestDispatcher("/view/externalUser/pet-not-found.jsp").forward(request, response);
                 return;
             }
             
             // Buscar dueño
             User owner = userDAO.findById(pet.getIdUser());
-            
-            if (owner == null || !owner.getActive()) {
-                System.out.println("❌ Dueño no encontrado o inactivo");
-                request.setAttribute("error", "Información no disponible");
-                request.getRequestDispatcher("/view/externalUser/pet-not-found.jsp").forward(request, response);
-                return;
-            }
-            
-            System.out.println("✅ Mostrando: " + pet.getNamePet() + " - Dueño: " + owner.getNameUser());
+            String ownerName = owner != null ? owner.getNameUser() : "Dueño";
             
             // Pasar datos a la vista
             request.setAttribute("pet", pet);
             request.setAttribute("owner", owner);
-            request.setAttribute("ownerName", owner.getNameUser());
+            request.setAttribute("ownerName", ownerName);
             
-            // Mostrar vista pública
+            System.out.println("📱 Vista pública de mascota: " + pet.getNamePet() + " (ID: " + petId + ")");
+            
             request.getRequestDispatcher("/view/externalUser/pet-public.jsp").forward(request, response);
             
         } catch (NumberFormatException e) {
-            System.out.println("❌ ID inválido: " + pathInfo);
             response.sendRedirect(request.getContextPath() + "/");
         }
     }
@@ -85,75 +74,171 @@ public class PublicPetController extends HttpServlet {
         
         String action = request.getParameter("action");
         
-        if ("report-found".equals(action)) {
-            reportFound(request, response);
-        } else if ("send-message".equals(action)) {
-            sendMessage(request, response);
+        if ("send-message".equals(action)) {
+            handleSendMessage(request, response);
+        } else if ("report-found".equals(action)) {
+            handleReportFound(request, response);
         } else {
             response.sendRedirect(request.getContextPath() + "/");
         }
     }
     
     /**
-     * Reportar mascota como encontrada
+     * Maneja el envío de mensaje al dueño
      */
-    private void reportFound(HttpServletRequest request, HttpServletResponse response) 
+    private void handleSendMessage(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-        String petIdStr = request.getParameter("petId");
-        
         try {
+            String petIdStr = request.getParameter("petId");
+            String senderName = request.getParameter("senderName");
+            String senderPhone = request.getParameter("senderPhone");
+            String message = request.getParameter("message");
+            
+            // Validaciones
+            if (petIdStr == null || senderName == null || senderPhone == null || message == null ||
+                senderName.trim().isEmpty() || senderPhone.trim().isEmpty() || message.trim().isEmpty()) {
+                
+                redirectWithError(request, response, petIdStr, "Por favor completa todos los campos");
+                return;
+            }
+            
             Integer petId = Integer.parseInt(petIdStr);
             Pet pet = petDAO.findById(petId);
             
-            if (pet != null) {
-                // Cambiar estado a "found"
-                pet.setStatusPet("found");
-                
-                if (petDAO.update(pet)) {
-                    System.out.println("✅ Mascota reportada como encontrada - ID: " + petId);
-                    request.setAttribute("success", "¡Gracias! El dueño ha sido notificado.");
-                } else {
-                    request.setAttribute("error", "Error al reportar. Intenta nuevamente.");
-                }
-                
-                // Volver a mostrar la página
-                doGet(request, response);
+            if (pet == null) {
+                response.sendRedirect(request.getContextPath() + "/");
+                return;
             }
             
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/");
+            // Obtener dueño
+            User owner = userDAO.findById(pet.getIdUser());
+            
+            if (owner == null) {
+                redirectWithError(request, response, petIdStr, "No se pudo contactar al dueño");
+                return;
+            }
+            
+            // Construir email
+            String subject = "🐾 Mensaje sobre " + pet.getNamePet() + " - PawPaw";
+            String emailBody = "Hola " + owner.getNameUser() + ",\n\n" +
+                             "Has recibido un mensaje sobre tu mascota " + pet.getNamePet() + ":\n\n" +
+                             "━━━━━━━━━━━━━━━━━━━━━━━━\n" +
+                             "DE: " + senderName + "\n" +
+                             "TELÉFONO: " + senderPhone + "\n" +
+                             "━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                             "MENSAJE:\n" +
+                             message + "\n\n" +
+                             "━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
+                             "Por favor, contacta a " + senderName + " al número " + senderPhone + " " +
+                             "para coordinar.\n\n" +
+                             "Saludos,\n" +
+                             "Equipo PawPaw 🐾";
+            
+            // Enviar email al dueño
+            boolean emailSent = emailService.sendNotificationEmail(
+                owner.getEmail(),
+                owner.getNameUser(),
+                subject,
+                emailBody
+            );
+            
+            if (emailSent) {
+                System.out.println("✅ Email enviado a " + owner.getEmail() + " sobre " + pet.getNamePet());
+                redirectWithSuccess(request, response, petIdStr, 
+                    "¡Mensaje enviado! El dueño recibirá tu mensaje en su email.");
+            } else {
+                System.err.println("❌ Error al enviar email a " + owner.getEmail());
+                redirectWithError(request, response, petIdStr, 
+                    "Hubo un error al enviar el mensaje. Por favor intenta llamar directamente.");
+            }
+            
+        } catch (Exception e) {
+            System.err.println("❌ Error al procesar mensaje: " + e.getMessage());
+            e.printStackTrace();
+            String petIdStr = request.getParameter("petId");
+            redirectWithError(request, response, petIdStr, "Error al enviar el mensaje");
         }
     }
     
     /**
-     * Enviar mensaje al dueño
-     * TODO: Implementar sistema de notificaciones por email
+     * Maneja el reporte de mascota encontrada
      */
-    private void sendMessage(HttpServletRequest request, HttpServletResponse response) 
+    private void handleReportFound(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-        String petIdStr = request.getParameter("petId");
-        String senderName = request.getParameter("senderName");
-        String senderPhone = request.getParameter("senderPhone");
-        String message = request.getParameter("message");
-        
-        System.out.println("📧 Mensaje recibido para mascota ID: " + petIdStr);
-        System.out.println("   De: " + senderName + " - " + senderPhone);
-        System.out.println("   Mensaje: " + message);
-        
-        // TODO: Aquí se podría:
-        // 1. Guardar el mensaje en una tabla "messages"
-        // 2. Enviar email al dueño
-        // 3. Enviar notificación push
-        
-        request.setAttribute("success", "Mensaje enviado. El dueño se pondrá en contacto contigo.");
-        
         try {
+            String petIdStr = request.getParameter("petId");
             Integer petId = Integer.parseInt(petIdStr);
-            request.getRequestDispatcher("/pet/" + petId).forward(request, response);
-        } catch (NumberFormatException e) {
-            response.sendRedirect(request.getContextPath() + "/");
+            
+            Pet pet = petDAO.findById(petId);
+            
+            if (pet == null || !"lost".equals(pet.getStatusPet())) {
+                response.sendRedirect(request.getContextPath() + "/pet/" + petIdStr);
+                return;
+            }
+            
+            // Cambiar estado a "found"
+            pet.setStatusPet("found");
+            boolean updated = petDAO.update(pet);
+            
+            if (updated) {
+                // Enviar email al dueño
+                User owner = userDAO.findById(pet.getIdUser());
+                
+                if (owner != null) {
+                    String subject = "🎉 ¡Buenas noticias sobre " + pet.getNamePet() + "!";
+                    String emailBody = "Hola " + owner.getNameUser() + ",\n\n" +
+                                     "¡Excelentes noticias! 🎉\n\n" +
+                                     "Alguien ha reportado que encontró a " + pet.getNamePet() + ".\n\n" +
+                                     "Por favor revisa tu perfil de PawPaw para más detalles y " +
+                                     "coordinar la reunión con tu mascota.\n\n" +
+                                     "Link directo: " + request.getScheme() + "://" + 
+                                     request.getServerName() + 
+                                     (request.getServerPort() != 80 && request.getServerPort() != 443 
+                                         ? ":" + request.getServerPort() : "") +
+                                     request.getContextPath() + "/user/pets\n\n" +
+                                     "Saludos,\n" +
+                                     "Equipo PawPaw 🐾";
+                    
+                    emailService.sendNotificationEmail(
+                        owner.getEmail(),
+                        owner.getNameUser(),
+                        subject,
+                        emailBody
+                    );
+                }
+                
+                System.out.println("✅ Mascota " + petId + " reportada como encontrada");
+                redirectWithSuccess(request, response, petIdStr, 
+                    "¡Gracias por reportar! El dueño ha sido notificado.");
+            } else {
+                redirectWithError(request, response, petIdStr, "Error al actualizar el estado");
+            }
+            
+        } catch (Exception e) {
+            System.err.println("❌ Error al reportar mascota encontrada: " + e.getMessage());
+            e.printStackTrace();
+            String petIdStr = request.getParameter("petId");
+            redirectWithError(request, response, petIdStr, "Error al procesar la solicitud");
         }
+    }
+    
+    /**
+     * Redirect con mensaje de éxito
+     */
+    private void redirectWithSuccess(HttpServletRequest request, HttpServletResponse response, 
+                                     String petId, String message) throws IOException {
+        request.getSession().setAttribute("successMessage", message);
+        response.sendRedirect(request.getContextPath() + "/pet/" + petId);
+    }
+    
+    /**
+     * Redirect con mensaje de error
+     */
+    private void redirectWithError(HttpServletRequest request, HttpServletResponse response, 
+                                   String petId, String message) throws IOException {
+        request.getSession().setAttribute("errorMessage", message);
+        response.sendRedirect(request.getContextPath() + "/pet/" + petId);
     }
 }
