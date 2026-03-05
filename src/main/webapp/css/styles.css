@@ -2722,6 +2722,74 @@ a {
     text-decoration: underline;
 }
 
+.alert-big {
+    padding: var(--espaciado-xl);
+    margin-bottom: var(--espaciado-xl);
+    border-radius: var(--radio-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--espaciado-lg);
+    box-shadow: var(--sombra-lg);
+    animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-big .alert-icon {
+    font-size: 3rem;
+    flex-shrink: 0;
+}
+
+.alert-big .alert-content {
+    flex: 1;
+}
+
+.alert-big .alert-content h3 {
+    margin: 0 0 var(--espaciado-sm) 0;
+    font-size: 1.5rem;
+    font-family: var(--fuente-titulos);
+}
+
+.alert-big .alert-content p {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.alert-big.alert-success {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    border: 2px solid #4CAF50;
+}
+
+.alert-big.alert-success .alert-content h3 {
+    color: #2e7d32;
+}
+
+.alert-big.alert-success .alert-content p {
+    color: #1b5e20;
+}
+
+.alert-big.alert-error {
+    background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+    border: 2px solid #f44336;
+}
+
+.alert-big.alert-error .alert-content h3 {
+    color: #c62828;
+}
+
+.alert-big.alert-error .alert-content p {
+    color: #b71c1c;
+}
+
 
 /* ==================== CONSOLIDACIÓN DE RESPONSIVE ==================== */
 /* NOTA: Reemplazar TODAS las @media queries existentes con esto */
@@ -2837,6 +2905,15 @@ a {
     
     .success-card {
         padding: var(--espaciado-lg);
+    }
+    
+    .alert-big {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .alert-big .alert-icon {
+        font-size: 2.5rem;
     }
 }
 
