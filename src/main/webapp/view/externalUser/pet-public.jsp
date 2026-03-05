@@ -27,6 +27,20 @@
     <link rel="icon" type="image/png" href="<%= request.getContextPath() %>/images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
+    
+    <% if (successMessage != null) { %>
+    <script>
+        // Auto-scroll al mensaje de éxito
+        window.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                document.querySelector('.alert-success').scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+            }, 300);
+        });
+    </script>
+    <% } %>
 </head>
 <body class="public-page">
     
@@ -44,16 +58,24 @@
     <main class="public-main">
         <div class="public-container">
             
-            <!-- Mensajes -->
+            <!-- Mensajes MÁS VISIBLES -->
             <% if (successMessage != null) { %>
-                <div class="alert alert-success">
-                    ✅ <%= successMessage %>
+                <div class="alert alert-success alert-big">
+                    <div class="alert-icon">✅</div>
+                    <div class="alert-content">
+                        <h3>¡Mensaje Enviado!</h3>
+                        <p><%= successMessage %></p>
+                    </div>
                 </div>
             <% } %>
             
             <% if (errorMessage != null) { %>
-                <div class="alert alert-error">
-                    ⚠️ <%= errorMessage %>
+                <div class="alert alert-error alert-big">
+                    <div class="alert-icon">⚠️</div>
+                    <div class="alert-content">
+                        <h3>Error</h3>
+                        <p><%= errorMessage %></p>
+                    </div>
                 </div>
             <% } %>
             
@@ -169,12 +191,12 @@
                         <h3>💬 Enviar mensaje al dueño</h3>
                         <p class="form-description">Déjale un mensaje al dueño de <%= pet.getNamePet() %></p>
                         
-                        <form method="POST" action="<%= request.getContextPath() %>/pet/<%= pet.getIdPet() %>" class="contact-form">
+                        <form method="POST" action="<%= request.getContextPath() %>/pet/<%= pet.getIdPet() %>" class="contact-form" id="contactForm">
                             <input type="hidden" name="action" value="send-message">
                             <input type="hidden" name="petId" value="<%= pet.getIdPet() %>">
                             
                             <div class="form-group">
-                                <label for="senderName" class="form-label required">Tu nombre *</label>
+                                <label for="senderName" class="form-label">Tu nombre *</label>
                                 <input type="text" 
                                        id="senderName" 
                                        name="senderName" 
@@ -185,7 +207,7 @@
                             </div>
                             
                             <div class="form-group">
-                                <label for="senderPhone" class="form-label required">Tu teléfono *</label>
+                                <label for="senderPhone" class="form-label">Tu teléfono *</label>
                                 <input type="tel" 
                                        id="senderPhone" 
                                        name="senderPhone" 
@@ -196,7 +218,7 @@
                             </div>
                             
                             <div class="form-group">
-                                <label for="message" class="form-label required">Mensaje *</label>
+                                <label for="message" class="form-label">Mensaje *</label>
                                 <textarea id="message" 
                                           name="message" 
                                           class="form-textarea" 
@@ -206,7 +228,7 @@
                                           placeholder="Cuéntale al dueño dónde viste a <%= pet.getNamePet() %> o cómo pueden contactarte..."></textarea>
                             </div>
                             
-                            <button type="submit" class="btn btn-primario btn-grande">
+                            <button type="submit" class="btn btn-primario btn-grande" id="submitBtn">
                                 ✉️ Enviar mensaje
                             </button>
                         </form>
@@ -223,6 +245,15 @@
             
         </div>
     </main>
+    
+    <script>
+        // Deshabilitar botón y mostrar "Enviando..." mientras procesa
+        document.getElementById('contactForm').addEventListener('submit', function() {
+            var btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Enviando mensaje...';
+        });
+    </script>
     
 </body>
 </html>
