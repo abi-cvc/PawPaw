@@ -2,8 +2,10 @@ package controller;
 
 import model.dao.PetDAO;
 import model.dao.UserDAO;
+import model.dao.PetContactMessageDAO;
 import model.entity.Pet;
 import model.entity.User;
+import model.entity.PetContactMessage;
 import service.EmailService;
 
 import jakarta.servlet.ServletException;
@@ -23,13 +25,13 @@ public class PublicPetController extends HttpServlet {
     
     private PetDAO petDAO = new PetDAO();
     private UserDAO userDAO = new UserDAO();
+    private PetContactMessageDAO messageDAO = new PetContactMessageDAO();
     private EmailService emailService = new EmailService();
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
-        // Obtener ID de la mascota desde la URL
         String pathInfo = request.getPathInfo();
         
         if (pathInfo == null || pathInfo.equals("/")) {
@@ -38,11 +40,9 @@ public class PublicPetController extends HttpServlet {
         }
         
         try {
-            // Extraer ID (formato: /pet/123)
             String petIdStr = pathInfo.substring(1);
             Integer petId = Integer.parseInt(petIdStr);
             
-            // Buscar mascota
             Pet pet = petDAO.findById(petId);
             
             if (pet == null) {
@@ -50,11 +50,9 @@ public class PublicPetController extends HttpServlet {
                 return;
             }
             
-            // Buscar dueño
             User owner = userDAO.findById(pet.getIdUser());
             String ownerName = owner != null ? owner.getNameUser() : "Dueño";
             
-            // Pasar datos a la vista
             request.setAttribute("pet", pet);
             request.setAttribute("owner", owner);
             request.setAttribute("ownerName", ownerName);
@@ -95,7 +93,6 @@ public class PublicPetController extends HttpServlet {
             String senderPhone = request.getParameter("senderPhone");
             String message = request.getParameter("message");
             
-            // Validaciones
             if (petIdStr == null || senderName == null || senderPhone == null || message == null ||
                 senderName.trim().isEmpty() || senderPhone.trim().isEmpty() || message.trim().isEmpty()) {
                 
@@ -111,13 +108,23 @@ public class PublicPetController extends HttpServlet {
                 return;
             }
             
-            // Obtener dueño
             User owner = userDAO.findById(pet.getIdUser());
             
             if (owner == null) {
                 redirectWithError(request, response, petIdStr, "No se pudo contactar al dueño");
                 return;
             }
+            
+            // NUEVO: Guardar mensaje en BD
+            PetContactMessage contactMessage = new PetContactMessage(
+                pet.getIdPet(),
+                pet.getIdUser(),
+                senderName,
+                senderPhone,
+                message
+            );
+            
+            boolean savedInDB = messageDAO.create(contactMessage);
             
             // Construir email
             String subject = "🐾 Mensaje sobre " + pet.getNamePet() + " - PawPaw";
@@ -132,10 +139,14 @@ public class PublicPetController extends HttpServlet {
                              "━━━━━━━━━━━━━━━━━━━━━━━━\n\n" +
                              "Por favor, contacta a " + senderName + " al número " + senderPhone + " " +
                              "para coordinar.\n\n" +
+                             "También puedes ver este mensaje en tu panel de PawPaw:\n" +
+                             request.getScheme() + "://" + request.getServerName() + 
+                             (request.getServerPort() != 80 && request.getServerPort() != 443 
+                                 ? ":" + request.getServerPort() : "") +
+                             request.getContextPath() + "/user/messages\n\n" +
                              "Saludos,\n" +
                              "Equipo PawPaw 🐾";
             
-            // Enviar email al dueño
             boolean emailSent = emailService.sendNotificationEmail(
                 owner.getEmail(),
                 owner.getNameUser(),
@@ -143,12 +154,12 @@ public class PublicPetController extends HttpServlet {
                 emailBody
             );
             
-            if (emailSent) {
-                System.out.println("✅ Email enviado a " + owner.getEmail() + " sobre " + pet.getNamePet());
+            if (emailSent || savedInDB) {
+                System.out.println("✅ Mensaje procesado - Email: " + emailSent + " | BD: " + savedInDB);
                 redirectWithSuccess(request, response, petIdStr, 
-                    "¡Mensaje enviado! El dueño recibirá tu mensaje en su email.");
+                    "¡Mensaje enviado! El dueño recibirá tu mensaje en su email y podrá verlo en su panel.");
             } else {
-                System.err.println("❌ Error al enviar email a " + owner.getEmail());
+                System.err.println("❌ Error al procesar mensaje");
                 redirectWithError(request, response, petIdStr, 
                     "Hubo un error al enviar el mensaje. Por favor intenta llamar directamente.");
             }
@@ -178,12 +189,10 @@ public class PublicPetController extends HttpServlet {
                 return;
             }
             
-            // Cambiar estado a "found"
             pet.setStatusPet("found");
             boolean updated = petDAO.update(pet);
             
             if (updated) {
-                // Enviar email al dueño
                 User owner = userDAO.findById(pet.getIdUser());
                 
                 if (owner != null) {
@@ -224,18 +233,12 @@ public class PublicPetController extends HttpServlet {
         }
     }
     
-    /**
-     * Redirect con mensaje de éxito
-     */
     private void redirectWithSuccess(HttpServletRequest request, HttpServletResponse response, 
                                      String petId, String message) throws IOException {
         request.getSession().setAttribute("successMessage", message);
         response.sendRedirect(request.getContextPath() + "/pet/" + petId);
     }
     
-    /**
-     * Redirect con mensaje de error
-     */
     private void redirectWithError(HttpServletRequest request, HttpServletResponse response, 
                                    String petId, String message) throws IOException {
         request.getSession().setAttribute("errorMessage", message);
