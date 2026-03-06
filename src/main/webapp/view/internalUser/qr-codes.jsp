@@ -85,6 +85,30 @@
                     Códigos QR
                 </a>
                 
+                <a href="<%= request.getContextPath() %>/user/messages" class="nav-item">
+				    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+				              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+				    </svg>
+				    Mis Mensajes
+				    <% 
+				    // Contador de mensajes no leídos
+				    Integer unreadCount = null;
+				    try {
+				        model.dao.PetContactMessageDAO msgDAO = new model.dao.PetContactMessageDAO();
+				        Integer userId = (Integer) session.getAttribute("userId");
+				        if (userId != null) {
+				            unreadCount = msgDAO.countUnreadByUserId(userId);
+				        }
+				    } catch (Exception e) {
+				        // Silenciar si la tabla no existe aún
+				    }
+				    if (unreadCount != null && unreadCount > 0) { 
+				    %>
+				    <span class="notification-badge"><%= unreadCount %></span>
+				    <% } %>
+				</a>
+                
                 <div class="nav-divider"></div>
                 
                 <a href="<%= request.getContextPath() %>/user/profile" class="nav-item">
@@ -92,7 +116,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                     </svg>
                     Mi Perfil
-                </a>
+                </a>                
                 
                 <a href="<%= request.getContextPath() %>/user/send-suggestion" class="nav-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
