@@ -3499,6 +3499,113 @@ a {
     color: #666;
 }
 
+/* ==========================================
+   SIDEBAR ACTIVE STATE FIX
+   ========================================== */
+
+.sidebar-nav .nav-item.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-weight: 600;
+    position: relative;
+}
+
+.sidebar-nav .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 4px;
+    background: white;
+    border-radius: 0 4px 4px 0;
+}
+
+.sidebar-nav .nav-item.active svg {
+    opacity: 1;
+}
+
+/* ==========================================
+   FILTER BUTTONS
+   ========================================== */
+
+.filter-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    background: white;
+    border: 2px solid #e0e0e0;
+    color: #666;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.filter-btn:hover {
+    border-color: var(--color-1);
+    color: var(--color-1);
+    background: #f8f9fa;
+}
+
+.filter-btn.active {
+    background: var(--color-1);
+    border-color: var(--color-1);
+    color: white;
+    font-weight: 600;
+}
+
+/* ==========================================
+   DETAILS GRID
+   ========================================== */
+
+.details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.detail-item strong {
+    display: block;
+    color: var(--color-1);
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.detail-item span, .detail-item p {
+    color: #666;
+}
+
+/* ==========================================
+   BUTTON VARIANTS
+   ========================================== */
+
+.btn-success {
+    background: linear-gradient(135deg, #4CAF50, #388E3C);
+    color: white;
+    border: none;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #388E3C, #2E7D32);
+    transform: translateY(-2px);
+}
+
+.btn-error {
+    background: linear-gradient(135deg, #f44336, #c62828);
+    color: white;
+    border: none;
+}
+
+.btn-error:hover {
+    background: linear-gradient(135deg, #c62828, #b71c1c);
+    transform: translateY(-2px);
+}
+
+.btn-sm {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.875rem;
+}
+
 /* ==================== CONSOLIDACIÓN DE RESPONSIVE ==================== */
 
 /* Tablet y pantallas medianas (máx 968px) */
@@ -3701,6 +3808,10 @@ a {
     }
     
     .quick-actions-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .details-grid {
         grid-template-columns: 1fr;
     }
 }
