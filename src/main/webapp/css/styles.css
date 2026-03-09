@@ -2880,6 +2880,7 @@ a {
     box-shadow: var(--sombra-sm);
     border: 2px solid #f0f0f0;
     transition: var(--transicion);
+    gap: var(--espaciado-xl);   
 }
 
 .message-card:hover {
