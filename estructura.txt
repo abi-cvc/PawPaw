@@ -1029,17 +1029,6 @@ C:.
     |       tomcat-util-10.1.18.jar
     |       tomcat-util-scan-10.1.18.jar
     |       
-    +---m2e-wtp
-    |   \---web-resources
-    |       \---META-INF
-    |           |   MANIFEST.MF
-    |           |   
-    |           \---maven
-    |               \---PawPaw
-    |                   \---PawPaw
-    |                           pom.properties
-    |                           pom.xml
-    |                           
     +---maven-archiver
     |       pom.properties
     |       
@@ -1070,6 +1059,7 @@ C:.
         |   |       manage-promotions.jsp
         |   |       manage-suggestions.jsp
         |   |       manage-users.jsp
+        |   |       user-slot-history.jsp
         |   |       
         |   +---externalUser
         |   |       pet-not-found.jsp
@@ -1103,6 +1093,7 @@ C:.
             |   |       PayPalConfig.class
             |   |       
             |   +---controller
+            |   |       AdjustUserSlotsServlet.class
             |   |       AdminPanelServlet.class
             |   |       AuthenticationController.class
             |   |       CapturePayPalOrderServlet.class
@@ -1130,6 +1121,7 @@ C:.
             |   |       UserController.class
             |   |       UserPanelController.class
             |   |       UserProfileController.class
+            |   |       UserSlotHistoryServlet.class
             |   |       
             |   +---filter
             |   |       CharacterEncodingFilter.class
@@ -1146,6 +1138,7 @@ C:.
             |   |   |       PetDAO.class
             |   |   |       PromotionDAO.class
             |   |   |       QRCodeDAO.class
+            |   |   |       SlotAdjustmentDAO.class
             |   |   |       SuggestionDAO.class
             |   |   |       UserDAO.class
             |   |   |       
@@ -1158,6 +1151,7 @@ C:.
             |   |           PetContactMessage.class
             |   |           Promotion.class
             |   |           QRcode.class
+            |   |           SlotAdjustment.class
             |   |           Suggestion.class
             |   |           User.class
             |   |           

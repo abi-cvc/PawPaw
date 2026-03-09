@@ -26,6 +26,12 @@
     String errorMessage = (String) session.getAttribute("errorMessage");
     session.removeAttribute("successMessage");
     session.removeAttribute("errorMessage");
+    
+    User adminUser = (User) request.getAttribute("user");
+    String userName = adminUser != null ? adminUser.getNameUser() : (String) session.getAttribute("userName");
+    
+    Integer pendingSuggestions = (Integer) request.getAttribute("pendingSuggestions");
+    if (pendingSuggestions == null) pendingSuggestions = 0;
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -49,51 +55,52 @@
                 </a>
             </div>
             
+            <div class="sidebar-user">
+			    <div class="user-info">
+			        <div class="user-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+			            <%= userName != null ? userName.substring(0, 1).toUpperCase() : "A" %>
+			        </div>
+			        <div class="user-details">
+			            <h3><%= userName %></h3>
+			            <p>Administrador</p>
+			        </div>
+			    </div>
+			</div>
+            
             <nav class="sidebar-nav">
-                <a href="<%= request.getContextPath() %>/admin/panel" class="nav-item">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-                    </svg>
-                    Panel
-                </a>
-                
-                <a href="<%= request.getContextPath() %>/admin/promotions" class="nav-item">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path>
-                    </svg>
-                    Promociones
-                </a>
-                
-                <a href="<%= request.getContextPath() %>/admin/payments" class="nav-item">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                    </svg>
-                    Pagos
-                </a>
-                
-                <a href="<%= request.getContextPath() %>/admin/foundations" class="nav-item">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                    </svg>
-                    Fundaciones
-                </a>
-                
-                <a href="<%= request.getContextPath() %>/admin/users" class="nav-item active">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
-                    </svg>
-                    Usuarios
-                </a>
-                
-                <div class="nav-divider"></div>
-                
-                <a href="<%= request.getContextPath() %>/logout" class="nav-item">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                    </svg>
-                    Cerrar Sesión
-                </a>
-            </nav>
+			    <a href="<%= request.getContextPath() %>/admin/panel" class="nav-item">
+			        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+			        </svg>
+			        Dashboard
+			    </a>
+			    
+			    <a href="<%= request.getContextPath() %>/admin/users" class="nav-item active">
+			        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+			        </svg>
+			        Usuarios
+			    </a>
+			    
+			    <a href="<%= request.getContextPath() %>/admin/suggestions" class="nav-item">
+			        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
+			        </svg>
+			        Sugerencias
+			        <% if (pendingSuggestions != null && pendingSuggestions > 0) { %>
+			            <span style="margin-left: auto; background: var(--color-error); color: white; padding: 0.25rem 0.5rem; border-radius: var(--radio-full); font-size: 0.75rem; font-weight: 700;"><%= pendingSuggestions %></span>
+			        <% } %>
+			    </a>
+			    
+			    <div class="nav-divider"></div>
+			    
+			    <a href="<%= request.getContextPath() %>/logout" class="nav-item">
+			        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+			        </svg>
+			        Cerrar Sesión
+			    </a>
+			</nav>
         </aside>
         
         <!-- Main Content -->
@@ -160,6 +167,43 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Accesos Rápidos -->
+			<div class="quick-actions-section">
+			    <h3 class="section-title">🚀 Accesos Rápidos</h3>
+			    
+			    <div class="quick-actions-grid">
+			        <a href="<%= request.getContextPath() %>/admin/promotions" class="quick-action-card">
+			            <div class="quick-action-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+			                🎁
+			            </div>
+			            <div class="quick-action-info">
+			                <h4>Promociones</h4>
+			                <p>Gestionar ofertas</p>
+			            </div>
+			        </a>
+			        
+			        <a href="<%= request.getContextPath() %>/admin/payments" class="quick-action-card">
+			            <div class="quick-action-icon" style="background: linear-gradient(135deg, #4CAF50, #388E3C);">
+			                💳
+			            </div>
+			            <div class="quick-action-info">
+			                <h4>Pagos</h4>
+			                <p>Ver transacciones</p>
+			            </div>
+			        </a>
+			        
+			        <a href="<%= request.getContextPath() %>/admin/foundations" class="quick-action-card">
+			            <div class="quick-action-icon" style="background: linear-gradient(135deg, #FF9800, #F57C00);">
+			                🏢
+			            </div>
+			            <div class="quick-action-info">
+			                <h4>Fundaciones</h4>
+			                <p>Gestionar partners</p>
+			            </div>
+			        </a>
+			    </div>
+			</div>
             
             <!-- Filtros -->
             <div class="filter-section">

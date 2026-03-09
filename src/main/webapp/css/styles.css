@@ -3440,6 +3440,65 @@ a {
     word-wrap: break-word;
 }
 
+/* Accesos Rápidos en Gestión de Usuarios */
+.quick-actions-section {
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--color-1);
+    margin-bottom: 1rem;
+}
+
+.quick-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.quick-action-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.quick-action-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+}
+
+.quick-action-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.quick-action-info h4 {
+    margin: 0 0 0.25rem 0;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--color-1);
+}
+
+.quick-action-info p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
 /* ==================== CONSOLIDACIÓN DE RESPONSIVE ==================== */
 
 /* Tablet y pantallas medianas (máx 968px) */
@@ -3639,6 +3698,10 @@ a {
     
     .action-buttons .btn {
         width: 100%;
+    }
+    
+    .quick-actions-grid {
+        grid-template-columns: 1fr;
     }
 }
 
