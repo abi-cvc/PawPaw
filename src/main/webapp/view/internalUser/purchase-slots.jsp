@@ -11,8 +11,6 @@
     
     User user = (User) request.getAttribute("user");
     Promotion activePromo = (Promotion) request.getAttribute("activePromotion");
-    BigDecimal singleSlotPrice = (BigDecimal) request.getAttribute("singleSlotPrice");
-    BigDecimal savings = (BigDecimal) request.getAttribute("savings");
     
     String userName = user != null ? user.getNameUser() : (String) session.getAttribute("userName");
     
@@ -32,28 +30,53 @@
     <link rel="icon" type="image/png" href="<%= request.getContextPath() %>/images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
+    
+    <!-- PayPal SDK -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AWl8G_qfgo0lmbDgplDHcFzdSu8I5HrWtnDoRkgxmZx6Bx9-jOMQHXrE0xqY1RPuSlTpfv9X5aeYThKf&currency=USD"></script>
 </head>
 <body>
     <div class="dashboard">
-        <!-- Sidebar -->
+        <!-- Sidebar (mismo que antes) -->
         <aside class="sidebar">
-            <div class="logo">
-                <h2>🐾 PawPaw</h2>
+            <div class="sidebar-header">
+                <a href="<%= request.getContextPath() %>/view/index.jsp" class="sidebar-logo">
+                    <img src="<%= request.getContextPath() %>/images/logo.png" alt="PawPaw Logo">
+                    <span class="sidebar-logo-text">PawPaw</span>
+                </a>
             </div>
             
-            <nav class="nav-menu">
+            <div class="sidebar-user">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <%= userName != null ? userName.substring(0, 1).toUpperCase() : "U" %>
+                    </div>
+                    <div class="user-details">
+                        <h3><%= userName %></h3>
+                        <p>Usuario</p>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
                 <a href="<%= request.getContextPath() %>/user/panel" class="nav-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                     </svg>
-                    Panel
+                    Panel Principal
                 </a>
                 
                 <a href="<%= request.getContextPath() %>/user/pets" class="nav-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                     Mis Mascotas
+                </a>
+                
+                <a href="<%= request.getContextPath() %>/user/qr-codes" class="nav-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+                    </svg>
+                    Códigos QR
                 </a>
                 
                 <a href="<%= request.getContextPath() %>/user/purchase-slots" class="nav-item active">
@@ -62,24 +85,25 @@
                     </svg>
                     Comprar Slots
                 </a>
+                
+                <div class="nav-divider"></div>
+                
+                <a href="<%= request.getContextPath() %>/logout" class="nav-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    Cerrar Sesión
+                </a>
             </nav>
-            
-            <div class="user-info">
-                <div class="user-avatar">
-                    <%= userName != null && !userName.isEmpty() ? userName.substring(0, 1).toUpperCase() : "U" %>
-                </div>
-                <div class="user-details">
-                    <p class="user-name"><%= userName %></p>
-                    <a href="<%= request.getContextPath() %>/logout" class="logout-link">Cerrar sesión</a>
-                </div>
-            </div>
         </aside>
         
         <!-- Main Content -->
         <main class="main-content">
             <div class="content-header">
-                <h1 class="content-title">🐾 Expande tu límite de mascotas</h1>
-                <p class="content-subtitle">Elige el plan que mejor se adapte a tus necesidades</p>
+                <div>
+                    <h1 class="content-title">🐾 Expande tu límite de mascotas</h1>
+                    <p class="content-subtitle">Elige el plan que mejor se adapte a tus necesidades</p>
+                </div>
             </div>
             
             <!-- Mensajes -->
@@ -97,7 +121,8 @@
             
             <!-- Pricing Cards -->
             <div class="pricing-grid">
-                <!-- Slot Individual -->
+                
+                <!-- 1 SLOT -->
                 <div class="pricing-card">
                     <h3 class="pricing-title">Slot Individual</h3>
                     <div class="pricing-price">
@@ -106,74 +131,160 @@
                     <p class="pricing-period">Pago único</p>
                     
                     <ul class="pricing-features">
-                        <li>1 espacio adicional</li>
-                        <li>Permanente</li>
-                        <li>No caduca</li>
+                        <li>✅ 1 espacio adicional</li>
+                        <li>✅ Permanente</li>
+                        <li>✅ No caduca</li>
                     </ul>
                     
-                    <button class="btn btn-primario btn-block" onclick="selectPlan(1, 5.00)">
-                        Comprar ahora
-                    </button>
+                    <div id="paypal-button-1" class="paypal-button-container"></div>
                 </div>
                 
-                <!-- Promoción (si existe) -->
-                <% if (activePromo != null) { %>
+                <!-- 5 SLOTS -->
                 <div class="pricing-card pricing-featured">
-                    <div class="featured-badge">🎉 OFERTA ESPECIAL</div>
+                    <div class="featured-badge">🎉 POPULAR</div>
                     
-                    <h3 class="pricing-title"><%= activePromo.getPromoName() %></h3>
+                    <h3 class="pricing-title">Paquete 5 Slots</h3>
                     <div class="pricing-price">
-                        $<%= activePromo.getPromoPrice() %><span class="price-currency">USD</span>
+                        $20<span class="price-currency">USD</span>
                     </div>
+                    <p class="pricing-period">Pago único</p>
                     
-                    <% if (savings != null && savings.compareTo(BigDecimal.ZERO) > 0) { %>
                     <div class="pricing-savings">
-                        ¡Ahorra $<%= savings %>!
+                        ¡Ahorra $5!
                     </div>
-                    <% } %>
                     
                     <ul class="pricing-features">
-                        <li><%= activePromo.getSlotsQuantity() %> espacios adicionales</li>
-                        <li>Permanentes</li>
-                        <li>No caducan</li>
-                        <% if (activePromo.getPromoDescription() != null) { %>
-                        <li><%= activePromo.getPromoDescription() %></li>
-                        <% } %>
+                        <li>✅ 5 espacios adicionales</li>
+                        <li>✅ Permanentes</li>
+                        <li>✅ No caducan</li>
+                        <li>✅ Mejor relación precio/valor</li>
                     </ul>
                     
-                    <button class="btn btn-primario btn-block" onclick="selectPlan(<%= activePromo.getSlotsQuantity() %>, <%= activePromo.getPromoPrice() %>)">
-                        Aprovechar oferta
-                    </button>
+                    <div id="paypal-button-5" class="paypal-button-container"></div>
                 </div>
-                <% } %>
+                
+                <!-- 10 SLOTS -->
+                <div class="pricing-card">
+                    <h3 class="pricing-title">Paquete 10 Slots</h3>
+                    <div class="pricing-price">
+                        $35<span class="price-currency">USD</span>
+                    </div>
+                    <p class="pricing-period">Pago único</p>
+                    
+                    <div class="pricing-savings">
+                        ¡Ahorra $15!
+                    </div>
+                    
+                    <ul class="pricing-features">
+                        <li>✅ 10 espacios adicionales</li>
+                        <li>✅ Permanentes</li>
+                        <li>✅ No caducan</li>
+                        <li>✅ Máximo ahorro</li>
+                    </ul>
+                    
+                    <div id="paypal-button-10" class="paypal-button-container"></div>
+                </div>
+                
             </div>
             
-            <!-- Métodos de Pago -->
-            <div class="payment-methods-section">
-                <h3 class="section-title">💳 Métodos de pago disponibles</h3>
-                <div class="payment-methods-grid">
-                    <div class="payment-method-card">
-                        <h4>PayPal</h4>
-                        <p>Activación inmediata</p>
-                    </div>
-                    <div class="payment-method-card">
-                        <h4>DeUna QR</h4>
-                        <p>Verificación en 24h</p>
-                    </div>
-                    <div class="payment-method-card">
-                        <h4>Transferencia</h4>
-                        <p>Verificación en 24h</p>
-                    </div>
-                </div>
+            <!-- Información adicional -->
+            <div class="payment-info">
+                <h3>ℹ️ Información importante</h3>
+                <ul>
+                    <li>✅ Los slots son <strong>permanentes</strong> y nunca caducan</li>
+                    <li>✅ Pago seguro procesado por PayPal</li>
+                    <li>✅ Activación <strong>inmediata</strong> tras confirmar el pago</li>
+                    <li>✅ Recibirás un email de confirmación</li>
+                    <li>✅ Puedes pagar con tarjeta o saldo PayPal</li>
+                </ul>
             </div>
         </main>
     </div>
     
     <script>
-        function selectPlan(slots, price) {
-            // Placeholder para integración PayPal
-            alert('Has seleccionado ' + slots + ' slot(s) por $' + price + ' USD\n\nPróximamente: Integración con PayPal');
-        }
+        const contextPath = '<%= request.getContextPath() %>';
+        
+        // Configuración de precios
+        const packages = {
+            1: { slots: 1, amount: 5.00 },
+            5: { slots: 5, amount: 20.00 },
+            10: { slots: 10, amount: 35.00 }
+        };
+        
+        // Crear botón PayPal para cada paquete
+        Object.keys(packages).forEach(key => {
+            const pkg = packages[key];
+            
+            paypal.Buttons({
+                style: {
+                    layout: 'vertical',
+                    color: 'gold',
+                    shape: 'rect',
+                    label: 'pay'
+                },
+                
+                createOrder: function(data, actions) {
+                    console.log('Creando orden para ' + pkg.slots + ' slots...');
+                    
+                    return fetch(contextPath + '/api/paypal/create-order', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            slots: pkg.slots,
+                            amount: pkg.amount
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(order => {
+                        console.log('Orden creada:', order.id);
+                        return order.id;
+                    });
+                },
+                
+                onApprove: function(data, actions) {
+                    console.log('Pago aprobado. Capturando...');
+                    
+                    return fetch(contextPath + '/api/paypal/capture-order', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            orderID: data.orderID,
+                            slots: pkg.slots
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        console.log('Pago capturado:', result);
+                        
+                        if (result.status === 'success') {
+                            alert('¡Pago exitoso! ' + pkg.slots + ' slot(s) agregado(s) a tu cuenta. ✅');
+                            window.location.href = contextPath + '/user/panel';
+                        } else {
+                            alert('Error al procesar el pago: ' + result.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error al procesar el pago. Por favor intenta de nuevo.');
+                    });
+                },
+                
+                onCancel: function(data) {
+                    console.log('Pago cancelado por el usuario');
+                    alert('Pago cancelado. Puedes intentar de nuevo cuando quieras.');
+                },
+                
+                onError: function(err) {
+                    console.error('Error en PayPal:', err);
+                    alert('Ocurrió un error con PayPal. Por favor intenta de nuevo.');
+                }
+                
+            }).render('#paypal-button-' + key);
+        });
     </script>
 </body>
 </html>

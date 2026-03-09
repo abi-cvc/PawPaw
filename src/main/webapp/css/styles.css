@@ -3097,6 +3097,43 @@ a {
     color: var(--color-1) !important;
 }
 
+/* ==================== ESTILOS PARA BOTONES PAYPAL ==================== */
+
+.paypal-button-container {
+    margin-top: 1.5rem;
+    min-height: 45px;
+}
+
+.payment-info {
+    background: white;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-top: 2rem;
+}
+
+.payment-info h3 {
+    color: var(--color-1);
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+}
+
+.payment-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.payment-info li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+    line-height: 1.6;
+}
+
+.payment-info li:last-child {
+    border-bottom: none;
+}
+
 /* ==================== CONSOLIDACIÓN DE RESPONSIVE ==================== */
 
 /* Tablet y pantallas medianas (máx 968px) */
