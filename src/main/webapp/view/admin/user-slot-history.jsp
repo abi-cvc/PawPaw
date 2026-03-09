@@ -4,8 +4,8 @@
 <%@ page import="java.util.List" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%
-    if (session == null || session.getAttribute("role") == null || 
-        !"admin".equals(session.getAttribute("role"))) {
+    if (session == null || session.getAttribute("userRole") == null || 
+        !"admin".equals(session.getAttribute("userRole"))) {
         response.sendRedirect(request.getContextPath() + "/login");
         return;
     }

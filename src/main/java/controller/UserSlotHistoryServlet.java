@@ -32,9 +32,9 @@ public class UserSlotHistoryServlet extends HttpServlet {
         
         HttpSession session = request.getSession(false);
         
-        // Verificar que es admin
-        if (session == null || session.getAttribute("role") == null || 
-            !"admin".equals(session.getAttribute("role"))) {
+        // Verificar que es admin - CORREGIDO: usar "userRole"
+        if (session == null || session.getAttribute("userRole") == null || 
+            !"admin".equals(session.getAttribute("userRole"))) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
