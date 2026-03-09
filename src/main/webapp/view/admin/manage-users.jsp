@@ -2,131 +2,80 @@
 <%@ page import="model.entity.User" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
-<%@ page import="java.text.SimpleDateFormat" %>
 <%
-    // Verificar sesión y rol
-    if (session == null || session.getAttribute("userId") == null) {
+    if (session == null || session.getAttribute("role") == null || 
+        !"admin".equals(session.getAttribute("role"))) {
         response.sendRedirect(request.getContextPath() + "/login");
         return;
     }
     
-    String userRole = (String) session.getAttribute("userRole");
-    if (!"admin".equalsIgnoreCase(userRole)) {
-        response.sendRedirect(request.getContextPath() + "/user/panel");
-        return;
-    }
-    
-    User user = (User) request.getAttribute("user");
-    String userName = user != null ? user.getNameUser() : (String) session.getAttribute("userName");
-    
-    // Mensajes
-    String successMessage = (String) request.getAttribute("successMessage");
-    String errorMessage = (String) request.getAttribute("errorMessage");
-    
-    // Usuarios y estadísticas
     @SuppressWarnings("unchecked")
     List<User> users = (List<User>) request.getAttribute("users");
-    
     @SuppressWarnings("unchecked")
-    Map<Integer, Integer> userPetCounts = (Map<Integer, Integer>) request.getAttribute("userPetCounts");
-    
-    @SuppressWarnings("unchecked")
-    Map<Integer, Integer> userQRCounts = (Map<Integer, Integer>) request.getAttribute("userQRCounts");
+    Map<Integer, Integer> petCounts = (Map<Integer, Integer>) request.getAttribute("petCounts");
     
     Integer totalUsers = (Integer) request.getAttribute("totalUsers");
-    Long activeUsers = (Long) request.getAttribute("activeUsers");
-    Long inactiveUsers = (Long) request.getAttribute("inactiveUsers");
+    Long normalUsers = (Long) request.getAttribute("normalUsers");
     Long adminUsers = (Long) request.getAttribute("adminUsers");
-    String currentFilter = (String) request.getAttribute("currentFilter");
+    Long partners = (Long) request.getAttribute("partners");
     
-    if (totalUsers == null) totalUsers = 0;
-    if (activeUsers == null) activeUsers = 0L;
-    if (inactiveUsers == null) inactiveUsers = 0L;
-    if (adminUsers == null) adminUsers = 0L;
+    String currentSearch = (String) request.getAttribute("currentSearch");
+    String currentRole = (String) request.getAttribute("currentRole");
     
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    String successMessage = (String) session.getAttribute("successMessage");
+    String errorMessage = (String) session.getAttribute("errorMessage");
+    session.removeAttribute("successMessage");
+    session.removeAttribute("errorMessage");
 %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestionar Usuarios - PawPaw</title>
+    <title>Gestión de Usuarios - PawPaw Admin</title>
     
     <link rel="icon" type="image/png" href="<%= request.getContextPath() %>/images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
-    
-    <style>
-        /* Dropdown elegante */
-        .custom-select {
-            transition: all 0.3s ease;
-        }
-        
-        .custom-select:hover {
-            border-color: var(--color-2) !important;
-            box-shadow: 0 2px 8px rgba(136, 74, 57, 0.15);
-        }
-        
-        .custom-select:focus {
-            outline: none;
-            border-color: var(--color-1) !important;
-            box-shadow: 0 0 0 3px rgba(136, 74, 57, 0.1);
-        }
-        
-        /* Opciones del select */
-        .custom-select option {
-            padding: 0.75rem;
-            font-size: 1rem;
-        }
-        
-        /* Animación suave */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-5px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .custom-select-wrapper {
-            animation: fadeIn 0.3s ease;
-        }
-    </style>
 </head>
 <body>
     <div class="dashboard">
-        
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <a href="<%= request.getContextPath() %>/view/index.jsp" class="sidebar-logo">
+                <a href="<%= request.getContextPath() %>/admin/panel" class="sidebar-logo">
                     <img src="<%= request.getContextPath() %>/images/logo.png" alt="PawPaw Logo">
-                    <span class="sidebar-logo-text">PawPaw</span>
+                    <span class="sidebar-logo-text">PawPaw Admin</span>
                 </a>
-            </div>
-            
-            <div class="sidebar-user">
-                <div class="user-info">
-                    <div class="user-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                        <%= userName != null ? userName.substring(0, 1).toUpperCase() : "A" %>
-                    </div>
-                    <div class="user-details">
-                        <h3><%= userName %></h3>
-                        <p>Administrador</p>
-                    </div>
-                </div>
             </div>
             
             <nav class="sidebar-nav">
                 <a href="<%= request.getContextPath() %>/admin/panel" class="nav-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                     </svg>
-                    Dashboard
+                    Panel
+                </a>
+                
+                <a href="<%= request.getContextPath() %>/admin/promotions" class="nav-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path>
+                    </svg>
+                    Promociones
+                </a>
+                
+                <a href="<%= request.getContextPath() %>/admin/payments" class="nav-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                    </svg>
+                    Pagos
+                </a>
+                
+                <a href="<%= request.getContextPath() %>/admin/foundations" class="nav-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                    Fundaciones
                 </a>
                 
                 <a href="<%= request.getContextPath() %>/admin/users" class="nav-item active">
@@ -134,13 +83,6 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                     </svg>
                     Usuarios
-                </a>
-                
-                <a href="<%= request.getContextPath() %>/admin/suggestions" class="nav-item">
-                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
-                    </svg>
-                    Sugerencias
                 </a>
                 
                 <div class="nav-divider"></div>
@@ -155,216 +97,330 @@
         </aside>
         
         <!-- Main Content -->
-        <div class="main-content">
-            <!-- Top Bar -->
-            <div class="topbar">
-                <div class="topbar-title">
-                    <h1>Gestionar Usuarios</h1>
+        <main class="main-content">
+            <div class="content-header">
+                <div>
+                    <h1 class="content-title">👥 Gestión de Usuarios</h1>
+                    <p class="content-subtitle">Administrar usuarios y sus límites de slots</p>
                 </div>
             </div>
             
-            <!-- Content -->
-            <div class="content">
-                
-                <% if (successMessage != null && !successMessage.isEmpty()) { %>
-                    <div class="mensaje mensaje-exito" style="margin-bottom: 1.5rem;">
-                        <%= successMessage %>
+            <!-- Mensajes -->
+            <% if (successMessage != null) { %>
+                <div class="alert alert-success">
+                    <%= successMessage %>
+                </div>
+            <% } %>
+            
+            <% if (errorMessage != null) { %>
+                <div class="alert alert-error">
+                    <%= errorMessage %>
+                </div>
+            <% } %>
+            
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, var(--color-2), var(--color-1));">
+                        👥
                     </div>
-                <% } %>
-                
-                <% if (errorMessage != null && !errorMessage.isEmpty()) { %>
-                    <div class="mensaje mensaje-error" style="margin-bottom: 1.5rem;">
-                        <%= errorMessage %>
-                    </div>
-                <% } %>
-                
-                <!-- Estadísticas -->
-                <div class="stats-grid" style="margin-bottom: 2rem;">
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">👥</div>
-                        <div class="stat-info">
-                            <h3>Total Usuarios</h3>
-                            <p><%= totalUsers %></p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">✅</div>
-                        <div class="stat-info">
-                            <h3>Activos</h3>
-                            <p><%= activeUsers %></p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">❌</div>
-                        <div class="stat-info">
-                            <h3>Inactivos</h3>
-                            <p><%= inactiveUsers %></p>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">👑</div>
-                        <div class="stat-info">
-                            <h3>Administradores</h3>
-                            <p><%= adminUsers %></p>
-                        </div>
+                    <div class="stat-info">
+                        <h3>Total Usuarios</h3>
+                        <p><%= totalUsers != null ? totalUsers : 0 %></p>
                     </div>
                 </div>
                 
-                <!-- Filtro Dropdown -->
-                <div style="margin-bottom: 2rem; display: flex; align-items: center; gap: 1rem;">
-                    <label for="userFilter" style="font-weight: 600; color: var(--color-2); font-size: 1rem;">
-                        Filtrar por:
-                    </label>
-                    <div class="custom-select-wrapper" style="position: relative; min-width: 250px;">
-                        <select id="userFilter" class="custom-select" onchange="window.location.href='<%= request.getContextPath() %>/admin/users?filter=' + this.value" 
-                                style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #e0e0e0; border-radius: var(--radio-md); background: white; font-size: 1rem; cursor: pointer; appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill=\"%23884A39\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7 10l5 5 5-5z\"/></svg>'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.5rem; transition: all 0.3s ease;">
-                            <option value="" <%= currentFilter == null || currentFilter.isEmpty() ? "selected" : "" %>>
-                                ✓ Todos (<%= totalUsers %>)
-                            </option>
-                            <option value="active" <%= "active".equals(currentFilter) ? "selected" : "" %>>
-                                ✅ Activos (<%= activeUsers %>)
-                            </option>
-                            <option value="inactive" <%= "inactive".equals(currentFilter) ? "selected" : "" %>>
-                                ❌ Inactivos (<%= inactiveUsers %>)
-                            </option>
-                            <option value="admin" <%= "admin".equals(currentFilter) ? "selected" : "" %>>
-                                👑 Administradores (<%= adminUsers %>)
-                            </option>
-                            <option value="user" <%= "user".equals(currentFilter) ? "selected" : "" %>>
-                                👤 Usuarios (<%= totalUsers - adminUsers.intValue() %>)
-                            </option>
-                        </select>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #4CAF50, #388E3C);">
+                        👤
+                    </div>
+                    <div class="stat-info">
+                        <h3>Usuarios Normales</h3>
+                        <p><%= normalUsers != null ? normalUsers : 0 %></p>
                     </div>
                 </div>
                 
-                <!-- Tabla de Usuarios -->
-                <% if (users != null && !users.isEmpty()) { %>
-                    <div style="background: white; border-radius: var(--radio-lg); box-shadow: var(--sombra-sm); overflow: hidden;">
-                        <div style="overflow-x: auto;">
-                            <table style="width: 100%; border-collapse: collapse;">
-                                <thead style="background: linear-gradient(135deg, var(--color-2) 0%, var(--color-1) 100%); color: white;">
-                                    <tr>
-                                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Usuario</th>
-                                        <th style="padding: 1rem; text-align: left; font-weight: 600;">Email</th>
-                                        <th style="padding: 1rem; text-align: center; font-weight: 600;">Rol</th>
-                                        <th style="padding: 1rem; text-align: center; font-weight: 600;">Estado</th>
-                                        <th style="padding: 1rem; text-align: center; font-weight: 600;">Mascotas</th>
-                                        <th style="padding: 1rem; text-align: center; font-weight: 600;">QR Activos</th>
-                                        <th style="padding: 1rem; text-align: center; font-weight: 600;">Registro</th>
-                                        <th style="padding: 1rem; text-align: center; font-weight: 600;">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% for (User u : users) { 
-                                        int petCount = userPetCounts.get(u.getIdUser()) != null ? userPetCounts.get(u.getIdUser()) : 0;
-                                        int qrCount = userQRCounts.get(u.getIdUser()) != null ? userQRCounts.get(u.getIdUser()) : 0;
-                                    %>
-                                        <tr style="border-bottom: 1px solid #e0e0e0;">
-                                            <td style="padding: 1rem;">
-                                                <div style="display: flex; align-items: center; gap: 0.75rem;">
-                                                    <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--color-3); display: flex; align-items: center; justify-content: center; font-weight: 600; color: var(--color-1);">
-                                                        <%= u.getNameUser() != null ? u.getNameUser().substring(0, 1).toUpperCase() : "?" %>
-                                                    </div>
-                                                    <div>
-                                                        <div style="font-weight: 600; color: var(--color-1);"><%= u.getNameUser() %></div>
-                                                        <div style="font-size: 0.85rem; color: #999;">ID: <%= u.getIdUser() %></div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td style="padding: 1rem; color: #666;">
-                                                <%= u.getEmail() %>
-                                            </td>
-                                            <td style="padding: 1rem; text-align: center;">
-                                                <% if ("admin".equalsIgnoreCase(u.getRol())) { %>
-                                                    <span style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 0.25rem 0.75rem; border-radius: var(--radio-full); font-size: 0.85rem; font-weight: 600;">
-                                                        👑 Admin
-                                                    </span>
-                                                <% } else { %>
-                                                    <span style="background: #e3f2fd; color: #1976d2; padding: 0.25rem 0.75rem; border-radius: var(--radio-full); font-size: 0.85rem; font-weight: 600;">
-                                                        👤 Usuario
-                                                    </span>
-                                                <% } %>
-                                            </td>
-                                            <td style="padding: 1rem; text-align: center;">
-                                                <% if (u.getActive()) { %>
-                                                    <span style="background: #d4edda; color: #155724; padding: 0.25rem 0.75rem; border-radius: var(--radio-full); font-size: 0.85rem; font-weight: 600;">
-                                                        ✅ Activo
-                                                    </span>
-                                                <% } else { %>
-                                                    <span style="background: #f8d7da; color: #721c24; padding: 0.25rem 0.75rem; border-radius: var(--radio-full); font-size: 0.85rem; font-weight: 600;">
-                                                        ❌ Inactivo
-                                                    </span>
-                                                <% } %>
-                                            </td>
-                                            <td style="padding: 1rem; text-align: center; font-weight: 600; color: var(--color-2);">
-                                                <%= petCount %>
-                                            </td>
-                                            <td style="padding: 1rem; text-align: center; font-weight: 600; color: var(--color-2);">
-                                                <%= qrCount %>
-                                            </td>
-                                            <td style="padding: 1rem; text-align: center; color: #999; font-size: 0.9rem;">
-                                                <%= u.getRegistrationDate() != null ? dateFormat.format(u.getRegistrationDate()) : "-" %>
-                                            </td>
-                                            <td style="padding: 1rem; text-align: center;">
-                                                <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
-                                                    <!-- Botón Activar/Desactivar -->
-                                                    <form method="post" action="<%= request.getContextPath() %>/admin/users" style="display: inline;">
-                                                        <input type="hidden" name="action" value="toggleStatus">
-                                                        <input type="hidden" name="userId" value="<%= u.getIdUser() %>">
-                                                        <button type="submit" 
-                                                                style="padding: 0.5rem 1rem; border: none; border-radius: var(--radio-sm); font-weight: 600; cursor: pointer; font-size: 0.85rem; transition: var(--transicion); <%= u.getActive() ? "background: #ff9800; color: white;" : "background: #4caf50; color: white;" %>"
-                                                                onmouseover="this.style.opacity='0.8'"
-                                                                onmouseout="this.style.opacity='1'"
-                                                                onclick="return confirm('<%= u.getActive() ? "¿Desactivar este usuario?" : "¿Activar este usuario?" %>')">
-                                                            <%= u.getActive() ? "Desactivar" : "Activar" %>
-                                                        </button>
-                                                    </form>
-                                                    
-                                                    <!-- Botón Eliminar (solo si no tiene mascotas) -->
-                                                    <% if (petCount == 0) { %>
-                                                        <form method="post" action="<%= request.getContextPath() %>/admin/users" style="display: inline;">
-                                                            <input type="hidden" name="action" value="delete">
-                                                            <input type="hidden" name="userId" value="<%= u.getIdUser() %>">
-                                                            <button type="submit" 
-                                                                    style="padding: 0.5rem 1rem; border: none; border-radius: var(--radio-sm); background: #f44336; color: white; font-weight: 600; cursor: pointer; font-size: 0.85rem; transition: var(--transicion);"
-                                                                    onmouseover="this.style.opacity='0.8'"
-                                                                    onmouseout="this.style.opacity='1'"
-                                                                    onclick="return confirm('⚠️ ADVERTENCIA: Esta acción es IRREVERSIBLE.\\n\\n¿Estás seguro de eliminar permanentemente a <%= u.getNameUser() %>?')">
-                                                                🗑️ Eliminar
-                                                            </button>
-                                                        </form>
-                                                    <% } else { %>
-                                                        <button disabled 
-                                                                style="padding: 0.5rem 1rem; border: none; border-radius: var(--radio-sm); background: #ccc; color: #666; font-weight: 600; cursor: not-allowed; font-size: 0.85rem;"
-                                                                title="No se puede eliminar porque tiene <%= petCount %> mascota(s)">
-                                                            🔒 Bloqueado
-                                                        </button>
-                                                    <% } %>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    <% } %>
-                                </tbody>
-                            </table>
-                        </div>
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #2196F3, #1976D2);">
+                        🛡️
                     </div>
-                <% } else { %>
-                    <div class="empty-state">
-                        <div style="font-size: 4rem; margin-bottom: 1rem;">👥</div>
-                        <h3 style="margin: 0 0 0.5rem 0; color: var(--color-2);">No hay usuarios</h3>
-                        <p style="color: #999; margin: 0;">
-                            <%= currentFilter != null && !currentFilter.isEmpty() 
-                                ? "No hay usuarios con el filtro '" + currentFilter + "'" 
-                                : "No hay usuarios registrados en el sistema" %>
-                        </p>
+                    <div class="stat-info">
+                        <h3>Administradores</h3>
+                        <p><%= adminUsers != null ? adminUsers : 0 %></p>
                     </div>
-                <% } %>
+                </div>
                 
+                <div class="stat-card">
+                    <div class="stat-icon" style="background: linear-gradient(135deg, #FF9800, #F57C00);">
+                        🤝
+                    </div>
+                    <div class="stat-info">
+                        <h3>Partners/Fundaciones</h3>
+                        <p><%= partners != null ? partners : 0 %></p>
+                    </div>
+                </div>
             </div>
-        </div>
-        
+            
+            <!-- Filtros -->
+            <div class="filter-section">
+                <form method="get" action="<%= request.getContextPath() %>/admin/users" style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 250px;">
+                        <input type="text" 
+                               name="search" 
+                               class="form-input" 
+                               placeholder="Buscar por nombre o email..."
+                               value="<%= currentSearch != null ? currentSearch : "" %>">
+                    </div>
+                    
+                    <select name="role" class="filter-select">
+                        <option value="all" <%= currentRole == null || "all".equals(currentRole) ? "selected" : "" %>>Todos los roles</option>
+                        <option value="user" <%= "user".equals(currentRole) ? "selected" : "" %>>Usuarios</option>
+                        <option value="admin" <%= "admin".equals(currentRole) ? "selected" : "" %>>Administradores</option>
+                    </select>
+                    
+                    <button type="submit" class="btn btn-primario">
+                        🔍 Buscar
+                    </button>
+                    
+                    <a href="<%= request.getContextPath() %>/admin/users" class="btn btn-secundario">
+                        ↻ Limpiar
+                    </a>
+                </form>
+            </div>
+            
+            <!-- Tabla de Usuarios -->
+            <div class="table-container">
+                <% if (users != null && !users.isEmpty()) { %>
+                <table class="data-table users-table">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Email</th>
+                            <th>Rol</th>
+                            <th>Límite Slots</th>
+                            <th>Mascotas</th>
+                            <th>Partner</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% for (User user : users) { 
+                            Integer petCount = petCounts.get(user.getIdUser());
+                            if (petCount == null) petCount = 0;
+                            Integer limit = user.getPetLimit() != null ? user.getPetLimit() : 2;
+                        %>
+                        <tr>
+                            <td>
+                                <div class="user-cell">
+                                    <div class="admin-avatar">
+                                        <%= user.getNameUser().substring(0, 1).toUpperCase() %>
+                                    </div>
+                                    <strong><%= user.getNameUser() %></strong>
+                                </div>
+                            </td>
+                            <td><%= user.getEmail() %></td>
+                            <td>
+                                <% if ("admin".equals(user.getRol())) { %>
+                                <span class="user-role admin">Admin</span>
+                                <% } else { %>
+                                <span class="user-role user">Usuario</span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <span class="slots-display <%= petCount >= limit ? "slots-full" : "" %>">
+                                    <%= petCount %>/<%= limit %>
+                                </span>
+                            </td>
+                            <td><%= petCount %></td>
+                            <td>
+                                <% if (user.getIsPartner() != null && user.getIsPartner()) { %>
+                                <span class="status-badge status-active">✓ Partner</span>
+                                <% } else { %>
+                                <span class="status-badge status-inactive">No</span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-icon btn-primario" 
+                                            onclick="openAdjustModal(<%= user.getIdUser() %>, '<%= user.getNameUser() %>', <%= limit %>, <%= petCount %>)"
+                                            title="Ajustar slots">
+                                        ⚙️
+                                    </button>
+                                    <a href="<%= request.getContextPath() %>/admin/users/<%= user.getIdUser() %>/slot-history" 
+                                       class="btn btn-icon btn-secundario"
+                                       title="Ver historial">
+                                        📜
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                        <% } %>
+                    </tbody>
+                </table>
+                <% } else { %>
+                <div class="empty-state">
+                    <div class="empty-icon">👥</div>
+                    <h3>No se encontraron usuarios</h3>
+                    <p>Intenta ajustar los filtros de búsqueda.</p>
+                </div>
+                <% } %>
+            </div>
+        </main>
     </div>
     
-    <script src="<%= request.getContextPath() %>/js/main.js"></script>
+    <!-- Modal de Ajuste de Slots -->
+    <div class="modal-overlay" id="adjustSlotsModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="modalTitle">Ajustar Slots</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <form method="post" action="<%= request.getContextPath() %>/admin/adjust-slots" onsubmit="return validateForm()">
+                <div class="modal-body">
+                    <input type="hidden" name="userId" id="modalUserId">
+                    
+                    <div class="modal-info-card">
+                        <div class="info-row">
+                            <span class="info-label">Límite actual:</span>
+                            <span class="info-value" id="modalCurrentLimit">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Mascotas registradas:</span>
+                            <span class="info-value" id="modalPetCount">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="newLimit" class="form-label">Nuevo límite *</label>
+                        <input type="number" 
+                               id="newLimit" 
+                               name="newLimit" 
+                               class="form-input" 
+                               required
+                               min="0"
+                               max="100"
+                               onchange="validateLimit()">
+                        <div class="form-hint" id="limitHint"></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="reason" class="form-label">Razón del ajuste * (mínimo 10 caracteres)</label>
+                        <textarea id="reason" 
+                                  name="reason" 
+                                  class="form-textarea" 
+                                  rows="4" 
+                                  required
+                                  minlength="10"
+                                  maxlength="500"
+                                  placeholder="Ej: Fundación aprobada, ajuste por error, compra adicional..."
+                                  oninput="updateCharCount()"></textarea>
+                        <div class="form-hint" id="charCount">0/500 caracteres</div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secundario" onclick="closeModal()">
+                        Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-primario" id="submitBtn">
+                        Guardar cambios
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        let currentPetCount = 0;
+        
+        function openAdjustModal(userId, userName, currentLimit, petCount) {
+            currentPetCount = petCount;
+            
+            document.getElementById('modalUserId').value = userId;
+            document.getElementById('modalTitle').textContent = 'Ajustar Slots - ' + userName;
+            document.getElementById('modalCurrentLimit').textContent = currentLimit;
+            document.getElementById('modalPetCount').textContent = petCount;
+            document.getElementById('newLimit').value = currentLimit;
+            document.getElementById('newLimit').min = petCount;
+            document.getElementById('reason').value = '';
+            document.getElementById('charCount').textContent = '0/500 caracteres';
+            document.getElementById('limitHint').textContent = '';
+            
+            document.getElementById('adjustSlotsModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeModal() {
+            document.getElementById('adjustSlotsModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        function validateLimit() {
+            const newLimit = parseInt(document.getElementById('newLimit').value);
+            const hint = document.getElementById('limitHint');
+            
+            if (isNaN(newLimit)) return;
+            
+            if (newLimit < currentPetCount) {
+                hint.textContent = '⚠️ No puedes bajar el límite por debajo de ' + currentPetCount + ' (mascotas registradas)';
+                hint.style.color = '#dc3545';
+                return false;
+            } else if (newLimit > 100) {
+                hint.textContent = '⚠️ El límite máximo es 100 slots';
+                hint.style.color = '#dc3545';
+                return false;
+            } else {
+                hint.textContent = '✓ Límite válido';
+                hint.style.color = '#28a745';
+                return true;
+            }
+        }
+        
+        function updateCharCount() {
+            const reason = document.getElementById('reason').value;
+            const count = document.getElementById('charCount');
+            count.textContent = reason.length + '/500 caracteres';
+            
+            if (reason.length < 10) {
+                count.style.color = '#dc3545';
+            } else {
+                count.style.color = '#28a745';
+            }
+        }
+        
+        function validateForm() {
+            const reason = document.getElementById('reason').value;
+            
+            if (reason.trim().length < 10) {
+                alert('La razón debe tener al menos 10 caracteres');
+                return false;
+            }
+            
+            if (!validateLimit()) {
+                alert('El nuevo límite no es válido');
+                return false;
+            }
+            
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('submitBtn').textContent = 'Guardando...';
+            
+            return true;
+        }
+        
+        // Cerrar modal con ESC
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+        
+        // Cerrar modal al hacer click fuera
+        document.getElementById('adjustSlotsModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+    </script>
 </body>
 </html>
