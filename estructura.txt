@@ -534,6 +534,7 @@ C:.
 |   |   |   |   |       PaymentRequestDAO.java
 |   |   |   |   |       PetContactMessageDAO.java
 |   |   |   |   |       PetDAO.java
+|   |   |   |   |       PetTransferRequestDAO.java
 |   |   |   |   |       PromotionDAO.java
 |   |   |   |   |       QRCodeDAO.java
 |   |   |   |   |       SlotAdjustmentDAO.java
@@ -547,6 +548,7 @@ C:.
 |   |   |   |           PaymentRequest.java
 |   |   |   |           Pet.java
 |   |   |   |           PetContactMessage.java
+|   |   |   |           PetTransferRequest.java
 |   |   |   |           Promotion.java
 |   |   |   |           QRcode.java
 |   |   |   |           SlotAdjustment.java
@@ -575,6 +577,7 @@ C:.
 |   |       |   |   
 |   |       |   +---admin
 |   |       |   |       admin-panel.jsp
+|   |       |   |       manage-foundations.jsp
 |   |       |   |       manage-payments.jsp
 |   |       |   |       manage-promotions.jsp
 |   |       |   |       manage-suggestions.jsp
@@ -938,6 +941,7 @@ C:.
     |   |   |       PaymentRequestDAO.class
     |   |   |       PetContactMessageDAO.class
     |   |   |       PetDAO.class
+    |   |   |       PetTransferRequestDAO.class
     |   |   |       PromotionDAO.class
     |   |   |       QRCodeDAO.class
     |   |   |       SlotAdjustmentDAO.class
@@ -951,6 +955,7 @@ C:.
     |   |           PaymentRequest.class
     |   |           Pet.class
     |   |           PetContactMessage.class
+    |   |           PetTransferRequest.class
     |   |           Promotion.class
     |   |           QRcode.class
     |   |           SlotAdjustment.class

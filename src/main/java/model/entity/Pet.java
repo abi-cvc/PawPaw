@@ -20,6 +20,7 @@ public class Pet {
     private String statusPet;
     private Timestamp creationDate;
     private String extraComments;
+    private String adoptionStatus; // owned, available, adopted_pending, adopted_transferred
     
     // Constructores
     
@@ -41,6 +42,7 @@ public class Pet {
         this.sexPet = sexPet;
         this.contactPhone = contactPhone;
         this.statusPet = "active"; // Estado por defecto
+        this.adoptionStatus = "owned";
     }
     
     /**
@@ -161,6 +163,14 @@ public class Pet {
         this.extraComments = extraComments;
     }
     
+    public String getAdoptionStatus() {
+        return adoptionStatus;
+    }
+
+    public void setAdoptionStatus(String adoptionStatus) {
+        this.adoptionStatus = adoptionStatus;
+    }
+    
     // Métodos útiles
     
     public boolean isActive() {
@@ -182,5 +192,75 @@ public class Pet {
                 ", statusPet='" + statusPet + '\'' +
                 ", creationDate=" + creationDate +
                 '}';
+    }
+    
+ // ✅ MÉTODOS ÚTILES para adopciones
+
+    /**
+     * Verifica si la mascota está disponible para adopción
+     */
+    public boolean isAvailableForAdoption() {
+        return "available".equalsIgnoreCase(adoptionStatus);
+    }
+
+    /**
+     * Verifica si la mascota fue adoptada
+     */
+    public boolean isAdopted() {
+        return adoptionStatus != null && adoptionStatus.toLowerCase().startsWith("adopted");
+    }
+
+    /**
+     * Verifica si la transferencia está pendiente
+     */
+    public boolean isAdoptionPending() {
+        return "adopted_pending".equalsIgnoreCase(adoptionStatus);
+    }
+
+    /**
+     * Verifica si la transferencia fue completada
+     */
+    public boolean isAdoptionTransferred() {
+        return "adopted_transferred".equalsIgnoreCase(adoptionStatus);
+    }
+
+    /**
+     * Obtiene el texto del estado de adopción en español
+     */
+    public String getAdoptionStatusText() {
+        if (adoptionStatus == null || "owned".equalsIgnoreCase(adoptionStatus)) {
+            return "Propia";
+        }
+        
+        switch (adoptionStatus.toLowerCase()) {
+            case "available":
+                return "🏠 En Adopción";
+            case "adopted_pending":
+                return "🔄 Adoptado (Pendiente)";
+            case "adopted_transferred":
+                return "✅ Adoptado (Transferido)";
+            default:
+                return adoptionStatus;
+        }
+    }
+
+    /**
+     * Obtiene la clase CSS del badge según estado
+     */
+    public String getAdoptionStatusClass() {
+        if (adoptionStatus == null || "owned".equalsIgnoreCase(adoptionStatus)) {
+            return "adoption-owned";
+        }
+        
+        switch (adoptionStatus.toLowerCase()) {
+            case "available":
+                return "adoption-available";
+            case "adopted_pending":
+                return "adoption-pending";
+            case "adopted_transferred":
+                return "adoption-transferred";
+            default:
+                return "";
+        }
     }
 }
