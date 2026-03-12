@@ -4487,6 +4487,924 @@ a.foundation-contact-link:hover {
     font-size: 0.875rem;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   NAVBAR — enlace central de navegación
+   ───────────────────────────────────────────────────────────── */
+.navbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+ 
+.navbar-nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radio-md);
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--color-1);
+    transition: var(--transicion);
+}
+ 
+.navbar-nav-link:hover {
+    background: var(--color-4);
+    color: var(--color-1);
+}
+ 
+/* Hacer visible en mobile (el navbar existente ya tiene su responsive) */
+@media (max-width: 640px) {
+    .navbar-nav {
+        display: none; /* se accede por footer o sección hero */
+    }
+}
+ 
+ 
+/* ─────────────────────────────────────────────────────────────
+   HERO — imagen de placas lado derecho
+   ───────────────────────────────────────────────────────────── */
+.hero-placas-img {
+    width: 100%;
+    max-width: 480px;
+    height: auto;
+    border-radius: var(--radio-xl);
+    box-shadow: var(--sombra-lg);
+    object-fit: cover;
+    transition: var(--transicion);
+}
+ 
+.hero-placas-img:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 60px rgba(136, 74, 57, 0.2);
+}
+ 
+/* En mobile el hero ya colapsa a 1 columna, la imagen queda debajo */
+@media (max-width: 768px) {
+    .hero-placas-img {
+        max-width: 100%;
+        border-radius: var(--radio-lg);
+    }
+}
+ 
+/* CTA final con dos botones */
+.cta-botones {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+ 
+ 
+/* ─────────────────────────────────────────────────────────────
+   FUNDACIONES — Hero de la lista pública
+   ───────────────────────────────────────────────────────────── */
+.foundations-hero {
+    background: linear-gradient(135deg, var(--color-5) 0%, var(--color-4) 100%);
+    padding: 60px 0 40px;
+    text-align: center;
+}
+ 
+.foundations-hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    margin-top: 28px;
+}
+ 
+.foundations-hero-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+ 
+.foundations-hero-stat-number {
+    font-family: var(--fuente-titulos);
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: var(--color-2);
+    line-height: 1;
+}
+ 
+.foundations-hero-stat-label {
+    font-size: 0.85rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+ 
+ 
+/* ─────────────────────────────────────────────────────────────
+   FUNDACIONES — Grid de tarjetas
+   ───────────────────────────────────────────────────────────── */
+.foundations-section {
+    padding: 48px 0 64px;
+    background: var(--color-5);
+}
+ 
+.foundations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 32px;
+}
+ 
+.foundation-card {
+    background: #fff;
+    border-radius: var(--radio-lg);
+    padding: 24px;
+    border: 1px solid rgba(195, 129, 84, 0.2);
+    box-shadow: var(--sombra-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: var(--transicion);
+}
+ 
+.foundation-card:hover {
+    box-shadow: var(--sombra-md);
+    transform: translateY(-3px);
+    border-color: var(--color-3);
+}
+ 
+.foundation-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+ 
+.foundation-avatar {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--color-2), var(--color-1));
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--fuente-titulos);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+}
+ 
+.foundation-card-info {
+    flex: 1;
+    min-width: 0;
+}
+ 
+.foundation-card-name {
+    font-family: var(--fuente-titulos);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--color-1);
+    margin: 0 0 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+ 
+.foundation-card-desc {
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.5;
+    margin: 0;
+}
+ 
+.foundation-card-stats {
+    display: flex;
+    gap: 12px;
+}
+ 
+.foundation-stat {
+    flex: 1;
+    text-align: center;
+    padding: 12px 8px;
+    border-radius: var(--radio-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+ 
+.foundation-stat-available {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+}
+ 
+.foundation-stat-adopted {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+}
+ 
+.foundation-stat-num {
+    font-family: var(--fuente-titulos);
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+ 
+.foundation-stat-available .foundation-stat-num { color: #16a34a; }
+.foundation-stat-adopted   .foundation-stat-num { color: #2563eb; }
+ 
+.foundation-stat-lbl {
+    font-size: 0.72rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #666;
+}
+ 
+.foundation-card-contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+ 
+.foundation-contact-item {
+    font-size: 0.82rem;
+    color: #555;
+    background: var(--color-5);
+    padding: 4px 10px;
+    border-radius: var(--radio-full);
+    text-decoration: none;
+    transition: var(--transicion);
+}
+ 
+a.foundation-contact-link:hover {
+    background: var(--color-4);
+    color: var(--color-1);
+}
+ 
+.foundation-card-actions {
+    margin-top: auto;
+}
+ 
+.foundations-cta {
+    text-align: center;
+    margin-top: 48px;
+    padding: 32px;
+    background: #fff;
+    border-radius: var(--radio-lg);
+    border: 2px dashed var(--color-4);
+}
+ 
+.foundations-cta p {
+    color: #666;
+    margin-bottom: 16px;
+}
+ 
+ 
+/* ─────────────────────────────────────────────────────────────
+   FUNDACIONES — Perfil individual
+   ───────────────────────────────────────────────────────────── */
+.foundation-profile-hero {
+    background: linear-gradient(135deg, var(--color-5) 0%, var(--color-4) 100%);
+    padding: 40px 0 48px;
+}
+ 
+.foundation-back-link {
+    display: inline-block;
+    font-size: 0.88rem;
+    color: var(--color-2);
+    text-decoration: none;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+ 
+.foundation-back-link:hover { text-decoration: underline; }
+ 
+.foundation-profile-header {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+ 
+.foundation-profile-avatar {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, var(--color-2), var(--color-1));
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--fuente-titulos);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+}
+ 
+.foundation-profile-meta { flex: 1; min-width: 200px; }
+ 
+.foundation-profile-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+ 
+.foundation-profile-name {
+    font-family: var(--fuente-titulos);
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--color-1);
+    margin: 0;
+}
+ 
+.foundation-profile-desc {
+    color: #555;
+    line-height: 1.6;
+    margin: 8px 0 12px;
+}
+ 
+.foundation-profile-contacts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+ 
+.foundation-profile-stats {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    flex-shrink: 0;
+}
+ 
+.foundation-profile-stats .foundation-stat { min-width: 90px; }
+ 
+ 
+/* ─────────────────────────────────────────────────────────────
+   ADOPCIÓN — Sección y grid de mascotas
+   ───────────────────────────────────────────────────────────── */
+.adoption-section {
+    padding: 48px 0;
+    background: #fff;
+}
+ 
+.adoption-section-adopted { background: var(--color-5); }
+ 
+.adoption-section-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+ 
+.adoption-empty {
+    text-align: center;
+    padding: 48px;
+    color: #888;
+    background: var(--color-5);
+    border-radius: var(--radio-md);
+    border: 2px dashed var(--color-4);
+}
+ 
+.adoption-pets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+ 
+.adoption-pets-grid-adopted { opacity: 0.82; }
+ 
+.adoption-pet-card {
+    background: #fff;
+    border-radius: var(--radio-md);
+    border: 1px solid rgba(195, 129, 84, 0.2);
+    overflow: hidden;
+    box-shadow: var(--sombra-sm);
+    transition: var(--transicion);
+    display: flex;
+    flex-direction: column;
+}
+ 
+.adoption-pet-card:hover {
+    box-shadow: var(--sombra-md);
+    transform: translateY(-2px);
+}
+ 
+.adoption-pet-card-adopted { filter: grayscale(0.2); }
+ 
+.adoption-pet-photo {
+    position: relative;
+    height: 180px;
+    background: var(--color-4);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+ 
+.adoption-pet-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+ 
+.adoption-pet-photo .pet-photo-placeholder { font-size: 3rem; }
+ 
+/* Badges de estado de adopción */
+.adoption-status-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 10px;
+    border-radius: var(--radio-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+ 
+.adoption-available,
+.adoption-status-badge.adoption-available {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86efac;
+}
+ 
+.adoption-pending,
+.adoption-adopted-pending,
+.adoption-status-badge.adoption-pending {
+    background: var(--color-4);
+    color: var(--color-1);
+    border: 1px solid var(--color-3);
+}
+ 
+.adoption-transferred,
+.adoption-adopted-transferred,
+.adoption-status-badge.adoption-transferred {
+    background: #dbeafe;
+    color: #1d4ed8;
+    border: 1px solid #93c5fd;
+}
+ 
+.adoption-owned,
+.adoption-status-badge.adoption-owned {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+ 
+.adoption-pet-info {
+    padding: 16px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+ 
+.adoption-pet-name {
+    font-family: var(--fuente-titulos);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--color-1);
+    margin: 0;
+}
+ 
+.adoption-pet-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+ 
+.adoption-pet-tag {
+    font-size: 0.78rem;
+    background: var(--color-5);
+    color: #555;
+    padding: 3px 10px;
+    border-radius: var(--radio-full);
+    font-weight: 500;
+}
+ 
+.adoption-pet-desc {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.5;
+    margin: 0;
+}
+ 
+.adoption-pet-actions {
+    padding: 12px 16px;
+    border-top: 1px solid var(--color-5);
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+ 
+ 
+/* ─────────────────────────────────────────────────────────────
+   PARTNER BANNER (foundation-pets.jsp)
+   ───────────────────────────────────────────────────────────── */
+.partner-banner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(135deg, var(--color-5), var(--color-4));
+    border: 1px solid var(--color-3);
+    border-radius: var(--radio-md);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+ 
+.partner-banner-icon { font-size: 1.8rem; flex-shrink: 0; }
+ 
+.partner-banner-text {
+    flex: 1;
+    font-size: 0.9rem;
+    color: var(--color-1);
+    min-width: 200px;
+}
+ 
+.partner-banner-text strong { color: var(--color-2); }
+ 
+ 
+/* ─────────────────────────────────────────────────────────────
+   ADOPCIÓN en foundation-pets.jsp
+   ───────────────────────────────────────────────────────────── */
+.adoption-status-row { margin-top: 8px; }
+ 
+.adoption-status-row .adoption-status-badge {
+    position: static;
+    display: inline-block;
+    font-size: 0.78rem;
+    padding: 4px 10px;
+    border-radius: var(--radio-full);
+    font-weight: 600;
+}
+ 
+.partner-actions {
+    padding: 12px 16px;
+    border-top: 2px dashed var(--color-4);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--color-5);
+}
+ 
+.partner-status-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+ 
+.partner-status-form .form-select-sm {
+    flex: 1;
+    font-size: 0.82rem;
+    padding: 6px 10px;
+    border-radius: var(--radio-sm);
+    border: 1px solid #ddd;
+    font-family: var(--fuente-texto);
+}
+ 
+.adoption-pending-notice {
+    font-size: 0.82rem;
+    padding: 8px 12px;
+    border-radius: var(--radio-sm);
+    margin: 0;
+}
+ 
+.form-hint {
+    font-size: 0.78rem;
+    color: #888;
+    margin-top: 4px;
+    display: block;
+}
+ 
+.form-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+ 
+ 
+/* ─────────────────────────────────────────────────────────────
+   MODAL DE TRANSFERENCIA
+   ───────────────────────────────────────────────────────────── */
+.transfer-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 9000;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+ 
+.transfer-modal.transfer-modal-open { display: flex; }
+ 
+.transfer-modal-content {
+    background: #fff;
+    border-radius: var(--radio-xl);
+    padding: 32px;
+    max-width: 480px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: var(--sombra-lg);
+    animation: modalSlideIn 0.2s ease;
+}
+ 
+@keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+ 
+.transfer-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+ 
+.transfer-modal-header h2 {
+    font-family: var(--fuente-titulos);
+    font-size: 1.3rem;
+    margin: 0;
+    color: var(--color-1);
+}
+ 
+.transfer-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    color: #888;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: var(--radio-sm);
+    transition: var(--transicion);
+}
+ 
+.transfer-modal-close:hover { background: var(--color-5); color: #333; }
+ 
+.transfer-modal-subtitle {
+    font-size: 0.88rem;
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+ 
+.transfer-modal-pet-name {
+    background: var(--color-5);
+    border: 1px solid var(--color-3);
+    border-radius: var(--radio-sm);
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    color: var(--color-1);
+    margin-bottom: 16px;
+}
+ 
+.transfer-modal-form .form-group { margin-bottom: 16px; }
+ 
+.transfer-modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+ 
+ 
+/* ─────────────────────────────────────────────────────────────
+   PÁGINAS DE TRANSFERENCIA (accept, completed, error, expired)
+   ───────────────────────────────────────────────────────────── */
+.transfer-body {
+    background: linear-gradient(135deg, var(--color-5) 0%, var(--color-4) 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+}
+ 
+.transfer-page {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+ 
+.transfer-logo { display: flex; align-items: center; }
+ 
+.transfer-logo a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+ 
+.transfer-logo-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+ 
+.transfer-logo-text {
+    font-family: var(--fuente-titulos);
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-1);
+}
+ 
+.transfer-card {
+    background: #fff;
+    border-radius: var(--radio-xl);
+    padding: 36px 32px;
+    width: 100%;
+    box-shadow: var(--sombra-lg);
+    border: 1px solid var(--color-4);
+}
+ 
+.transfer-card-success { border-color: #bbf7d0; }
+.transfer-card-error   { border-color: #fecaca; }
+ 
+.transfer-header { text-align: center; margin-bottom: 24px; }
+ 
+.transfer-icon { font-size: 3rem; margin-bottom: 12px; }
+ 
+.transfer-success-icon,
+.transfer-error-icon {
+    font-size: 3.5rem;
+    text-align: center;
+    margin-bottom: 16px;
+}
+ 
+.transfer-title {
+    font-family: var(--fuente-titulos);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--color-1);
+    margin: 0 0 8px;
+    text-align: center;
+}
+ 
+.transfer-subtitle {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    text-align: center;
+    margin: 0 0 24px;
+}
+ 
+.transfer-pet-preview {
+    display: flex;
+    gap: 16px;
+    background: var(--color-5);
+    border-radius: var(--radio-md);
+    padding: 16px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+ 
+.transfer-pet-photo {
+    width: 80px;
+    height: 80px;
+    border-radius: var(--radio-md);
+    overflow: hidden;
+    background: var(--color-4);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+ 
+.transfer-pet-photo img { width: 100%; height: 100%; object-fit: cover; }
+.transfer-pet-placeholder { font-size: 2rem; }
+ 
+.transfer-pet-info h3 {
+    font-family: var(--fuente-titulos);
+    font-size: 1.2rem;
+    margin: 0 0 8px;
+    color: var(--color-1);
+}
+ 
+.transfer-pet-note {
+    font-size: 0.8rem;
+    color: #888;
+    margin: 8px 0 0;
+    line-height: 1.4;
+}
+ 
+.transfer-message { margin-bottom: 20px; font-size: 0.88rem; }
+ 
+.transfer-action-block { display: flex; flex-direction: column; gap: 12px; }
+ 
+.transfer-action-info {
+    font-size: 0.9rem;
+    color: #555;
+    text-align: center;
+    background: var(--color-5);
+    padding: 12px 16px;
+    border-radius: var(--radio-sm);
+    margin: 0;
+}
+ 
+.transfer-action-buttons { display: flex; flex-direction: column; gap: 10px; }
+ 
+.transfer-expiry {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #aaa;
+    margin: 16px 0 0;
+}
+ 
+.transfer-next-steps {
+    background: #f0fdf4;
+    border-radius: var(--radio-md);
+    padding: 16px 20px;
+    margin: 20px 0;
+    border: 1px solid #bbf7d0;
+}
+ 
+.transfer-next-steps h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #15803d;
+    margin: 0 0 10px;
+}
+ 
+.transfer-next-steps ul {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 0.88rem;
+    color: #374151;
+    line-height: 1.7;
+}
+ 
+.transfer-success-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto 20px;
+    border: 4px solid #bbf7d0;
+}
+ 
+.transfer-success-photo img { width: 100%; height: 100%; object-fit: cover; }
+ 
+.transfer-footer-note {
+    font-size: 0.85rem;
+    color: #888;
+    text-align: center;
+}
+ 
+.transfer-footer-note a { color: var(--color-2); text-decoration: none; }
+.transfer-footer-note a:hover { text-decoration: underline; }
+ 
+ 
+/* ─────────────────────────────────────────────────────────────
+   BADGES generales (reutilizables en fundaciones)
+   ───────────────────────────────────────────────────────────── */
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: var(--radio-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+ 
+.badge-success {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86efac;
+}
+ 
+.badge-warning {
+    background: var(--color-4);
+    color: var(--color-1);
+    border: 1px solid var(--color-3);
+}
+ 
+.badge-info {
+    background: #dbeafe;
+    color: #1d4ed8;
+    border: 1px solid #93c5fd;
+}
+ 
+/* btn utilidades extra */
+.btn-block { width: 100%; display: block; text-align: center; }
+.btn-sm    { padding: 0.5rem 1rem; font-size: 0.85rem; }
+.btn-success {
+    background: #22c55e;
+    color: #fff;
+}
+.btn-success:hover { background: #16a34a; color: #fff; }
+.btn-error {
+    background: transparent;
+    color: var(--color-error);
+    border: 2px solid var(--color-error);
+}
+.btn-error:hover { background: var(--color-error); color: #fff; }
+ 
+/* navbar-logo-link (foundations pages) */
+.navbar-logo-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+}
+
 /* ==================== CONSOLIDACIÓN DE RESPONSIVE ==================== */
 
 /* Tablet y pantallas medianas (máx 968px) */

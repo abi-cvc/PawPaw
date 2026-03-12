@@ -24,11 +24,19 @@
     <header class="header">
         <nav class="navbar">
             <div class="navbar-contenedor">
+
                 <!-- Logo -->
                 <div class="navbar-logo">
                     <img src="<%= request.getContextPath() %>/images/logo.png" alt="Logo PawPaw" class="logo-img">
                     <span class="logo-texto">PawPaw</span>
                 </div>
+
+                <!-- ── Nav central ── -->
+                <nav class="navbar-nav">
+                    <a href="<%= request.getContextPath() %>/foundations/public" class="navbar-nav-link">
+                        🏡 Fundaciones
+                    </a>
+                </nav>
 
                 <!-- Botones de acción -->
                 <div class="navbar-botones">
@@ -45,11 +53,11 @@
         <!-- ========== SECCIÓN HERO ========== -->
         <section class="hero">
             <div class="hero-contenedor">
-                
+
                 <!-- Contenido de texto -->
                 <div class="hero-contenido">
                     <h1 class="hero-titulo">La seguridad de tu mascota, a un escaneo de distancia</h1>
-                    
+
                     <p class="hero-descripcion">
                         Crea un perfil digital para tu mejor amigo y ayuda a que siempre encuentre el camino a casa. 
                         Con un simple código QR, cualquier persona puede contactarte si tu mascota se pierde.
@@ -78,23 +86,27 @@
                     </div>
                 </div>
 
+                <!-- ── Imagen de las placas ── -->
+                <div class="hero-imagen">
+                    <img src="<%= request.getContextPath() %>/images/placas.png"
+                         alt="Placas QR PawPaw para mascotas"
+                         class="hero-placas-img">
+                </div>
+
             </div>
         </section>
 
         <!-- ========== SECCIÓN CÓMO FUNCIONA ========== -->
         <section class="como-funciona">
             <div class="seccion-contenedor">
-                
-                <!-- Encabezado de sección -->
+
                 <div class="seccion-encabezado">
                     <h2 class="seccion-titulo">¿Cómo funciona?</h2>
                     <p class="seccion-subtitulo">Cuatro pasos simples para proteger a tu mascota</p>
                 </div>
 
-                <!-- Grid de pasos -->
                 <div class="pasos-grid">
-                    
-                    <!-- Paso 1 -->
+
                     <div class="paso-card">
                         <div class="paso-numero">1</div>
                         <div class="paso-icono">
@@ -109,7 +121,6 @@
                         </p>
                     </div>
 
-                    <!-- Paso 2 -->
                     <div class="paso-card">
                         <div class="paso-numero">2</div>
                         <div class="paso-icono">
@@ -127,7 +138,6 @@
                         </p>
                     </div>
 
-                    <!-- Paso 3 -->
                     <div class="paso-card">
                         <div class="paso-numero">3</div>
                         <div class="paso-icono">
@@ -142,7 +152,6 @@
                         </p>
                     </div>
 
-                    <!-- Paso 4 -->
                     <div class="paso-card">
                         <div class="paso-numero">4</div>
                         <div class="paso-icono">
@@ -163,16 +172,13 @@
         <!-- ========== SECCIÓN DE CONFIANZA ========== -->
         <section class="confianza">
             <div class="seccion-contenedor">
-                
-                <!-- Encabezado -->
+
                 <div class="seccion-encabezado">
                     <h2 class="seccion-titulo">Diseñado pensando en ti y tu mascota</h2>
                 </div>
 
-                <!-- Grid de características -->
                 <div class="caracteristicas-grid">
-                    
-                    <!-- Característica 1 -->
+
                     <div class="caracteristica-card">
                         <div class="caracteristica-icono">
                             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -186,7 +192,6 @@
                         </p>
                     </div>
 
-                    <!-- Característica 2 -->
                     <div class="caracteristica-card">
                         <div class="caracteristica-icono">
                             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -200,7 +205,6 @@
                         </p>
                     </div>
 
-                    <!-- Característica 3 -->
                     <div class="caracteristica-card">
                         <div class="caracteristica-icono">
                             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -214,7 +218,6 @@
                         </p>
                     </div>
 
-                    <!-- Característica 4 -->
                     <div class="caracteristica-card">
                         <div class="caracteristica-icono">
                             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -241,6 +244,7 @@
                 <p class="cta-subtitulo">Únete a miles de familias que ya confían en PawPaw</p>
                 <div class="cta-botones">
                     <a href="${pageContext.request.contextPath}/register" class="btn btn-primario btn-grande">Comenzar ahora</a>
+                    <a href="<%= request.getContextPath() %>/foundations/public" class="btn btn-outline btn-grande">Ver fundaciones aliadas</a>
                 </div>
             </div>
         </section>
@@ -250,28 +254,24 @@
     <!-- ==================== FOOTER ==================== -->
     <footer class="footer">
         <div class="footer-contenedor">
-            
-            <!-- Contenido principal del footer -->
+
             <div class="footer-contenido">
-                
-                <!-- Brand -->
+
                 <div class="footer-brand">
                     <img src="<%= request.getContextPath() %>/images/logo.png" alt="Logo PawPaw" class="footer-logo-img">
                     <span class="footer-logo-texto">PawPaw</span>
                 </div>
 
-                <!-- Enlaces -->
                 <nav class="footer-links">
                     <a href="${pageContext.request.contextPath}/about" class="footer-link">Sobre nosotros</a>
                     <a href="${pageContext.request.contextPath}/contact" class="footer-link">Contacto</a>
                     <a href="${pageContext.request.contextPath}/privacy" class="footer-link">Política de privacidad</a>
                     <a href="${pageContext.request.contextPath}/terms" class="footer-link">Términos de uso</a>
-                    <a href="<%= request.getContextPath() %>/foundations/public">Ver Fundaciones Aliadas</a>
+                    <a href="<%= request.getContextPath() %>/foundations/public" class="footer-link">🏡 Fundaciones Aliadas</a>
                 </nav>
 
             </div>
 
-            <!-- Copyright -->
             <div class="footer-bottom">
                 <p class="footer-copyright">© 2024 PawPaw. Todos los derechos reservados.</p>
             </div>
