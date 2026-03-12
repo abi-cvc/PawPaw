@@ -1,5 +1,6 @@
 package controller;
 
+import config.DatabaseConnection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -8,75 +9,58 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import config.DatabaseConnection;
+import java.util.*;
 
 /**
- * Servlet para mostrar lista pública de fundaciones aliadas
+ * Muestra la lista pública de fundaciones aliadas PawPaw.
  * URL: /foundations/public
  */
 @WebServlet("/foundations/public")
 public class PublicFoundationsServlet extends HttpServlet {
-    
+
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        try {
-            // Obtener fundaciones públicas desde la vista v_public_foundations
-            List<Map<String, Object>> foundations = getPublicFoundations();
-            
-            request.setAttribute("foundations", foundations);
-            request.setAttribute("totalFoundations", foundations.size());
-            
-            System.out.println("🏢 Mostrando fundaciones públicas. Total: " + foundations.size());
-            
-            request.getRequestDispatcher("/view/public/foundations-list.jsp").forward(request, response);
-            
-        } catch (Exception e) {
-            System.err.println("❌ Error al cargar fundaciones públicas: " + e.getMessage());
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
-                             "Error al cargar fundaciones");
-        }
-    }
-    
-    /**
-     * Obtiene lista de fundaciones públicas desde la vista
-     */
-    private List<Map<String, Object>> getPublicFoundations() {
-        List<Map<String, Object>> foundations = new ArrayList<>();
-        String sql = "SELECT * FROM v_public_foundations ORDER BY foundation_name";
-        
-        try (Connection conn = DatabaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            
-            while (rs.next()) {
-                Map<String, Object> foundation = new HashMap<>();
-                foundation.put("idUser", rs.getInt("id_user"));
-                foundation.put("foundationName", rs.getString("foundation_name"));
-                foundation.put("contactName", rs.getString("contact_name"));
-                foundation.put("email", rs.getString("email"));
-                foundation.put("phone", rs.getString("phone"));
-                foundation.put("website", rs.getString("website"));
-                foundation.put("description", rs.getString("description"));
-                foundation.put("availablePets", rs.getInt("available_pets"));
-                foundation.put("adoptedPets", rs.getInt("adopted_pets"));
-                foundation.put("totalPets", rs.getInt("total_pets"));
-                
-                foundations.add(foundation);
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+
+            String sql = """
+                SELECT id_user, foundation_name, contact_name, email,
+                       phone, whatsapp, website, description,
+                       available_pets, adopted_pets, total_pets
+                FROM v_public_foundations
+                ORDER BY available_pets DESC, foundation_name ASC
+                """;
+
+            List<Map<String, Object>> foundations = new ArrayList<>();
+
+            try (PreparedStatement ps = conn.prepareStatement(sql);
+                 ResultSet rs = ps.executeQuery()) {
+
+                while (rs.next()) {
+                    Map<String, Object> f = new LinkedHashMap<>();
+                    f.put("id_user",          rs.getInt("id_user"));
+                    f.put("foundation_name",  rs.getString("foundation_name"));
+                    f.put("contact_name",     rs.getString("contact_name"));
+                    f.put("email",            rs.getString("email"));
+                    f.put("phone",            rs.getString("phone"));
+                    f.put("whatsapp",         rs.getString("whatsapp"));
+                    f.put("website",          rs.getString("website"));
+                    f.put("description",      rs.getString("description"));
+                    f.put("available_pets",   rs.getInt("available_pets"));
+                    f.put("adopted_pets",     rs.getInt("adopted_pets"));
+                    f.put("total_pets",       rs.getInt("total_pets"));
+                    foundations.add(f);
+                }
             }
-            
+
+            request.setAttribute("foundations", foundations);
+            request.getRequestDispatcher("/view/public/foundations-list.jsp")
+                   .forward(request, response);
+
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener fundaciones: " + e.getMessage());
             e.printStackTrace();
+            response.sendError(500, "Error al cargar las fundaciones");
         }
-        
-        return foundations;
     }
 }

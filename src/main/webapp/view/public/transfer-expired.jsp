@@ -1,0 +1,52 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="model.entity.PetTransferRequest" %>
+<%
+    PetTransferRequest transfer = (PetTransferRequest) request.getAttribute("transfer");
+%>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transferencia Expirada</title>
+    <link rel="icon" type="image/png" href="<%= request.getContextPath() %>/images/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
+</head>
+<body>
+    <div class="transfer-page">
+        <div class="transfer-container">
+            <div class="transfer-header">
+                <img src="<%= request.getContextPath() %>/images/logo.png" alt="PawPaw Logo" class="transfer-logo">
+            </div>
+            
+            <div class="transfer-card transfer-expired">
+                <div class="status-icon warning-icon">⏰</div>
+                <h2>Transferencia Expirada</h2>
+                <% if (transfer != null) { %>
+                <p class="status-message">
+                    La transferencia de <strong><%= transfer.getPetName() %></strong> ha expirado.
+                </p>
+                <p>Esta transferencia estaba destinada a <strong><%= transfer.getAdopterName() %></strong>.</p>
+                <% } else { %>
+                <p class="status-message">Esta transferencia ha expirado y ya no está disponible.</p>
+                <% } %>
+                
+                <div class="info-box">
+                    <p>Las transferencias tienen una validez de 7 días. 
+                       Si aún deseas adoptar esta mascota, contacta directamente con la fundación.</p>
+                </div>
+                
+                <div class="status-actions">
+                    <a href="<%= request.getContextPath() %>/foundations/public" class="btn btn-primario">
+                        Ver Fundaciones
+                    </a>
+                    <a href="<%= request.getContextPath() %>/view/index.jsp" class="btn btn-secundario">
+                        Volver al Inicio
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

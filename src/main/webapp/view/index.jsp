@@ -266,6 +266,7 @@
                     <a href="${pageContext.request.contextPath}/contact" class="footer-link">Contacto</a>
                     <a href="${pageContext.request.contextPath}/privacy" class="footer-link">Política de privacidad</a>
                     <a href="${pageContext.request.contextPath}/terms" class="footer-link">Términos de uso</a>
+                    <a href="<%= request.getContextPath() %>/foundations/public">Ver Fundaciones Aliadas</a>
                 </nav>
 
             </div>

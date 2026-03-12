@@ -1,157 +1,135 @@
 package controller;
 
-import model.dao.PetDAO;
-import model.dao.PetTransferRequestDAO;
-import model.entity.Pet;
-import model.entity.PetTransferRequest;
-import service.EmailService;
-
+import config.DatabaseConnection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
+import model.dao.PetTransferRequestDAO;
+import model.entity.PetTransferRequest;
+import service.EmailService;
 
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.sql.*;
 import java.util.UUID;
 
 /**
- * Servlet para iniciar transferencia de mascota a adoptante
- * Solo para fundaciones (partners)
- * URL: /pet/transfer/initiate (POST)
+ * Inicia el proceso de transferencia de una mascota a su adoptante.
+ * La fundación envía el email del adoptante → se genera un token → se envía un email.
+ * URL: POST /pet/transfer/initiate
  */
 @WebServlet("/pet/transfer/initiate")
 public class InitiateTransferServlet extends HttpServlet {
-    
-    private PetDAO petDAO = new PetDAO();
-    private PetTransferRequestDAO transferDAO = new PetTransferRequestDAO();
-    private EmailService emailService = new EmailService();
-    
+
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        HttpSession session = request.getSession(false);
-        
-        // Verificar sesión
-        if (session == null || session.getAttribute("userId") == null) {
+
+        // ── Verificar sesión y rol de partner ─────────────────────────
+        Integer userId = (Integer) request.getSession().getAttribute("userId");
+        if (userId == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-        
+        Boolean isPartner = (Boolean) request.getSession().getAttribute("isPartner");
+        if (isPartner == null || !isPartner) {
+            response.sendError(403, "Solo fundaciones pueden iniciar transferencias");
+            return;
+        }
+
+        // ── Parámetros del formulario ─────────────────────────────────
+        String petIdStr     = request.getParameter("petId");
+        String adopterEmail = request.getParameter("adopterEmail");
+        String adopterName  = request.getParameter("adopterName");
+        String adopterPhone = request.getParameter("adopterPhone");
+        String message      = request.getParameter("message");
+
+        if (petIdStr == null || adopterEmail == null || adopterEmail.isBlank()
+                || adopterName == null || adopterName.isBlank()) {
+            response.sendRedirect(request.getContextPath() + "/user/pets?error=missingFields");
+            return;
+        }
+
+        int petId;
         try {
-            Integer foundationId = (Integer) session.getAttribute("userId");
-            Integer petId = Integer.parseInt(request.getParameter("petId"));
-            String adopterEmail = request.getParameter("adopterEmail");
-            String adopterName = request.getParameter("adopterName");
-            String adopterPhone = request.getParameter("adopterPhone");
-            String message = request.getParameter("message");
-            
-            // Validar datos
-            if (adopterEmail == null || adopterEmail.trim().isEmpty() ||
-                adopterName == null || adopterName.trim().isEmpty()) {
-                session.setAttribute("errorMessage", "Email y nombre del adoptante son obligatorios");
-                response.sendRedirect(request.getContextPath() + "/user/pets");
+            petId = Integer.parseInt(petIdStr);
+        } catch (NumberFormatException e) {
+            response.sendRedirect(request.getContextPath() + "/user/pets?error=invalidPet");
+            return;
+        }
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+
+            // Verificar que la mascota pertenece a la fundación y está disponible
+            String checkSql = "SELECT name_pet FROM pets WHERE id_pet = ? AND id_user = ? AND adoption_status = 'available'";
+            String petName = null;
+            try (PreparedStatement ps = conn.prepareStatement(checkSql)) {
+                ps.setInt(1, petId);
+                ps.setInt(2, userId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) petName = rs.getString("name_pet");
+                }
+            }
+
+            if (petName == null) {
+                response.sendRedirect(request.getContextPath() + "/user/pets?error=petNotAvailable");
                 return;
             }
-            
-            // Verificar que la mascota pertenece a la fundación
-            Pet pet = petDAO.findById(petId);
-            
-            if (pet == null || !pet.getIdUser().equals(foundationId)) {
-                session.setAttribute("errorMessage", "No tienes permiso para transferir esta mascota");
-                response.sendRedirect(request.getContextPath() + "/user/pets");
-                return;
-            }
-            
-            // Verificar que no haya transferencia pendiente
-            if (transferDAO.hasPendingTransfer(petId)) {
-                session.setAttribute("errorMessage", 
-                    "Ya existe una transferencia pendiente para " + pet.getNamePet());
-                response.sendRedirect(request.getContextPath() + "/user/pets");
-                return;
-            }
-            
+
             // Generar token único
             String token = UUID.randomUUID().toString();
-            
-            // Crear solicitud de transferencia
-            PetTransferRequest transfer = new PetTransferRequest(
-                petId, foundationId, adopterEmail, adopterName, token
-            );
-            transfer.setAdopterPhone(adopterPhone);
-            transfer.setMessage(message);
-            
-            if (transferDAO.create(transfer)) {
-                // Actualizar estado de mascota
-                petDAO.updateAdoptionStatus(petId, "adopted_pending");
-                
-                // Construir link de aceptación
-                String acceptLink = request.getScheme() + "://" + 
-                                  request.getServerName() + 
-                                  (request.getServerPort() != 80 && request.getServerPort() != 443 
-                                      ? ":" + request.getServerPort() : "") +
-                                  request.getContextPath() + 
-                                  "/accept-transfer?token=" + token;
-                
-                // Enviar email al adoptante
-                String subject = "¡Felicidades! Tu adopción de " + pet.getNamePet() + " está lista 🐾";
-                String emailMessage = buildTransferEmail(pet, adopterName, acceptLink, message);
-                
-                emailService.sendNotificationEmail(adopterEmail, adopterName, subject, emailMessage);
-                
-                session.setAttribute("successMessage", 
-                    "Transferencia iniciada. Email enviado a " + adopterEmail);
-                
-                System.out.println("✅ Transferencia iniciada: " + pet.getNamePet() + 
-                                 " → " + adopterEmail);
-            } else {
-                session.setAttribute("errorMessage", "Error al crear la transferencia");
+
+            // Guardar solicitud de transferencia
+            PetTransferRequest req = new PetTransferRequest();
+            req.setIdPet(petId);
+            req.setIdFoundation(userId);
+            req.setAdopterEmail(adopterEmail.trim().toLowerCase());
+            req.setAdopterName(adopterName.trim());
+            req.setAdopterPhone(adopterPhone != null ? adopterPhone.trim() : "");
+            req.setTransferToken(token);
+            req.setMessage(message != null ? message.trim() : "");
+
+            new PetTransferRequestDAO().createTransferRequest(req);
+
+            // Marcar mascota como adopted_pending
+            try (PreparedStatement ps = conn.prepareStatement(
+                    "UPDATE pets SET adoption_status = 'adopted_pending' WHERE id_pet = ?")) {
+                ps.setInt(1, petId);
+                ps.executeUpdate();
             }
-            
-        } catch (NumberFormatException e) {
-            session.setAttribute("errorMessage", "Datos inválidos");
+
+            // Construir URL de aceptación
+            String baseUrl = request.getScheme() + "://" + request.getServerName()
+                    + (request.getServerPort() == 80 || request.getServerPort() == 443
+                    ? "" : ":" + request.getServerPort())
+                    + request.getContextPath();
+            String acceptUrl = baseUrl + "/accept-transfer?token=" + token;
+
+            String foundationName = (String) request.getSession().getAttribute("userName");
+
+            // Enviar email usando instancia (los métodos helper son de instancia, no static)
+            EmailService emailService = new EmailService();
+            boolean emailSent = emailService.sendTransferEmail(
+                    adopterEmail.trim().toLowerCase(),
+                    adopterName.trim(),
+                    petName,
+                    foundationName != null ? foundationName : "La fundación",
+                    acceptUrl
+            );
+
+            if (!emailSent) {
+                System.err.println("⚠️ Transferencia creada pero el email no se pudo enviar a " + adopterEmail);
+            }
+
+            String encoded = URLEncoder.encode(petName, StandardCharsets.UTF_8);
+            response.sendRedirect(request.getContextPath() + "/user/pets?success=transferInitiated&petName=" + encoded);
+
         } catch (Exception e) {
-            System.err.println("❌ Error al iniciar transferencia: " + e.getMessage());
             e.printStackTrace();
-            session.setAttribute("errorMessage", "Error al iniciar la transferencia");
+            response.sendRedirect(request.getContextPath() + "/user/pets?error=transferFailed");
         }
-        
-        response.sendRedirect(request.getContextPath() + "/user/pets");
-    }
-    
-    /**
-     * Construye el email de notificación de transferencia
-     */
-    private String buildTransferEmail(Pet pet, String adopterName, String acceptLink, String message) {
-        StringBuilder email = new StringBuilder();
-        
-        email.append("Estimado/a ").append(adopterName).append(",\n\n");
-        email.append("¡Felicidades por tu decisión de adoptar! 🐾\n\n");
-        email.append("La fundación ha iniciado el proceso de transferencia para ").append(pet.getNamePet()).append(".\n\n");
-        
-        if (message != null && !message.trim().isEmpty()) {
-            email.append("Mensaje de la fundación:\n");
-            email.append("\"").append(message).append("\"\n\n");
-        }
-        
-        email.append("Para completar la adopción y convertirte en el dueño oficial de ").append(pet.getNamePet());
-        email.append(", necesitas aceptar esta transferencia.\n\n");
-        email.append("PASOS A SEGUIR:\n");
-        email.append("1. Haz click en el siguiente enlace:\n");
-        email.append(acceptLink).append("\n\n");
-        email.append("2. Si ya tienes cuenta en PawPaw, inicia sesión\n");
-        email.append("3. Si no tienes cuenta, regístrate (¡es gratis!)\n");
-        email.append("4. Acepta la transferencia\n\n");
-        email.append("Una vez aceptada:\n");
-        email.append("✅ ").append(pet.getNamePet()).append(" será oficialmente tuyo/a\n");
-        email.append("✅ Podrás editar su perfil y actualizar su información\n");
-        email.append("✅ El código QR seguirá funcionando con tus datos de contacto\n\n");
-        email.append("⏰ Este enlace es válido por 7 días.\n\n");
-        email.append("¡Bienvenido/a a la familia PawPaw! 🐕🐈\n\n");
-        email.append("Saludos,\nEquipo PawPaw");
-        
-        return email.toString();
     }
 }

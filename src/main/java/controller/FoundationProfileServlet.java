@@ -1,8 +1,6 @@
 package controller;
 
-import model.dao.PetDAO;
-import model.entity.Pet;
-
+import config.DatabaseConnection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -11,120 +9,136 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import config.DatabaseConnection;
+import java.util.*;
 
 /**
- * Servlet para mostrar perfil público de una fundación con sus mascotas
+ * Muestra el perfil público de una fundación con sus mascotas.
  * URL: /foundations/{id}
+ *
+ * Nota: /foundations/public es capturado PRIMERO por PublicFoundationsServlet
+ * (mapeo exacto tiene prioridad sobre wildcard en el spec de Servlet).
  */
 @WebServlet("/foundations/*")
 public class FoundationProfileServlet extends HttpServlet {
-    
-    private PetDAO petDAO = new PetDAO();
-    
+
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        // Extraer ID de la fundación desde la URL
-        String pathInfo = request.getPathInfo();
-        
-        if (pathInfo == null || pathInfo.equals("/") || pathInfo.equals("/public")) {
-            // Si es /foundations o /foundations/public, redirigir al servlet correcto
+
+        String pathInfo = request.getPathInfo(); // ej: "/42"
+
+        // Guardia: evitar colisión con /foundations/public en caso de contenedores que no respetan prioridad
+        if (pathInfo == null || pathInfo.equals("/") || "/public".equals(pathInfo)) {
             response.sendRedirect(request.getContextPath() + "/foundations/public");
             return;
         }
-        
+
+        // Extraer ID de la fundación
+        String[] parts = pathInfo.split("/");
+        if (parts.length < 2) {
+            response.sendError(404);
+            return;
+        }
+
+        int foundationId;
         try {
-            // Extraer ID: /foundations/123 -> 123
-            String idStr = pathInfo.substring(1);
-            Integer foundationId = Integer.parseInt(idStr);
-            
-            // Obtener información de la fundación
-            Map<String, Object> foundation = getFoundationInfo(foundationId);
-            
-            if (foundation == null) {
-                response.sendError(HttpServletResponse.SC_NOT_FOUND, "Fundación no encontrada");
-                return;
-            }
-            
-            // Obtener mascotas de la fundación
-            List<Pet> allPets = petDAO.findFoundationPets(foundationId);
-            
-            // Separar por estado
-            List<Pet> availablePets = new ArrayList<>();
-            List<Pet> adoptedPets = new ArrayList<>();
-            
-            for (Pet pet : allPets) {
-                if ("available".equals(pet.getAdoptionStatus())) {
-                    availablePets.add(pet);
-                } else if (pet.getAdoptionStatus() != null && 
-                          pet.getAdoptionStatus().toLowerCase().startsWith("adopted")) {
-                    adoptedPets.add(pet);
+            foundationId = Integer.parseInt(parts[1]);
+        } catch (NumberFormatException e) {
+            response.sendError(404, "ID de fundación no válido");
+            return;
+        }
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+
+            // ── 1. Info de la fundación (desde la vista) ──────────────
+            String foundationSql = """
+                SELECT id_user, foundation_name, contact_name, email,
+                       phone, whatsapp, website, description,
+                       available_pets, adopted_pets, total_pets
+                FROM v_public_foundations
+                WHERE id_user = ?
+                """;
+
+            Map<String, Object> foundation = null;
+            try (PreparedStatement ps = conn.prepareStatement(foundationSql)) {
+                ps.setInt(1, foundationId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        foundation = new LinkedHashMap<>();
+                        foundation.put("id_user",         rs.getInt("id_user"));
+                        foundation.put("foundation_name", rs.getString("foundation_name"));
+                        foundation.put("contact_name",    rs.getString("contact_name"));
+                        foundation.put("email",           rs.getString("email"));
+                        foundation.put("phone",           rs.getString("phone"));
+                        foundation.put("whatsapp",        rs.getString("whatsapp"));
+                        foundation.put("website",         rs.getString("website"));
+                        foundation.put("description",     rs.getString("description"));
+                        foundation.put("available_pets",  rs.getInt("available_pets"));
+                        foundation.put("adopted_pets",    rs.getInt("adopted_pets"));
+                        foundation.put("total_pets",      rs.getInt("total_pets"));
+                    }
                 }
             }
-            
-            request.setAttribute("foundation", foundation);
-            request.setAttribute("availablePets", availablePets);
-            request.setAttribute("adoptedPets", adoptedPets);
-            request.setAttribute("totalAvailable", availablePets.size());
-            request.setAttribute("totalAdopted", adoptedPets.size());
-            
-            System.out.println("🏢 Mostrando perfil de: " + foundation.get("foundationName"));
-            System.out.println("   En adopción: " + availablePets.size());
-            System.out.println("   Adoptados: " + adoptedPets.size());
-            
-            request.getRequestDispatcher("/view/public/foundation-profile.jsp").forward(request, response);
-            
-        } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "ID inválido");
-        } catch (Exception e) {
-            System.err.println("❌ Error al cargar perfil de fundación: " + e.getMessage());
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
-                             "Error al cargar perfil");
-        }
-    }
-    
-    /**
-     * Obtiene información de una fundación específica
-     */
-    private Map<String, Object> getFoundationInfo(Integer foundationId) {
-        String sql = "SELECT * FROM v_public_foundations WHERE id_user = ?";
-        
-        try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
-            stmt.setInt(1, foundationId);
-            ResultSet rs = stmt.executeQuery();
-            
-            if (rs.next()) {
-                Map<String, Object> foundation = new HashMap<>();
-                foundation.put("idUser", rs.getInt("id_user"));
-                foundation.put("foundationName", rs.getString("foundation_name"));
-                foundation.put("contactName", rs.getString("contact_name"));
-                foundation.put("email", rs.getString("email"));
-                foundation.put("phone", rs.getString("phone"));
-                foundation.put("whatsapp", rs.getString("whatsapp"));
-                foundation.put("website", rs.getString("website"));
-                foundation.put("description", rs.getString("description"));
-                foundation.put("availablePets", rs.getInt("available_pets"));
-                foundation.put("adoptedPets", rs.getInt("adopted_pets"));
-                foundation.put("totalPets", rs.getInt("total_pets"));
-                
-                return foundation;
+
+            if (foundation == null) {
+                response.sendError(404, "Fundación no encontrada");
+                return;
             }
-            
+
+            // ── 2. Mascotas de la fundación ────────────────────────────
+            String petsSql = """
+                SELECT id_pet, name_pet, species, breed, age,
+                       description, photo_url, adoption_status
+                FROM v_foundation_pets
+                WHERE id_user = ?
+                  AND status_pet = 'active'
+                ORDER BY
+                    CASE adoption_status
+                        WHEN 'available'           THEN 1
+                        WHEN 'adopted_pending'     THEN 2
+                        WHEN 'adopted_transferred' THEN 3
+                        ELSE 4
+                    END,
+                    name_pet ASC
+                """;
+
+            List<Map<String, Object>> availablePets  = new ArrayList<>();
+            List<Map<String, Object>> adoptedPets    = new ArrayList<>();
+
+            try (PreparedStatement ps = conn.prepareStatement(petsSql)) {
+                ps.setInt(1, foundationId);
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        Map<String, Object> pet = new LinkedHashMap<>();
+                        pet.put("id_pet",          rs.getInt("id_pet"));
+                        pet.put("name_pet",         rs.getString("name_pet"));
+                        pet.put("species",          rs.getString("species"));
+                        pet.put("breed",            rs.getString("breed"));
+                        pet.put("age",              rs.getObject("age"));
+                        pet.put("description",      rs.getString("description"));
+                        pet.put("photo_url",        rs.getString("photo_url"));
+                        pet.put("adoption_status",  rs.getString("adoption_status"));
+
+                        String status = rs.getString("adoption_status");
+                        if ("available".equals(status) || "adopted_pending".equals(status)) {
+                            availablePets.add(pet);
+                        } else if ("adopted_transferred".equals(status)) {
+                            adoptedPets.add(pet);
+                        }
+                    }
+                }
+            }
+
+            request.setAttribute("foundation",    foundation);
+            request.setAttribute("availablePets", availablePets);
+            request.setAttribute("adoptedPets",   adoptedPets);
+
+            request.getRequestDispatcher("/view/public/foundation-profile.jsp")
+                   .forward(request, response);
+
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener fundación: " + e.getMessage());
             e.printStackTrace();
+            response.sendError(500);
         }
-        
-        return null;
     }
 }

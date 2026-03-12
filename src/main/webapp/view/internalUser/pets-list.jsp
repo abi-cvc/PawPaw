@@ -14,6 +14,9 @@
     
     @SuppressWarnings("unchecked")
     List<Pet> pets = (List<Pet>) request.getAttribute("pets");
+    
+    Boolean isPartner = (Boolean) session.getAttribute("isPartner");
+    if (isPartner == null) isPartner = false;
 %>
 <!DOCTYPE html>
 <html lang="es">

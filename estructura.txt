@@ -493,6 +493,7 @@ C:.
 |   |   |   |       PayPalConfig.java
 |   |   |   |       
 |   |   |   +---controller
+|   |   |   |       AcceptTransferServlet.java
 |   |   |   |       AdjustUserSlotsServlet.java
 |   |   |   |       AdminPanelServlet.java
 |   |   |   |       AuthenticationController.java
@@ -501,7 +502,9 @@ C:.
 |   |   |   |       DiagnosticServlet.java
 |   |   |   |       ForgotPasswordServlet.java
 |   |   |   |       FoundationFormServlet.java
+|   |   |   |       FoundationProfileServlet.java
 |   |   |   |       HealthCheckServlet.java
+|   |   |   |       InitiateTransferServlet.java
 |   |   |   |       LogoutServlet.java
 |   |   |   |       ManageFoundationsServlet.java
 |   |   |   |       ManagePaymentsServlet.java
@@ -511,12 +514,14 @@ C:.
 |   |   |   |       MyMessagesServlet.java
 |   |   |   |       MySuggestionsServlet.java
 |   |   |   |       PetController.java
+|   |   |   |       PublicFoundationsServlet.java
 |   |   |   |       PublicPetController.java
 |   |   |   |       PurchaseSlotsServlet.java
 |   |   |   |       QRCodeController.java
 |   |   |   |       ResendPasswordResetServlet.java
 |   |   |   |       ResetPasswordServlet.java
 |   |   |   |       SendSuggestionServlet.java
+|   |   |   |       UpdateAdoptionStatusServlet.java
 |   |   |   |       UserController.java
 |   |   |   |       UserPanelController.java
 |   |   |   |       UserProfileController.java
@@ -592,20 +597,29 @@ C:.
 |   |       |   |       foundation-form.jsp
 |   |       |   |       foundation-success.jsp
 |   |       |   |       
-|   |       |   \---internalUser
-|   |       |           forgot-password.jsp
-|   |       |           login.jsp
-|   |       |           my-messages.jsp
-|   |       |           my-suggestions.jsp
-|   |       |           panel.jsp
-|   |       |           pet-form.jsp
-|   |       |           pets-list.jsp
-|   |       |           profile.jsp
-|   |       |           purchase-slots.jsp
-|   |       |           qr-codes.jsp
-|   |       |           register.jsp
-|   |       |           reset-password.jsp
-|   |       |           send-suggestion.jsp
+|   |       |   +---internalUser
+|   |       |   |       forgot-password.jsp
+|   |       |   |       login.jsp
+|   |       |   |       my-messages.jsp
+|   |       |   |       my-suggestions.jsp
+|   |       |   |       panel.jsp
+|   |       |   |       pet-form.jsp
+|   |       |   |       pets-list.jsp
+|   |       |   |       profile.jsp
+|   |       |   |       purchase-slots.jsp
+|   |       |   |       qr-codes.jsp
+|   |       |   |       register.jsp
+|   |       |   |       reset-password.jsp
+|   |       |   |       send-suggestion.jsp
+|   |       |   |       
+|   |       |   \---public
+|   |       |           accept-transfer.jsp
+|   |       |           foundation-pets.jsp
+|   |       |           foundation-profile.jsp
+|   |       |           foundations-list.jsp
+|   |       |           transfer-completed.jsp
+|   |       |           transfer-error.jsp
+|   |       |           transfer-expired.jsp
 |   |       |           
 |   |       \---WEB-INF
 |   |               web.xml
@@ -898,6 +912,7 @@ C:.
     |   |       PayPalConfig.class
     |   |       
     |   +---controller
+    |   |       AcceptTransferServlet.class
     |   |       AdjustUserSlotsServlet.class
     |   |       AdminPanelServlet.class
     |   |       AuthenticationController.class
@@ -906,7 +921,9 @@ C:.
     |   |       DiagnosticServlet.class
     |   |       ForgotPasswordServlet.class
     |   |       FoundationFormServlet.class
+    |   |       FoundationProfileServlet.class
     |   |       HealthCheckServlet.class
+    |   |       InitiateTransferServlet.class
     |   |       LogoutServlet.class
     |   |       ManageFoundationsServlet.class
     |   |       ManagePaymentsServlet.class
@@ -916,6 +933,7 @@ C:.
     |   |       MyMessagesServlet.class
     |   |       MySuggestionsServlet.class
     |   |       PetController.class
+    |   |       PublicFoundationsServlet.class
     |   |       PublicPetController.class
     |   |       PurchaseSlotsServlet.class
     |   |       QRCodeController$QRCodeData.class
@@ -923,6 +941,7 @@ C:.
     |   |       ResendPasswordResetServlet.class
     |   |       ResetPasswordServlet.class
     |   |       SendSuggestionServlet.class
+    |   |       UpdateAdoptionStatusServlet.class
     |   |       UserController.class
     |   |       UserPanelController.class
     |   |       UserProfileController.class
@@ -1071,6 +1090,7 @@ C:.
         |   |   
         |   +---admin
         |   |       admin-panel.jsp
+        |   |       manage-foundations.jsp
         |   |       manage-payments.jsp
         |   |       manage-promotions.jsp
         |   |       manage-suggestions.jsp
@@ -1109,6 +1129,7 @@ C:.
             |   |       PayPalConfig.class
             |   |       
             |   +---controller
+            |   |       AcceptTransferServlet.class
             |   |       AdjustUserSlotsServlet.class
             |   |       AdminPanelServlet.class
             |   |       AuthenticationController.class
@@ -1117,7 +1138,9 @@ C:.
             |   |       DiagnosticServlet.class
             |   |       ForgotPasswordServlet.class
             |   |       FoundationFormServlet.class
+            |   |       FoundationProfileServlet.class
             |   |       HealthCheckServlet.class
+            |   |       InitiateTransferServlet.class
             |   |       LogoutServlet.class
             |   |       ManageFoundationsServlet.class
             |   |       ManagePaymentsServlet.class
@@ -1127,6 +1150,7 @@ C:.
             |   |       MyMessagesServlet.class
             |   |       MySuggestionsServlet.class
             |   |       PetController.class
+            |   |       PublicFoundationsServlet.class
             |   |       PublicPetController.class
             |   |       PurchaseSlotsServlet.class
             |   |       QRCodeController$QRCodeData.class
@@ -1134,6 +1158,7 @@ C:.
             |   |       ResendPasswordResetServlet.class
             |   |       ResetPasswordServlet.class
             |   |       SendSuggestionServlet.class
+            |   |       UpdateAdoptionStatusServlet.class
             |   |       UserController.class
             |   |       UserPanelController.class
             |   |       UserProfileController.class
@@ -1152,6 +1177,7 @@ C:.
             |   |   |       PaymentRequestDAO.class
             |   |   |       PetContactMessageDAO.class
             |   |   |       PetDAO.class
+            |   |   |       PetTransferRequestDAO.class
             |   |   |       PromotionDAO.class
             |   |   |       QRCodeDAO.class
             |   |   |       SlotAdjustmentDAO.class
@@ -1165,6 +1191,7 @@ C:.
             |   |           PaymentRequest.class
             |   |           Pet.class
             |   |           PetContactMessage.class
+            |   |           PetTransferRequest.class
             |   |           Promotion.class
             |   |           QRcode.class
             |   |           SlotAdjustment.class
