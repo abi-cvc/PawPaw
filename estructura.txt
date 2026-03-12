@@ -573,6 +573,7 @@ C:.
 |   |       |       
 |   |       +---images
 |   |       |       logo.png
+|   |       |       placas.png
 |   |       |       
 |   |       +---js
 |   |       |       main.js
