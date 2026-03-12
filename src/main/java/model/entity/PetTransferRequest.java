@@ -16,6 +16,10 @@ public class PetTransferRequest {
     private Timestamp createdAt;
     private Timestamp acceptedAt;
     private Timestamp expiresAt;
+    
+    // ── Campos transient: los rellena el servlet antes de hacer forward ──
+    private transient String petName;
+    private transient String foundationName;
 
     // ─── Constructors ────────────────────────────────────────
     public PetTransferRequest() {}
@@ -56,4 +60,24 @@ public class PetTransferRequest {
 
     public Timestamp getExpiresAt() { return expiresAt; }
     public void setExpiresAt(Timestamp expiresAt) { this.expiresAt = expiresAt; }
+    
+    public String getPetName() { return petName; }
+    public void setPetName(String petName) { this.petName = petName; }
+ 
+    public String getFoundationName() { return foundationName; }
+    public void setFoundationName(String foundationName) { this.foundationName = foundationName; }
+    
+    public long getDaysRemaining() {
+        if (expiresAt == null) return 0;
+        long diffMillis = expiresAt.getTime() - System.currentTimeMillis();
+        if (diffMillis <= 0) return 0;
+        return diffMillis / (1000L * 60 * 60 * 24);
+    }
+ 
+    /**
+     * Retorna true si quedan 2 días o menos para que expire.
+     */
+    public boolean isExpiringSoon() {
+        return getDaysRemaining() <= 2;
+    }
 }

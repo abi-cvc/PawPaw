@@ -200,6 +200,15 @@
         </cookie-config>
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>
+    
+    <servlet>
+	    <servlet-name>FoundationFormServlet</servlet-name>
+	    <servlet-class>controller.FoundationFormServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>FoundationFormServlet</servlet-name>
+	    <url-pattern>/foundation/apply</url-pattern>
+	</servlet-mapping>
 
     <!-- ==================== SECURITY (HTTPS cuando se configure) ==================== -->
     <!--
@@ -213,5 +222,7 @@
         </user-data-constraint>
     </security-constraint>
     -->
+    
+    
 
 </web-app>

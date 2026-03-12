@@ -1054,17 +1054,6 @@ C:.
     |       tomcat-util-10.1.18.jar
     |       tomcat-util-scan-10.1.18.jar
     |       
-    +---m2e-wtp
-    |   \---web-resources
-    |       \---META-INF
-    |           |   MANIFEST.MF
-    |           |   
-    |           \---maven
-    |               \---PawPaw
-    |                   \---PawPaw
-    |                           pom.properties
-    |                           pom.xml
-    |                           
     +---maven-archiver
     |       pom.properties
     |       
@@ -1081,6 +1070,7 @@ C:.
         |       
         +---images
         |       logo.png
+        |       placas.png
         |       
         +---js
         |       main.js
@@ -1106,20 +1096,29 @@ C:.
         |   |       foundation-form.jsp
         |   |       foundation-success.jsp
         |   |       
-        |   \---internalUser
-        |           forgot-password.jsp
-        |           login.jsp
-        |           my-messages.jsp
-        |           my-suggestions.jsp
-        |           panel.jsp
-        |           pet-form.jsp
-        |           pets-list.jsp
-        |           profile.jsp
-        |           purchase-slots.jsp
-        |           qr-codes.jsp
-        |           register.jsp
-        |           reset-password.jsp
-        |           send-suggestion.jsp
+        |   +---internalUser
+        |   |       forgot-password.jsp
+        |   |       login.jsp
+        |   |       my-messages.jsp
+        |   |       my-suggestions.jsp
+        |   |       panel.jsp
+        |   |       pet-form.jsp
+        |   |       pets-list.jsp
+        |   |       profile.jsp
+        |   |       purchase-slots.jsp
+        |   |       qr-codes.jsp
+        |   |       register.jsp
+        |   |       reset-password.jsp
+        |   |       send-suggestion.jsp
+        |   |       
+        |   \---public
+        |           accept-transfer.jsp
+        |           foundation-pets.jsp
+        |           foundation-profile.jsp
+        |           foundations-list.jsp
+        |           transfer-completed.jsp
+        |           transfer-error.jsp
+        |           transfer-expired.jsp
         |           
         \---WEB-INF
             |   web.xml
