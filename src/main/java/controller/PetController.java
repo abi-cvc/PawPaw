@@ -86,7 +86,14 @@ public class PetController extends HttpServlet {
         
         var pets = petDAO.findByUserId(userId);
         request.setAttribute("pets", pets);
-        request.getRequestDispatcher("/view/internalUser/pets-list.jsp").forward(request, response);
+        
+        HttpSession session = request.getSession(false);
+        Boolean isPartner = (session != null) ? (Boolean) session.getAttribute("isPartner") : null;
+        if (isPartner != null && isPartner) {
+            request.getRequestDispatcher("/view/internalUser/foundation-pets.jsp").forward(request, response);
+        } else {
+            request.getRequestDispatcher("/view/internalUser/pets-list.jsp").forward(request, response);
+        }
     }
     
     /**

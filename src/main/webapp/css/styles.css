@@ -3554,6 +3554,887 @@ a {
     font-weight: 600;
 }
 
+/* ─────────────────────────────────────────────────────────────
+   FUNDACIONES — Hero y stats globales
+   ───────────────────────────────────────────────────────────── */
+.foundations-hero {
+    background: linear-gradient(135deg, #fff7f0 0%, #ffe8d6 100%);
+    padding: 60px 0 40px;
+    text-align: center;
+}
+ 
+.foundations-hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 48px;
+    margin-top: 28px;
+}
+ 
+.foundations-hero-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+ 
+.foundations-hero-stat-number {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: #E07B39;
+    line-height: 1;
+}
+ 
+.foundations-hero-stat-label {
+    font-size: 0.85rem;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+ 
+ 
+/* ─────────────────────────────────────────────────────────────
+   FUNDACIONES — Grid de tarjetas
+   ───────────────────────────────────────────────────────────── */
+.foundations-section {
+    padding: 48px 0 64px;
+    background: #fafafa;
+}
+ 
+.foundations-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 32px;
+}
+ 
+.foundation-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #e8e8e8;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+ 
+.foundation-card:hover {
+    box-shadow: 0 8px 24px rgba(224, 123, 57, 0.15);
+    transform: translateY(-2px);
+}
+ 
+.foundation-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+ 
+.foundation-avatar {
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, #E07B39, #c85e1e);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+}
+ 
+.foundation-card-info {
+    flex: 1;
+    min-width: 0;
+}
+ 
+.foundation-card-name {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+ 
+.foundation-card-desc {
+    font-size: 0.9rem;
+    color: #555;
+    line-height: 1.5;
+    margin: 0;
+}
+ 
+.foundation-card-stats {
+    display: flex;
+    gap: 12px;
+}
+ 
+.foundation-stat {
+    flex: 1;
+    text-align: center;
+    padding: 12px 8px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+ 
+.foundation-stat-available {
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+}
+ 
+.foundation-stat-adopted {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+}
+ 
+.foundation-stat-num {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+}
+ 
+.foundation-stat-available .foundation-stat-num { color: #16a34a; }
+.foundation-stat-adopted   .foundation-stat-num { color: #2563eb; }
+ 
+.foundation-stat-lbl {
+    font-size: 0.72rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #666;
+}
+ 
+.foundation-card-contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+ 
+.foundation-contact-item {
+    font-size: 0.82rem;
+    color: #555;
+    background: #f5f5f5;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-decoration: none;
+    transition: background 0.15s;
+}
+ 
+a.foundation-contact-link:hover {
+    background: #ffe8d6;
+    color: #E07B39;
+}
+ 
+.foundation-card-actions {
+    margin-top: auto;
+}
+ 
+.foundations-cta {
+    text-align: center;
+    margin-top: 48px;
+    padding: 32px;
+    background: #fff;
+    border-radius: 16px;
+    border: 2px dashed #e8e8e8;
+}
+ 
+.foundations-cta p {
+    color: #666;
+    margin-bottom: 16px;
+}
+ 
+ 
+/* ─────────────────────────────────────────────────────────────
+   FUNDACIONES — Perfil individual (hero)
+   ───────────────────────────────────────────────────────────── */
+.foundation-profile-hero {
+    background: linear-gradient(135deg, #fff7f0 0%, #ffe8d6 100%);
+    padding: 40px 0 48px;
+}
+ 
+.foundation-back-link {
+    display: inline-block;
+    font-size: 0.88rem;
+    color: #E07B39;
+    text-decoration: none;
+    margin-bottom: 20px;
+    font-weight: 500;
+}
+ 
+.foundation-back-link:hover { text-decoration: underline; }
+ 
+.foundation-profile-header {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+ 
+.foundation-profile-avatar {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #E07B39, #c85e1e);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+}
+ 
+.foundation-profile-meta {
+    flex: 1;
+    min-width: 200px;
+}
+ 
+.foundation-profile-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 8px;
+}
+ 
+.foundation-profile-name {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+}
+ 
+.foundation-profile-desc {
+    color: #555;
+    line-height: 1.6;
+    margin: 8px 0 12px;
+}
+ 
+.foundation-profile-contacts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+ 
+.foundation-profile-stats {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    flex-shrink: 0;
+}
+ 
+.foundation-profile-stats .foundation-stat {
+    min-width: 90px;
+}
+ 
+ 
+/* ─────────────────────────────────────────────────────────────
+   ADOPCIÓN — Sección y grid de mascotas
+   ───────────────────────────────────────────────────────────── */
+.adoption-section {
+    padding: 48px 0;
+    background: #fff;
+}
+ 
+.adoption-section-adopted {
+    background: #fafafa;
+}
+ 
+.adoption-section-header {
+    text-align: center;
+    margin-bottom: 32px;
+}
+ 
+.adoption-empty {
+    text-align: center;
+    padding: 48px;
+    color: #888;
+    background: #f9f9f9;
+    border-radius: 12px;
+    border: 2px dashed #e0e0e0;
+}
+ 
+.adoption-pets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+}
+ 
+.adoption-pets-grid-adopted {
+    opacity: 0.82;
+}
+ 
+.adoption-pet-card {
+    background: #fff;
+    border-radius: 14px;
+    border: 1px solid #e8e8e8;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.2s, transform 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+ 
+.adoption-pet-card:hover {
+    box-shadow: 0 6px 20px rgba(224, 123, 57, 0.12);
+    transform: translateY(-2px);
+}
+ 
+.adoption-pet-card-adopted {
+    filter: grayscale(0.2);
+}
+ 
+.adoption-pet-photo {
+    position: relative;
+    height: 180px;
+    background: #f0f0f0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+ 
+.adoption-pet-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+ 
+.adoption-pet-photo .pet-photo-placeholder {
+    font-size: 3rem;
+}
+ 
+.adoption-status-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+ 
+/* Estados de adopción */
+.adoption-available,
+.adoption-status-badge.adoption-available {
+    background: #dcfce7;
+    color: #15803d;
+    border: 1px solid #86efac;
+}
+ 
+.adoption-pending,
+.adoption-adopted-pending,
+.adoption-status-badge.adoption-pending {
+    background: #fef9c3;
+    color: #a16207;
+    border: 1px solid #fde047;
+}
+ 
+.adoption-transferred,
+.adoption-adopted-transferred,
+.adoption-status-badge.adoption-transferred {
+    background: #dbeafe;
+    color: #1d4ed8;
+    border: 1px solid #93c5fd;
+}
+ 
+.adoption-owned,
+.adoption-status-badge.adoption-owned {
+    background: #f3f4f6;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+ 
+.adoption-pet-info {
+    padding: 16px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+ 
+.adoption-pet-name {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0;
+}
+ 
+.adoption-pet-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+ 
+.adoption-pet-tag {
+    font-size: 0.78rem;
+    background: #f5f5f5;
+    color: #555;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+ 
+.adoption-pet-desc {
+    font-size: 0.85rem;
+    color: #666;
+    line-height: 1.5;
+    margin: 0;
+}
+ 
+.adoption-pet-actions {
+    padding: 12px 16px;
+    border-top: 1px solid #f0f0f0;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+ 
+ 
+/* ─────────────────────────────────────────────────────────────
+   PARTNER BANNER (pets-list fundación)
+   ───────────────────────────────────────────────────────────── */
+.partner-banner {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: linear-gradient(135deg, #fff7ed, #ffe8d6);
+    border: 1px solid #fed7aa;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+ 
+.partner-banner-icon {
+    font-size: 1.8rem;
+    flex-shrink: 0;
+}
+ 
+.partner-banner-text {
+    flex: 1;
+    font-size: 0.9rem;
+    color: #7c4516;
+    min-width: 200px;
+}
+ 
+.partner-banner-text strong {
+    color: #c45c10;
+}
+ 
+ 
+/* ─────────────────────────────────────────────────────────────
+   ADOPCIÓN en pets-list (acciones de fundación por mascota)
+   ───────────────────────────────────────────────────────────── */
+.adoption-status-row {
+    margin-top: 8px;
+}
+ 
+.adoption-status-row .adoption-status-badge {
+    position: static;
+    display: inline-block;
+    font-size: 0.78rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+}
+ 
+.partner-actions {
+    padding: 12px 16px;
+    border-top: 2px dashed #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #fafafa;
+}
+ 
+.partner-status-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+ 
+.partner-status-form .form-select-sm {
+    flex: 1;
+    font-size: 0.82rem;
+    padding: 6px 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+ 
+.adoption-pending-notice {
+    font-size: 0.82rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin: 0;
+}
+ 
+.form-hint {
+    font-size: 0.78rem;
+    color: #888;
+    margin-top: 4px;
+    display: block;
+}
+ 
+.form-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+ 
+ 
+/* ─────────────────────────────────────────────────────────────
+   MODAL DE TRANSFERENCIA
+   ───────────────────────────────────────────────────────────── */
+.transfer-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 9000;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+ 
+.transfer-modal.transfer-modal-open {
+    display: flex;
+}
+ 
+.transfer-modal-content {
+    background: #fff;
+    border-radius: 20px;
+    padding: 32px;
+    max-width: 480px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    animation: modalSlideIn 0.2s ease;
+}
+ 
+@keyframes modalSlideIn {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+ 
+.transfer-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+ 
+.transfer-modal-header h2 {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.3rem;
+    margin: 0;
+    color: #1a1a1a;
+}
+ 
+.transfer-modal-close {
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    color: #888;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.15s;
+}
+ 
+.transfer-modal-close:hover { background: #f0f0f0; color: #333; }
+ 
+.transfer-modal-subtitle {
+    font-size: 0.88rem;
+    color: #666;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+ 
+.transfer-modal-pet-name {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.9rem;
+    color: #7c4516;
+    margin-bottom: 16px;
+}
+ 
+.transfer-modal-form .form-group {
+    margin-bottom: 16px;
+}
+ 
+.transfer-modal-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+ 
+ 
+/* ─────────────────────────────────────────────────────────────
+   PÁGINAS DE TRANSFERENCIA (accept, completed, error, expired)
+   ───────────────────────────────────────────────────────────── */
+.transfer-body {
+    background: linear-gradient(135deg, #fff7f0 0%, #fce7d4 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+}
+ 
+.transfer-page {
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+ 
+.transfer-logo {
+    display: flex;
+    align-items: center;
+}
+ 
+.transfer-logo a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+ 
+.transfer-logo-img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+ 
+.transfer-logo-text {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #E07B39;
+}
+ 
+.transfer-card {
+    background: #fff;
+    border-radius: 20px;
+    padding: 36px 32px;
+    width: 100%;
+    box-shadow: 0 8px 32px rgba(224, 123, 57, 0.12);
+    border: 1px solid #f0e0d0;
+}
+ 
+.transfer-card-success {
+    border-color: #bbf7d0;
+    box-shadow: 0 8px 32px rgba(22, 163, 74, 0.1);
+}
+ 
+.transfer-card-error {
+    border-color: #fecaca;
+    box-shadow: 0 8px 32px rgba(220, 38, 38, 0.08);
+}
+ 
+.transfer-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+ 
+.transfer-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+ 
+.transfer-success-icon,
+.transfer-error-icon {
+    font-size: 3.5rem;
+    text-align: center;
+    margin-bottom: 16px;
+}
+ 
+.transfer-title {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0 0 8px;
+    text-align: center;
+}
+ 
+.transfer-subtitle {
+    color: #555;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    text-align: center;
+    margin: 0 0 24px;
+}
+ 
+.transfer-pet-preview {
+    display: flex;
+    gap: 16px;
+    background: #f9f9f9;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 20px;
+    align-items: center;
+}
+ 
+.transfer-pet-photo {
+    width: 80px;
+    height: 80px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #e8e8e8;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+ 
+.transfer-pet-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+ 
+.transfer-pet-placeholder {
+    font-size: 2rem;
+}
+ 
+.transfer-pet-info h3 {
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1.2rem;
+    margin: 0 0 8px;
+    color: #1a1a1a;
+}
+ 
+.transfer-pet-info .adoption-pet-tag {
+    display: inline-block;
+    margin-right: 4px;
+    margin-bottom: 6px;
+}
+ 
+.transfer-pet-note {
+    font-size: 0.8rem;
+    color: #888;
+    margin: 8px 0 0;
+    line-height: 1.4;
+}
+ 
+.transfer-message {
+    margin-bottom: 20px;
+    font-size: 0.88rem;
+}
+ 
+.transfer-action-block {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+ 
+.transfer-action-info {
+    font-size: 0.9rem;
+    color: #555;
+    text-align: center;
+    background: #f9f9f9;
+    padding: 12px 16px;
+    border-radius: 10px;
+    margin: 0;
+}
+ 
+.transfer-action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+ 
+.transfer-expiry {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #aaa;
+    margin: 16px 0 0;
+}
+ 
+.transfer-next-steps {
+    background: #f0fdf4;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    border: 1px solid #bbf7d0;
+}
+ 
+.transfer-next-steps h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #15803d;
+    margin: 0 0 10px;
+}
+ 
+.transfer-next-steps ul {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 0.88rem;
+    color: #374151;
+    line-height: 1.7;
+}
+ 
+.transfer-success-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    margin: 0 auto 20px;
+    border: 4px solid #bbf7d0;
+}
+ 
+.transfer-success-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+ 
+.transfer-footer-note {
+    font-size: 0.85rem;
+    color: #888;
+    text-align: center;
+}
+ 
+.transfer-footer-note a {
+    color: #E07B39;
+    text-decoration: none;
+}
+ 
+.transfer-footer-note a:hover { text-decoration: underline; }
+ 
+ 
+/* ─────────────────────────────────────────────────────────────
+   NAVBAR — link a fundaciones (si se agrega)
+   ───────────────────────────────────────────────────────────── */
+.navbar-logo-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+}
+ 
+.footer-link:last-child.footer-link-highlight {
+    color: #E07B39;
+    font-weight: 500;
+}
 /* ==========================================
    DETAILS GRID
    ========================================== */

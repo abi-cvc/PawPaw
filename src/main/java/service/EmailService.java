@@ -351,4 +351,128 @@ public class EmailService {
                 .replace("\"", "&quot;")
                 .replace("'", "&#39;");
     }
+    
+    /**
+     * Envía el email de invitación de adopción al adoptante.
+     * Usa el mismo mecanismo Brevo HTTP que los demás métodos del servicio.
+     *
+     * @param adopterEmail   Email del adoptante
+     * @param adopterName    Nombre del adoptante
+     * @param petName        Nombre de la mascota
+     * @param foundationName Nombre de la fundación
+     * @param acceptUrl      URL con token: https://...app.../accept-transfer?token=...
+     */
+    public boolean sendTransferEmail(String adopterEmail, String adopterName,
+                                     String petName, String foundationName,
+                                     String acceptUrl) {
+        System.out.println("📧 Enviando email de transferencia a " + adopterEmail);
+ 
+        if (API_KEY == null || FROM_EMAIL == null) {
+            System.err.println("❌ ERROR: Variables de entorno no configuradas para email de transferencia");
+            return false;
+        }
+ 
+        try {
+            String subject = "🐾 " + foundationName + " quiere transferirte a " + petName + " - PawPaw";
+ 
+            String htmlContent = buildTransferEmailHtml(adopterName, foundationName, petName, acceptUrl);
+ 
+            String textContent = "Hola " + adopterName + ",\n\n"
+                    + foundationName + " te ha seleccionado como el nuevo dueño de " + petName + ".\n\n"
+                    + "Para aceptar la adopción, ingresa aquí:\n"
+                    + acceptUrl + "\n\n"
+                    + "Este enlace es válido por 7 días.\n\n"
+                    + "Si no esperabas este mensaje, puedes ignorarlo.\n\n"
+                    + "Equipo PawPaw";
+ 
+            String jsonPayload = buildJsonPayload(adopterEmail, adopterName, subject, htmlContent, textContent);
+ 
+            URL url = new URL(BREVO_API_URL);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("accept", "application/json");
+            conn.setRequestProperty("api-key", API_KEY);
+            conn.setRequestProperty("content-type", "application/json");
+            conn.setDoOutput(true);
+            conn.setConnectTimeout(15000);
+            conn.setReadTimeout(15000);
+ 
+            try (OutputStream os = conn.getOutputStream()) {
+                byte[] input = jsonPayload.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+ 
+            int responseCode = conn.getResponseCode();
+ 
+            if (responseCode >= 200 && responseCode < 300) {
+                System.out.println("✅ Email de transferencia enviado exitosamente a " + adopterEmail);
+                return true;
+            } else {
+                System.err.println("❌ Error al enviar email de transferencia: " + responseCode + " - " + conn.getResponseMessage());
+                return false;
+            }
+ 
+        } catch (Exception e) {
+            System.err.println("❌ Excepción al enviar email de transferencia: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+ 
+    /**
+     * Construye el HTML del email de invitación de adopción
+     */
+    private String buildTransferEmailHtml(String adopterName, String foundationName,
+                                           String petName, String acceptUrl) {
+        return "<!DOCTYPE html>" +
+                "<html lang='es'>" +
+                "<head><meta charset='UTF-8'></head>" +
+                "<body style='margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,\"Segoe UI\",Roboto,Arial,sans-serif;background-color:#f5f5f5;'>" +
+                "<table width='100%' cellpadding='0' cellspacing='0' style='background-color:#f5f5f5;padding:40px 20px;'>" +
+                "<tr><td align='center'>" +
+                "<table width='600' cellpadding='0' cellspacing='0' style='background-color:#ffffff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);'>" +
+ 
+                // Header
+                "<tr><td style='padding:40px;text-align:center;background:linear-gradient(135deg,#E07B39 0%,#c85e1e 100%);border-radius:12px 12px 0 0;'>" +
+                "<h1 style='margin:0;color:#ffffff;font-size:32px;font-weight:700;'>🐾 PawPaw</h1>" +
+                "<p style='margin:10px 0 0;color:#ffe8d6;font-size:16px;'>Sistema de identificación de mascotas</p>" +
+                "</td></tr>" +
+ 
+                // Body
+                "<tr><td style='padding:40px;'>" +
+                "<h2 style='margin:0 0 16px;color:#1a1a1a;font-size:22px;'>¡Hola, " + escapeHtml(adopterName) + "! 👋</h2>" +
+                "<p style='margin:0 0 16px;color:#555;font-size:15px;line-height:1.6;'>" +
+                "La fundación <strong style='color:#c85e1e;'>" + escapeHtml(foundationName) + "</strong> " +
+                "te ha seleccionado como el/la nuevo/a dueño/a de <strong>" + escapeHtml(petName) + "</strong>.</p>" +
+ 
+                "<div style='background:#fff7ed;border-left:4px solid #E07B39;border-radius:0 8px 8px 0;padding:16px 20px;margin:20px 0;'>" +
+                "<p style='margin:0;color:#7c4516;font-size:14px;line-height:1.6;'>" +
+                "🐾 Al aceptar, el perfil QR de <strong>" + escapeHtml(petName) + "</strong> se transferirá " +
+                "automáticamente a tu cuenta PawPaw. El mismo código en su placa seguirá funcionando, " +
+                "pero ahora mostrará <strong>tu</strong> información de contacto.</p>" +
+                "</div>" +
+ 
+                "<p style='margin:0 0 8px;color:#555;font-size:15px;line-height:1.6;'>" +
+                "Haz clic en el botón para aceptar la adopción:</p>" +
+ 
+                "<div style='text-align:center;margin:30px 0;'>" +
+                "<a href='" + acceptUrl + "' style='background:#E07B39;color:#ffffff;padding:14px 32px;" +
+                "border-radius:8px;text-decoration:none;font-size:16px;font-weight:700;display:inline-block;'>" +
+                "✅ Aceptar Adopción</a>" +
+                "</div>" +
+ 
+                "<p style='margin:0;color:#999;font-size:13px;line-height:1.5;'>" +
+                "⏳ Este enlace es válido por 7 días.<br>" +
+                "Si no esperabas este mensaje, puedes ignorarlo sin problemas.</p>" +
+                "</td></tr>" +
+ 
+                // Footer
+                "<tr><td style='padding:24px 40px;text-align:center;border-top:1px solid #f0f0f0;'>" +
+                "<p style='margin:0;color:#aaa;font-size:12px;'>" +
+                "© PawPaw — La seguridad de tu mascota, a un escaneo de distancia.</p>" +
+                "</td></tr>" +
+ 
+                "</table></td></tr></table>" +
+                "</body></html>";
+    }
 }
