@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 /**
  * Controlador para gestión de mascotas
@@ -21,6 +22,8 @@ public class PetController extends HttpServlet {
     private static final long serialVersionUID = 1L;
     
     private PetDAO petDAO = new PetDAO();
+    private static final Pattern CLOUDINARY_URL_PATTERN =
+            Pattern.compile("^https://res\\.cloudinary\\.com/[a-zA-Z0-9_-]+/.*$");
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -46,8 +49,9 @@ public class PetController extends HttpServlet {
             // Mostrar formulario de edición
             showEditPetForm(request, response, userId);
         } else if (pathInfo.equals("/delete")) {
-            // Eliminar mascota
-            deletePet(request, response, userId);
+            // DELETE solo via POST por seguridad (SEC-007)
+            response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Use POST para eliminar");
+            return;
         } else {
             response.sendRedirect(request.getContextPath() + "/user/panel");
         }
@@ -73,6 +77,9 @@ public class PetController extends HttpServlet {
         } else if (pathInfo != null && pathInfo.equals("/edit")) {
             // Actualizar mascota existente
             updatePet(request, response, userId);
+        } else if (pathInfo != null && pathInfo.equals("/delete")) {
+            // Eliminar mascota (solo via POST)
+            deletePet(request, response, userId);
         } else {
             response.sendRedirect(request.getContextPath() + "/user/panel");
         }
@@ -188,7 +195,15 @@ public class PetController extends HttpServlet {
             request.getRequestDispatcher("/view/internalUser/pet-form.jsp").forward(request, response);
             return;
         }
-        
+
+        // Validar URL de Cloudinary (SEC-011)
+        if (!CLOUDINARY_URL_PATTERN.matcher(photo.trim()).matches()) {
+            request.setAttribute("error", "La URL de la foto no es valida. Debe ser una imagen de Cloudinary.");
+            request.setAttribute("action", "new");
+            request.getRequestDispatcher("/view/internalUser/pet-form.jsp").forward(request, response);
+            return;
+        }
+
         // Crear objeto Pet
         Pet pet = new Pet();
         pet.setIdUser(userId);

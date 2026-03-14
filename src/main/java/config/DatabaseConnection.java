@@ -15,10 +15,8 @@ public class DatabaseConnection {
     
     private static HikariDataSource dataSource;
     
-    // Configuración de conexión - Valores por defecto para desarrollo local
-    private static final String DB_URL = "jdbc:postgresql://ep-morning-meadow-acbwlvy2-pooler.sa-east-1.aws.neon.tech/pawpawbd?sslmode=require";
-    private static final String DB_USER = "neondb_owner";
-    private static final String DB_PASSWORD = "npg_ru6hPFSOJjl3";
+    // Configuración de conexión - DEBE configurarse via variables de entorno
+    // DB_URL, DB_USER, DB_PASSWORD son OBLIGATORIAS
     
     // Configuración del pool de conexiones
     private static final int MAX_POOL_SIZE = 10;
@@ -43,20 +41,21 @@ public class DatabaseConnection {
     private static void inicializarDataSource() {
         HikariConfig config = new HikariConfig();
         
-        // Leer variables de entorno (Railway/Producción)
+        // Leer variables de entorno (OBLIGATORIO)
         String dbUrl = System.getenv("DB_URL");
         String dbUser = System.getenv("DB_USER");
         String dbPassword = System.getenv("DB_PASSWORD");
-        
-        // Si no hay variables de entorno, usar configuración local
-        if (dbUrl == null || dbUrl.isEmpty()) {
-            System.out.println("🔵 Modo: DESARROLLO (localhost)");
-            dbUrl = DB_URL;
-            dbUser = DB_USER;
-            dbPassword = DB_PASSWORD;
-        } else {
-            System.out.println("🚀 Modo: PRODUCCIÓN (Railway)");
+
+        // Fail-fast si no hay variables de entorno configuradas
+        if (dbUrl == null || dbUrl.isEmpty() ||
+            dbUser == null || dbUser.isEmpty() ||
+            dbPassword == null || dbPassword.isEmpty()) {
+            throw new IllegalStateException(
+                "Variables de entorno de BD no configuradas. " +
+                "Requeridas: DB_URL, DB_USER, DB_PASSWORD");
         }
+
+        System.out.println("✅ Variables de entorno de BD detectadas");
         
         // Configuración básica
         config.setJdbcUrl(dbUrl);

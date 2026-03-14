@@ -148,24 +148,34 @@ public class AcceptTransferServlet extends HttpServlet {
             if ("accept".equals(action)) {
                 Integer adopterId = (Integer) request.getSession().getAttribute("userId");
 
+                // DB-002: Usar transacción explícita para las 3 operaciones
                 try (Connection conn = DatabaseConnection.getConnection()) {
+                    conn.setAutoCommit(false);
+                    try {
+                        // Transferir propiedad: cambia id_user pero id_pet permanece igual → QR intacto
+                        try (PreparedStatement ps = conn.prepareStatement(
+                                "UPDATE pets SET id_user = ?, adoption_status = 'adopted_transferred' WHERE id_pet = ?")) {
+                            ps.setInt(1, adopterId);
+                            ps.setInt(2, transfer.getIdPet());
+                            ps.executeUpdate();
+                        }
 
-                    // Transferir propiedad: cambia id_user pero id_pet permanece igual → QR intacto
-                    try (PreparedStatement ps = conn.prepareStatement(
-                            "UPDATE pets SET id_user = ?, adoption_status = 'adopted_transferred' WHERE id_pet = ?")) {
-                        ps.setInt(1, adopterId);
-                        ps.setInt(2, transfer.getIdPet());
-                        ps.executeUpdate();
+                        // Agregar 1 slot al adoptante (para que el pet no quede fuera del límite)
+                        try (PreparedStatement ps = conn.prepareStatement(
+                                "UPDATE users SET pet_limit = pet_limit + 1 WHERE id_user = ?")) {
+                            ps.setInt(1, adopterId);
+                            ps.executeUpdate();
+                        }
+
+                        conn.commit();
+                    } catch (SQLException e) {
+                        conn.rollback();
+                        throw e;
+                    } finally {
+                        conn.setAutoCommit(true);
                     }
 
-                    // Agregar 1 slot al adoptante (para que el pet no quede fuera del límite)
-                    try (PreparedStatement ps = conn.prepareStatement(
-                            "UPDATE users SET pet_limit = pet_limit + 1 WHERE id_user = ?")) {
-                        ps.setInt(1, adopterId);
-                        ps.executeUpdate();
-                    }
-
-                    // Marcar transferencia como aceptada
+                    // Marcar transferencia como aceptada (puede estar fuera de la transacción)
                     dao.updateStatus(transfer.getIdTransfer(), "accepted",
                             new Timestamp(System.currentTimeMillis()));
 
@@ -193,14 +203,13 @@ public class AcceptTransferServlet extends HttpServlet {
     private void loadPetInfo(HttpServletRequest request, int petId) {
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement ps = conn.prepareStatement(
-                     "SELECT p.name_pet, p.photo_url, p.species, p.breed, u.name_user AS foundation_name " +
+                     "SELECT p.name_pet, p.photo, p.breed, u.name_user AS foundation_name " +
                      "FROM pets p JOIN users u ON p.id_user = u.id_user WHERE p.id_pet = ?")) {
             ps.setInt(1, petId);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     request.setAttribute("petName",        rs.getString("name_pet"));
-                    request.setAttribute("petPhoto",       rs.getString("photo_url"));
-                    request.setAttribute("petSpecies",     rs.getString("species"));
+                    request.setAttribute("petPhoto",       rs.getString("photo"));
                     request.setAttribute("petBreed",       rs.getString("breed"));
                     request.setAttribute("foundationName", rs.getString("foundation_name"));
                     request.setAttribute("petId",          petId);

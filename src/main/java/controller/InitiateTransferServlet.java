@@ -101,11 +101,17 @@ public class InitiateTransferServlet extends HttpServlet {
                 ps.executeUpdate();
             }
 
-            // Construir URL de aceptación
-            String baseUrl = request.getScheme() + "://" + request.getServerName()
-                    + (request.getServerPort() == 80 || request.getServerPort() == 443
-                    ? "" : ":" + request.getServerPort())
-                    + request.getContextPath();
+            // SEC-016: Usar APP_BASE_URL en vez de request.getScheme() para evitar HTTP
+            String appBaseUrl = System.getenv("APP_BASE_URL");
+            String baseUrl;
+            if (appBaseUrl != null && !appBaseUrl.isEmpty()) {
+                baseUrl = appBaseUrl;
+            } else {
+                baseUrl = request.getScheme() + "://" + request.getServerName()
+                        + (request.getServerPort() == 80 || request.getServerPort() == 443
+                        ? "" : ":" + request.getServerPort())
+                        + request.getContextPath();
+            }
             String acceptUrl = baseUrl + "/accept-transfer?token=" + token;
 
             String foundationName = (String) request.getSession().getAttribute("userName");

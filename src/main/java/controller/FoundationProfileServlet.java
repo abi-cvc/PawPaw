@@ -87,9 +87,9 @@ public class FoundationProfileServlet extends HttpServlet {
 
             // ── 2. Mascotas de la fundación ────────────────────────────
             String petsSql = """
-                SELECT id_pet, name_pet, species, breed, age,
-                       description, photo_url, adoption_status
-                FROM v_foundation_pets
+                SELECT id_pet, name_pet, breed, age_pet,
+                       medical_conditions, photo, adoption_status, adoption_description
+                FROM pets
                 WHERE id_user = ?
                   AND status_pet = 'active'
                 ORDER BY
@@ -110,14 +110,13 @@ public class FoundationProfileServlet extends HttpServlet {
                 try (ResultSet rs = ps.executeQuery()) {
                     while (rs.next()) {
                         Map<String, Object> pet = new LinkedHashMap<>();
-                        pet.put("id_pet",          rs.getInt("id_pet"));
-                        pet.put("name_pet",         rs.getString("name_pet"));
-                        pet.put("species",          rs.getString("species"));
-                        pet.put("breed",            rs.getString("breed"));
-                        pet.put("age",              rs.getObject("age"));
-                        pet.put("description",      rs.getString("description"));
-                        pet.put("photo_url",        rs.getString("photo_url"));
-                        pet.put("adoption_status",  rs.getString("adoption_status"));
+                        pet.put("id_pet",              rs.getInt("id_pet"));
+                        pet.put("name_pet",             rs.getString("name_pet"));
+                        pet.put("breed",                rs.getString("breed"));
+                        pet.put("age",                  rs.getObject("age_pet"));
+                        pet.put("description",          rs.getString("adoption_description"));
+                        pet.put("photo_url",            rs.getString("photo"));
+                        pet.put("adoption_status",      rs.getString("adoption_status"));
 
                         String status = rs.getString("adoption_status");
                         if ("available".equals(status) || "adopted_pending".equals(status)) {

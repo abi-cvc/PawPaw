@@ -1,6 +1,5 @@
 package controller;
 
-import config.DatabaseConnection;
 import model.dao.UserDAO;
 import model.dao.PetDAO;
 import model.dao.QRCodeDAO;
@@ -15,9 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
 
 /**
  * Servlet para el panel principal del administrador
@@ -60,28 +56,11 @@ public class AdminPanelServlet extends HttpServlet {
         try {
             int totalUsers = userDAO.count();
             
-            // PetDAO sí tiene findAll()
-            int totalPets = 0;
-            try {
-                totalPets = petDAO.findAll().size();
-            } catch (Exception e) {
-                System.err.println("Error contando mascotas: " + e.getMessage());
-            }
-            
-            // QRCodeDAO NO tiene findAll() global, usar query manual
-            int totalQRCodes = 0;
-            try {
-                String sql = "SELECT COUNT(*) FROM qrcodes";
-                try (Connection conn = DatabaseConnection.getConnection();
-                     Statement stmt = conn.createStatement();
-                     ResultSet rs = stmt.executeQuery(sql)) {
-                    if (rs.next()) {
-                        totalQRCodes = rs.getInt(1);
-                    }
-                }
-            } catch (Exception e) {
-                System.err.println("Error contando QR codes: " + e.getMessage());
-            }
+            // DB-004: Usar count() en vez de findAll().size()
+            int totalPets = petDAO.count();
+
+            // DB-005: Usar QRCodeDAO.count() en vez de SQL raw
+            int totalQRCodes = qrCodeDAO.count();
             
             int totalSuggestions = suggestionDAO.count();
             int pendingSuggestions = suggestionDAO.countByStatus("pending");

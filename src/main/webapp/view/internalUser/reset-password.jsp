@@ -1,10 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%
-    String token = (String) request.getAttribute("token");
-    Boolean tokenValid = (Boolean) request.getAttribute("tokenValid");
-    Boolean tokenExpired = (Boolean) request.getAttribute("tokenExpired");
-    String error = (String) request.getAttribute("error");
-%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,50 +7,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Restablecer Contraseña - PawPaw</title>
     
-    <link rel="icon" type="image/png" href="<%= request.getContextPath() %>/images/logo.png">
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
 </head>
 <body>
     <div class="contenedor-formulario">
         <div class="tarjeta-formulario">
             
             <div class="formulario-encabezado">
-                <a href="<%= request.getContextPath() %>/view/index.jsp">
-                    <img src="<%= request.getContextPath() %>/images/logo.png" alt="Logo PawPaw">
+                <a href="${pageContext.request.contextPath}/view/index.jsp">
+                    <img src="${pageContext.request.contextPath}/images/logo.png" alt="Logo PawPaw">
                 </a>
                 <h1>Restablecer Contraseña</h1>
                 <p>Crea una nueva contraseña segura</p>
             </div>
             
-            <% if (error != null && !error.isEmpty()) { %>
+            <c:if test="${not empty error}">
                 <div class="mensaje mensaje-error">
-                    ⚠️ <%= error %>
+                    ⚠️ <c:out value="${error}"/>
                 </div>
-                
-                <% if (tokenExpired != null && tokenExpired) { %>
-                    <!-- Token expirado - ofrecer solicitar uno nuevo -->
-                    <div style="text-align: center; margin-top: 2rem;">
-                        <p style="color: #666; margin-bottom: 1rem;">
-                            ¿Necesitas un nuevo enlace de recuperación?
-                        </p>
-                        <a href="<%= request.getContextPath() %>/forgot-password" class="btn btn-primario" style="width: 100%;">
-                            Solicitar Nuevo Enlace
-                        </a>
-                    </div>
-                <% } else { %>
-                    <!-- Error genérico - volver al login -->
-                    <div style="text-align: center; margin-top: 2rem;">
-                        <a href="<%= request.getContextPath() %>/login" class="btn btn-secundario" style="width: 100%;">
-                            Volver al Login
-                        </a>
-                    </div>
-                <% } %>
-                
-            <% } else if (tokenValid != null && tokenValid) { %>
+
+                <c:choose>
+                    <c:when test="${tokenExpired}">
+                        <!-- Token expirado - ofrecer solicitar uno nuevo -->
+                        <div style="text-align: center; margin-top: 2rem;">
+                            <p style="color: #666; margin-bottom: 1rem;">
+                                ¿Necesitas un nuevo enlace de recuperación?
+                            </p>
+                            <a href="${pageContext.request.contextPath}/forgot-password" class="btn btn-primario" style="width: 100%;">
+                                Solicitar Nuevo Enlace
+                            </a>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <!-- Error genérico - volver al login -->
+                        <div style="text-align: center; margin-top: 2rem;">
+                            <a href="${pageContext.request.contextPath}/login" class="btn btn-secundario" style="width: 100%;">
+                                Volver al Login
+                            </a>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+
+            </c:if>
+            <c:if test="${empty error and tokenValid}">
                 <!-- Token válido - mostrar formulario -->
-                <form action="<%= request.getContextPath() %>/reset-password" method="post" id="resetPasswordForm">
-                    <input type="hidden" name="token" value="<%= token %>">
+                <form action="${pageContext.request.contextPath}/reset-password" method="post" id="resetPasswordForm">
+                    <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
+                    <input type="hidden" name="token" value="<c:out value="${token}"/>">
                     
                     <div class="form-group">
                         <label for="newPassword" class="form-label required">Nueva Contraseña</label>
@@ -113,7 +113,8 @@
                     </ul>
                 </div>
                 
-            <% } else { %>
+            </c:if>
+            <c:if test="${empty error and not tokenValid}">
                 <!-- Sin token - mostrar mensaje y botón para solicitar recuperación -->
                 <div style="text-align: center; padding: 2rem 0;">
                     <div style="font-size: 4rem; margin-bottom: 1rem;">🔒</div>
@@ -123,10 +124,10 @@
                     </p>
                 </div>
                 
-                <a href="<%= request.getContextPath() %>/forgot-password" class="btn btn-primario" style="width: 100%;">
+                <a href="${pageContext.request.contextPath}/forgot-password" class="btn btn-primario" style="width: 100%;">
                     Solicitar Recuperación
                 </a>
-            <% } %>
+            </c:if>
             
         </div>
     </div>

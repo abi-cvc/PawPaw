@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -9,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
 </head>
 <body>
 
@@ -18,7 +19,7 @@
         <nav class="navbar">
             <div class="navbar-contenedor">
                 <div class="navbar-logo">
-                    <img src="<%= request.getContextPath() %>/images/logo.png" alt="Logo PawPaw" class="logo-img">
+                    <img src="${pageContext.request.contextPath}/images/logo.png" alt="Logo PawPaw" class="logo-img">
                     <span class="logo-texto">PawPaw</span>
                 </div>
                 <div class="navbar-botones">
@@ -38,7 +39,7 @@
                 <div class="hero-contenido">
                     <h1 class="hero-titulo">La seguridad de tu mascota, a un escaneo de distancia</h1>
                     <p class="hero-descripcion">
-                        Crea un perfil digital para tu mejor amigo y ayuda a que siempre encuentre el camino a casa. 
+                        Crea un perfil digital para tu mejor amigo y ayuda a que siempre encuentre el camino a casa.
                         Con un simple código QR, cualquier persona puede contactarte si tu mascota se pierde.
                     </p>
                     <div class="hero-botones">
@@ -63,7 +64,7 @@
 
                 <!-- Imagen placas -->
                 <div class="hero-imagen">
-                    <img src="<%= request.getContextPath() %>/images/placas.png"
+                    <img src="${pageContext.request.contextPath}/images/placas.png"
                          alt="Placas QR PawPaw para mascotas"
                          class="hero-placas-img">
                 </div>
@@ -190,7 +191,7 @@
                     <span class="fundaciones-etiqueta">🏡 Para fundaciones y rescatistas</span>
                     <h2 class="seccion-titulo">Dale visibilidad a tus animales rescatados</h2>
                     <p class="seccion-subtitulo">
-                        Si tienes una fundación o rescatas animales, PawPaw te da herramientas especiales 
+                        Si tienes una fundación o rescatas animales, PawPaw te da herramientas especiales
                         para conectar a tus mascotas con familias que las están esperando.
                     </p>
                 </div>
@@ -201,7 +202,7 @@
                         <div class="fundacion-beneficio-icono">♾️</div>
                         <h3 class="fundacion-beneficio-titulo">Slots ilimitados</h3>
                         <p class="fundacion-beneficio-desc">
-                            Registra todos los animales que cuidas sin restricciones, 
+                            Registra todos los animales que cuidas sin restricciones,
                             sin límite de mascotas y sin costo adicional.
                         </p>
                     </div>
@@ -210,7 +211,7 @@
                         <div class="fundacion-beneficio-icono">🌐</div>
                         <h3 class="fundacion-beneficio-titulo">Página pública propia</h3>
                         <p class="fundacion-beneficio-desc">
-                            Tu fundación tendrá una página en PawPaw donde cualquier persona 
+                            Tu fundación tendrá una página en PawPaw donde cualquier persona
                             puede ver tus animales disponibles para adopción.
                         </p>
                     </div>
@@ -219,7 +220,7 @@
                         <div class="fundacion-beneficio-icono">📲</div>
                         <h3 class="fundacion-beneficio-titulo">QR que sigue al animal</h3>
                         <p class="fundacion-beneficio-desc">
-                            Cuando un animal es adoptado, el QR se transfiere automáticamente 
+                            Cuando un animal es adoptado, el QR se transfiere automáticamente
                             al nuevo dueño. La placa no cambia, el perfil sí.
                         </p>
                     </div>
@@ -228,7 +229,7 @@
                         <div class="fundacion-beneficio-icono">🤝</div>
                         <h3 class="fundacion-beneficio-titulo">Badge de partner verificado</h3>
                         <p class="fundacion-beneficio-desc">
-                            Apareces verificado en el directorio de aliados PawPaw, 
+                            Apareces verificado en el directorio de aliados PawPaw,
                             generando confianza en los potenciales adoptantes.
                         </p>
                     </div>
@@ -237,7 +238,7 @@
                         <div class="fundacion-beneficio-icono">📬</div>
                         <h3 class="fundacion-beneficio-titulo">Transferencia por email</h3>
                         <p class="fundacion-beneficio-desc">
-                            Inicia la adopción con solo el email del adoptante. 
+                            Inicia la adopción con solo el email del adoptante.
                             Ellos reciben un enlace seguro para confirmar.
                         </p>
                     </div>
@@ -247,10 +248,10 @@
                         <div class="fundacion-beneficio-icono">🐾</div>
                         <h3 class="fundacion-beneficio-titulo">¿Tienes una fundación?</h3>
                         <p class="fundacion-beneficio-desc">
-                            Únete como fundación aliada y dale visibilidad a tus animales hoy mismo. 
+                            Únete como fundación aliada y dale visibilidad a tus animales hoy mismo.
                             El proceso es simple y gratuito.
                         </p>
-                        <a href="<%= request.getContextPath() %>/foundation/apply" class="btn btn-primario">
+                        <a href="${pageContext.request.contextPath}/foundation/apply" class="btn btn-primario">
                             Enviar solicitud →
                         </a>
                     </div>
@@ -260,7 +261,7 @@
                 <!-- Banner secundario para ver fundaciones existentes -->
                 <div class="fundaciones-banner-secundario">
                     <p>¿Quieres conocer las fundaciones que ya forman parte de PawPaw?</p>
-                    <a href="<%= request.getContextPath() %>/foundations/public" class="btn btn-secundario btn-sm">
+                    <a href="${pageContext.request.contextPath}/foundations/public" class="btn btn-secundario btn-sm">
                         Ver fundaciones aliadas →
                     </a>
                 </div>
@@ -275,7 +276,7 @@
                 <p class="cta-subtitulo">Únete a miles de familias que ya confían en PawPaw</p>
                 <div class="cta-botones">
                     <a href="${pageContext.request.contextPath}/register" class="btn btn-primario btn-grande">Comenzar ahora</a>
-                    <a href="<%= request.getContextPath() %>/foundations/public" class="btn btn-outline-claro btn-grande">Ver fundaciones aliadas</a>
+                    <a href="${pageContext.request.contextPath}/foundations/public" class="btn btn-outline-claro btn-grande">Ver fundaciones aliadas</a>
                 </div>
             </div>
         </section>
@@ -287,7 +288,7 @@
         <div class="footer-contenedor">
             <div class="footer-contenido">
                 <div class="footer-brand">
-                    <img src="<%= request.getContextPath() %>/images/logo.png" alt="Logo PawPaw" class="footer-logo-img">
+                    <img src="${pageContext.request.contextPath}/images/logo.png" alt="Logo PawPaw" class="footer-logo-img">
                     <span class="footer-logo-texto">PawPaw</span>
                 </div>
                 <nav class="footer-links">
@@ -295,8 +296,8 @@
                     <a href="${pageContext.request.contextPath}/contact" class="footer-link">Contacto</a>
                     <a href="${pageContext.request.contextPath}/privacy" class="footer-link">Política de privacidad</a>
                     <a href="${pageContext.request.contextPath}/terms" class="footer-link">Términos de uso</a>
-                    <a href="<%= request.getContextPath() %>/foundations/public" class="footer-link">🏡 Fundaciones Aliadas</a>
-                    <a href="<%= request.getContextPath() %>/foundation/apply" class="footer-link">Ser fundación aliada</a>
+                    <a href="${pageContext.request.contextPath}/foundations/public" class="footer-link">🏡 Fundaciones Aliadas</a>
+                    <a href="${pageContext.request.contextPath}/foundation/apply" class="footer-link">Ser fundación aliada</a>
                 </nav>
             </div>
             <div class="footer-bottom">

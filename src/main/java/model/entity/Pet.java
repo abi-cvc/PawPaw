@@ -21,7 +21,9 @@ public class Pet {
     private Timestamp creationDate;
     private String extraComments;
     private String adoptionStatus; // owned, available, adopted_pending, adopted_transferred
-    
+    private boolean availableForAdoption; // BD column: available_for_adoption
+    private String adoptionDescription; // BD column: adoption_description
+
     // Constructores
     
     /**
@@ -170,7 +172,23 @@ public class Pet {
     public void setAdoptionStatus(String adoptionStatus) {
         this.adoptionStatus = adoptionStatus;
     }
-    
+
+    public boolean getAvailableForAdoption() {
+        return availableForAdoption;
+    }
+
+    public void setAvailableForAdoption(boolean availableForAdoption) {
+        this.availableForAdoption = availableForAdoption;
+    }
+
+    public String getAdoptionDescription() {
+        return adoptionDescription;
+    }
+
+    public void setAdoptionDescription(String adoptionDescription) {
+        this.adoptionDescription = adoptionDescription;
+    }
+
     // Métodos útiles
     
     public boolean isActive() {
@@ -200,7 +218,7 @@ public class Pet {
      * Verifica si la mascota está disponible para adopción
      */
     public boolean isAvailableForAdoption() {
-        return "available".equalsIgnoreCase(adoptionStatus);
+        return availableForAdoption || "available".equalsIgnoreCase(adoptionStatus);
     }
 
     /**

@@ -59,12 +59,8 @@ public class ManageUsersServlet extends HttpServlet {
                 users.removeIf(u -> !roleFilter.equals(u.getRol()));
             }
             
-            // Contar mascotas de cada usuario
-            Map<Integer, Integer> petCounts = new HashMap<>();
-            for (User user : users) {
-                int count = petDAO.countByUserId(user.getIdUser());
-                petCounts.put(user.getIdUser(), count);
-            }
+            // DB-003: Contar mascotas en bulk (1 query en vez de N)
+            Map<Integer, Integer> petCounts = petDAO.countByUserIdBulk();
             
             // Estadísticas
             int totalUsers = users.size();
