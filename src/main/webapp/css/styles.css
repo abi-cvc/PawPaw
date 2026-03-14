@@ -2649,12 +2649,13 @@ a {
 }
 
 .benefits-list li::before {
-    content: "✓";
+    content: "\2714";
     position: absolute;
     left: 0;
     color: var(--color-3);
     font-weight: 700;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
+    font-family: "Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", sans-serif;
 }
 
 .btn-large {

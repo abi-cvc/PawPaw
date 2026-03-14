@@ -10,7 +10,7 @@ import java.io.IOException;
  * Filtro de headers de seguridad
  * Agrega headers como X-Content-Type-Options, X-Frame-Options, SameSite cookies
  */
-@WebFilter("/*")
+// Registrado en web.xml — no usar @WebFilter para evitar doble ejecución
 public class SecurityHeadersFilter implements Filter {
 
     @Override

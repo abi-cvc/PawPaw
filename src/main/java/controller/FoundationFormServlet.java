@@ -25,7 +25,7 @@ public class FoundationFormServlet extends HttpServlet {
             throws ServletException, IOException {
         
         // Formulario público - no requiere login
-        request.getRequestDispatcher("/view/externalUser/foundation-form.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/foundations/foundation-form.jsp").forward(request, response);
     }
     
     @Override
@@ -57,7 +57,7 @@ public class FoundationFormServlet extends HttpServlet {
             request.setAttribute("email", email);
             request.setAttribute("phone", phone);
             request.setAttribute("animalTypes", animalTypes);
-            request.getRequestDispatcher("/view/externalUser/foundation-form.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/foundations/foundation-form.jsp").forward(request, response);
             return;
         }
         
@@ -68,7 +68,7 @@ public class FoundationFormServlet extends HttpServlet {
             request.setAttribute("contactName", contactName);
             request.setAttribute("phone", phone);
             request.setAttribute("animalTypes", animalTypes);
-            request.getRequestDispatcher("/view/externalUser/foundation-form.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/foundations/foundation-form.jsp").forward(request, response);
             return;
         }
         
@@ -89,10 +89,10 @@ public class FoundationFormServlet extends HttpServlet {
                 System.out.println("✅ Nueva solicitud de fundación: " + foundationName);
                 
                 // Limpiar formulario
-                request.getRequestDispatcher("/view/externalUser/foundation-success.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/foundations/foundation-success.jsp").forward(request, response);
             } else {
                 request.setAttribute("errorMessage", "Error al enviar la solicitud. Inténtalo de nuevo.");
-                request.getRequestDispatcher("/view/externalUser/foundation-form.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/foundations/foundation-form.jsp").forward(request, response);
             }
             
         } catch (NumberFormatException e) {
@@ -102,7 +102,7 @@ public class FoundationFormServlet extends HttpServlet {
             request.setAttribute("email", email);
             request.setAttribute("phone", phone);
             request.setAttribute("animalTypes", animalTypes);
-            request.getRequestDispatcher("/view/externalUser/foundation-form.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/foundations/foundation-form.jsp").forward(request, response);
         }
     }
 }

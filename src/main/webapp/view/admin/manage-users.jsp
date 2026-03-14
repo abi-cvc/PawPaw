@@ -249,21 +249,24 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <% for (User user : users) { 
+                        <% for (User user : users) {
                             Integer petCount = petCounts.get(user.getIdUser());
                             if (petCount == null) petCount = 0;
                             Integer limit = user.getPetLimit() != null ? user.getPetLimit() : 2;
+                            pageContext.setAttribute("u", user);
+                            pageContext.setAttribute("petCount", petCount);
+                            pageContext.setAttribute("limit", limit);
                         %>
                         <tr>
                             <td>
                                 <div class="user-cell">
                                     <div class="admin-avatar">
-                                        <c:out value="${user.getNameUser().substring(0, 1).toUpperCase()}"/>
+                                        <c:out value="${u.nameUser.substring(0, 1).toUpperCase()}"/>
                                     </div>
-                                    <strong><c:out value="${user.getNameUser()}"/></strong>
+                                    <strong><c:out value="${u.nameUser}"/></strong>
                                 </div>
                             </td>
-                            <td><c:out value="${user.getEmail()}"/></td>
+                            <td><c:out value="${u.email}"/></td>
                             <td>
                                 <% if ("admin".equals(user.getRol())) { %>
                                 <span class="user-role admin">Admin</span>
@@ -288,7 +291,7 @@
                                 <div class="action-buttons">
                                     <button class="btn btn-icon btn-primario"
                                             onclick="openAdjustModal(<%= user.getIdUser() %>, this.dataset.username, <%= limit %>, <%= petCount %>)"
-                                            data-username="<c:out value="${user.getNameUser()}"/>"
+                                            data-username="<c:out value="${u.nameUser}"/>"
                                             title="Ajustar slots">
                                         ⚙️
                                     </button>

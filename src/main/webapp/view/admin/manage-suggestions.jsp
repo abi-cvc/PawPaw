@@ -315,7 +315,11 @@
                         <div style="font-size: 4rem; margin-bottom: 1rem;">📭</div>
                         <h3 style="margin: 0 0 0.5rem 0; color: var(--color-2);">No hay sugerencias</h3>
                         <p style="color: #999; margin: 0;">
-                            <c:out value="${currentFilter != null && !currentFilter.isEmpty() ? 'No hay sugerencias con el estado \''.concat(currentFilter).concat('\'') : 'Aún no se han recibido sugerencias'}"/>
+                            <% if (request.getAttribute("currentFilter") != null && !((String)request.getAttribute("currentFilter")).isEmpty()) { %>
+                                No hay sugerencias con el estado "<c:out value="${currentFilter}"/>"
+                            <% } else { %>
+                                Aún no se han recibido sugerencias
+                            <% } %>
                         </p>
                     </div>
                 <% } %>

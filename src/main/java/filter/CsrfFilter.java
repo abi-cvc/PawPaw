@@ -29,18 +29,12 @@ public class CsrfFilter implements Filter {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        // Generar token si no existe en la sesión
-        HttpSession session = httpRequest.getSession(false);
-        if (session != null && session.getAttribute(CSRF_TOKEN_ATTR) == null) {
-            session.setAttribute(CSRF_TOKEN_ATTR, generateToken());
-        }
-
         // Solo validar en requests POST (excepto APIs y PayPal callbacks)
         if ("POST".equalsIgnoreCase(httpRequest.getMethod())) {
             String path = httpRequest.getRequestURI();
 
-            // Excluir endpoints API que no usan forms HTML
             if (!isExcludedPath(path)) {
+                HttpSession session = httpRequest.getSession(false);
                 if (session == null) {
                     httpResponse.sendError(HttpServletResponse.SC_FORBIDDEN, "Sesion invalida");
                     return;
@@ -56,9 +50,11 @@ public class CsrfFilter implements Filter {
             }
         }
 
-        // Asegurar que las nuevas sesiones también tengan token
-        session = httpRequest.getSession(false);
-        if (session != null && session.getAttribute(CSRF_TOKEN_ATTR) == null) {
+        // Generar token CSRF para cualquier request (GET o POST)
+        // Usar getSession(true) para crear sesión si no existe — necesario para que
+        // el token esté disponible en la primera visita (ej: página de login)
+        HttpSession session = httpRequest.getSession(true);
+        if (session.getAttribute(CSRF_TOKEN_ATTR) == null) {
             session.setAttribute(CSRF_TOKEN_ATTR, generateToken());
         }
 
