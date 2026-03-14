@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page import="model.entity.User" %>
 <%@ page import="model.entity.Suggestion" %>
 <%@ page import="java.util.List" %>
@@ -48,9 +49,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestionar Sugerencias - PawPaw</title>
     
-    <link rel="icon" type="image/png" href="<%= request.getContextPath() %>/images/logo.png">
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
     
     <style>
         /* Dropdown elegante */
@@ -98,8 +99,8 @@
         <!-- Sidebar -->
         <aside class="sidebar">
 		    <div class="sidebar-header">
-		        <a href="<%= request.getContextPath() %>/admin/panel" class="sidebar-logo">
-		            <img src="<%= request.getContextPath() %>/images/logo.png" alt="PawPaw Logo">
+		        <a href="${pageContext.request.contextPath}/admin/panel" class="sidebar-logo">
+		            <img src="${pageContext.request.contextPath}/images/logo.png" alt="PawPaw Logo">
 		            <span class="sidebar-logo-text">PawPaw</span>
 		        </a>
 		    </div>
@@ -107,31 +108,31 @@
 		    <div class="sidebar-user">
 		        <div class="user-info">
 		            <div class="user-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-		                <%= userName != null ? userName.substring(0, 1).toUpperCase() : "A" %>
+		                <c:out value="${userName != null ? userName.substring(0, 1).toUpperCase() : 'A'}"/>
 		            </div>
 		            <div class="user-details">
-		                <h3><%= userName %></h3>
+		                <h3><c:out value="${userName}"/></h3>
 		                <p>Administrador</p>
 		            </div>
 		        </div>
 		    </div>
 		    
 		    <nav class="sidebar-nav">
-		        <a href="<%= request.getContextPath() %>/admin/panel" class="nav-item">
+		        <a href="${pageContext.request.contextPath}/admin/panel" class="nav-item">
 		            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
 		                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
 		            </svg>
 		            Dashboard
 		        </a>
 		        
-		        <a href="<%= request.getContextPath() %>/admin/users" class="nav-item">
+		        <a href="${pageContext.request.contextPath}/admin/users" class="nav-item">
 		            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
 		                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
 		            </svg>
 		            Usuarios
 		        </a>
 		        
-		        <a href="<%= request.getContextPath() %>/admin/suggestions" class="nav-item">
+		        <a href="${pageContext.request.contextPath}/admin/suggestions" class="nav-item">
 		            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
 		                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
 		            </svg>
@@ -140,7 +141,7 @@
 		        
 		        <div class="nav-divider"></div>
 		        
-		        <a href="<%= request.getContextPath() %>/logout" class="nav-item">
+		        <a href="${pageContext.request.contextPath}/logout" class="nav-item">
 		            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
 		                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
 		            </svg>
@@ -163,13 +164,13 @@
                 
                 <% if (successMessage != null && !successMessage.isEmpty()) { %>
                     <div class="mensaje mensaje-exito" style="margin-bottom: 1.5rem;">
-                        <%= successMessage %>
+                        <c:out value="${successMessage}"/>
                     </div>
                 <% } %>
                 
                 <% if (errorMessage != null && !errorMessage.isEmpty()) { %>
                     <div class="mensaje mensaje-error" style="margin-bottom: 1.5rem;">
-                        <%= errorMessage %>
+                        <c:out value="${errorMessage}"/>
                     </div>
                 <% } %>
                 
@@ -179,28 +180,28 @@
                         <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">📊</div>
                         <div class="stat-info">
                             <h3>Total</h3>
-                            <p><%= totalSuggestions %></p>
+                            <p><c:out value="${totalSuggestions}"/></p>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon" style="background: linear-gradient(135deg, #ffd700 0%, #ff8c00 100%);">⏳</div>
                         <div class="stat-info">
                             <h3>Pendientes</h3>
-                            <p><%= pendingSuggestions %></p>
+                            <p><c:out value="${pendingSuggestions}"/></p>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">👁️</div>
                         <div class="stat-info">
                             <h3>Revisadas</h3>
-                            <p><%= reviewedSuggestions %></p>
+                            <p><c:out value="${reviewedSuggestions}"/></p>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">✅</div>
                         <div class="stat-info">
                             <h3>Resueltas</h3>
-                            <p><%= resolvedSuggestions %></p>
+                            <p><c:out value="${resolvedSuggestions}"/></p>
                         </div>
                     </div>
                 </div>
@@ -211,22 +212,22 @@
                         Filtrar por:
                     </label>
                     <div class="custom-select-wrapper" style="position: relative; min-width: 250px;">
-                        <select id="suggestionFilter" class="custom-select" onchange="window.location.href='<%= request.getContextPath() %>/admin/suggestions?filter=' + this.value" 
+                        <select id="suggestionFilter" class="custom-select" onchange="window.location.href='${pageContext.request.contextPath}/admin/suggestions?filter=' + this.value" 
                                 style="width: 100%; padding: 0.75rem 1rem; border: 2px solid #e0e0e0; border-radius: var(--radio-md); background: white; font-size: 1rem; cursor: pointer; appearance: none; background-image: url('data:image/svg+xml;utf8,<svg fill=\"%23884A39\" viewBox=\"0 0 24 24\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M7 10l5 5 5-5z\"/></svg>'); background-repeat: no-repeat; background-position: right 0.75rem center; background-size: 1.5rem; transition: all 0.3s ease;">
-                            <option value="" <%= currentFilter == null || currentFilter.isEmpty() ? "selected" : "" %>>
-                                ✓ Todas (<%= totalSuggestions %>)
+                            <option value="" ${currentFilter == null || currentFilter.isEmpty() ? "selected" : ""}>
+                                ✓ Todas (${totalSuggestions})
                             </option>
-                            <option value="pending" <%= "pending".equals(currentFilter) ? "selected" : "" %>>
-                                ⏳ Pendientes (<%= pendingSuggestions %>)
+                            <option value="pending" ${"pending".equals(currentFilter) ? "selected" : ""}>
+                                ⏳ Pendientes (${pendingSuggestions})
                             </option>
-                            <option value="reviewed" <%= "reviewed".equals(currentFilter) ? "selected" : "" %>>
-                                👁️ Revisadas (<%= reviewedSuggestions %>)
+                            <option value="reviewed" ${"reviewed".equals(currentFilter) ? "selected" : ""}>
+                                👁️ Revisadas (${reviewedSuggestions})
                             </option>
-                            <option value="resolved" <%= "resolved".equals(currentFilter) ? "selected" : "" %>>
-                                ✅ Resueltas (<%= resolvedSuggestions %>)
+                            <option value="resolved" ${"resolved".equals(currentFilter) ? "selected" : ""}>
+                                ✅ Resueltas (${resolvedSuggestions})
                             </option>
-                            <option value="rejected" <%= "rejected".equals(currentFilter) ? "selected" : "" %>>
-                                ❌ Rechazadas (<%= totalSuggestions - pendingSuggestions - reviewedSuggestions - resolvedSuggestions %>)
+                            <option value="rejected" ${"rejected".equals(currentFilter) ? "selected" : ""}>
+                                ❌ Rechazadas (${totalSuggestions - pendingSuggestions - reviewedSuggestions - resolvedSuggestions})
                             </option>
                         </select>
                     </div>
@@ -239,15 +240,15 @@
                             <div class="suggestion-header">
                                 <div>
                                     <span class="suggestion-user">
-                                        <%= suggestion.getUserName() != null ? suggestion.getUserName() : "Usuario" %>
+                                        <c:out value="${suggestion.getUserName() != null ? suggestion.getUserName() : 'Usuario'}"/>
                                     </span>
                                     <span style="color: #999; margin-left: 0.5rem;">
-                                        (<%= suggestion.getUserEmail() %>)
+                                        (<c:out value="${suggestion.getUserEmail()}"/>)
                                     </span>
                                 </div>
                                 <div style="display: flex; align-items: center; gap: 0.5rem;">
-                                    <span class="status-badge <%= suggestion.getStatusClass() %>">
-                                        <%= suggestion.getStatusText() %>
+                                    <span class="status-badge ${suggestion.getStatusClass()}">
+                                        <c:out value="${suggestion.getStatusText()}"/>
                                     </span>
                                     <span class="suggestion-date">
                                         <%= suggestion.getSubmissionDate() != null ? dateFormat.format(suggestion.getSubmissionDate()) : "" %>
@@ -255,14 +256,14 @@
                                 </div>
                             </div>
                             
-                            <div class="suggestion-message">
-                                <%= suggestion.getMessage() != null ? suggestion.getMessage().replace("\n", "<br>") : "" %>
+                            <div class="suggestion-message" style="white-space: pre-wrap;">
+                                <c:out value="${suggestion.getMessage() != null ? suggestion.getMessage() : ''}"/>
                             </div>
                             
                             <% if (suggestion.getAdminResponse() != null && !suggestion.getAdminResponse().isEmpty()) { %>
                                 <div class="admin-response">
                                     <strong style="color: var(--color-2);">Respuesta del administrador:</strong><br>
-                                    <%= suggestion.getAdminResponse().replace("\n", "<br>") %>
+                                    <span style="white-space: pre-wrap;"><c:out value="${suggestion.getAdminResponse()}"/></span>
                                     <% if (suggestion.getResponseDate() != null) { %>
                                         <div style="font-size: 0.85rem; color: #999; margin-top: 0.5rem;">
                                             Respondido: <%= dateFormat.format(suggestion.getResponseDate()) %>
@@ -273,7 +274,8 @@
                             
                             <!-- Formulario de acciones -->
                             <div class="suggestion-actions" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #e0e0e0;">
-                                <form method="post" action="<%= request.getContextPath() %>/admin/suggestions" style="width: 100%;">
+                                <form method="post" action="${pageContext.request.contextPath}/admin/suggestions" style="width: 100%;">
+                                    <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
                                     <input type="hidden" name="action" value="updateStatus">
                                     <input type="hidden" name="suggestionId" value="<%= suggestion.getIdSuggestion() %>">
                                     
@@ -301,7 +303,7 @@
                                     <div id="response-<%= suggestion.getIdSuggestion() %>" style="display: none;">
                                         <div class="form-group" style="margin: 0;">
                                             <label for="response-<%= suggestion.getIdSuggestion() %>" class="form-label">Respuesta del administrador (opcional):</label>
-                                            <textarea id="response-<%= suggestion.getIdSuggestion() %>" name="adminResponse" class="form-input" rows="3" placeholder="Escribe una respuesta..."><%= suggestion.getAdminResponse() != null ? suggestion.getAdminResponse() : "" %></textarea>
+                                            <textarea id="response-<%= suggestion.getIdSuggestion() %>" name="adminResponse" class="form-input" rows="3" placeholder="Escribe una respuesta..."><c:out value="${suggestion.getAdminResponse() != null ? suggestion.getAdminResponse() : ''}"/></textarea>
                                         </div>
                                     </div>
                                 </form>
@@ -313,9 +315,7 @@
                         <div style="font-size: 4rem; margin-bottom: 1rem;">📭</div>
                         <h3 style="margin: 0 0 0.5rem 0; color: var(--color-2);">No hay sugerencias</h3>
                         <p style="color: #999; margin: 0;">
-                            <%= currentFilter != null && !currentFilter.isEmpty() 
-                                ? "No hay sugerencias con el estado '" + currentFilter + "'" 
-                                : "Aún no se han recibido sugerencias" %>
+                            <c:out value="${currentFilter != null && !currentFilter.isEmpty() ? 'No hay sugerencias con el estado \''.concat(currentFilter).concat('\'') : 'Aún no se han recibido sugerencias'}"/>
                         </p>
                     </div>
                 <% } %>
@@ -336,6 +336,6 @@
         }
     </script>
     
-    <script src="<%= request.getContextPath() %>/js/main.js"></script>
+    <script src="${pageContext.request.contextPath}/js/main.js"></script>
 </body>
 </html>

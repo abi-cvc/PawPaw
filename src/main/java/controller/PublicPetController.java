@@ -2,9 +2,13 @@ package controller;
 
 import model.dao.PetDAO;
 import model.dao.UserDAO;
+import model.dao.QRCodeDAO;
+import model.dao.ScanLogDAO;
 import model.dao.PetContactMessageDAO;
 import model.entity.Pet;
 import model.entity.User;
+import model.entity.QRcode;
+import model.entity.ScanLog;
 import model.entity.PetContactMessage;
 import service.EmailService;
 
@@ -25,6 +29,8 @@ public class PublicPetController extends HttpServlet {
     
     private PetDAO petDAO = new PetDAO();
     private UserDAO userDAO = new UserDAO();
+    private QRCodeDAO qrCodeDAO = new QRCodeDAO();
+    private ScanLogDAO scanLogDAO = new ScanLogDAO();
     private PetContactMessageDAO messageDAO = new PetContactMessageDAO();
     private EmailService emailService = new EmailService();
     
@@ -58,7 +64,24 @@ public class PublicPetController extends HttpServlet {
             request.setAttribute("ownerName", ownerName);
             
             System.out.println("📱 Vista pública de mascota: " + pet.getNamePet() + " (ID: " + petId + ")");
-            
+
+            // BUG-003: Registrar escaneo de QR en scan_logs
+            try {
+                QRcode qr = qrCodeDAO.findByPetId(petId);
+                if (qr != null) {
+                    qrCodeDAO.incrementScanCount(qr.getIdQR());
+                    ScanLog scanLog = new ScanLog(
+                            qr.getIdQR(),
+                            request.getRemoteAddr(),
+                            request.getHeader("User-Agent"),
+                            null
+                    );
+                    scanLogDAO.create(scanLog);
+                }
+            } catch (Exception e) {
+                System.err.println("Error al registrar escaneo: " + e.getMessage());
+            }
+
             request.getRequestDispatcher("/view/externalUser/pet-public.jsp").forward(request, response);
             
         } catch (NumberFormatException e) {

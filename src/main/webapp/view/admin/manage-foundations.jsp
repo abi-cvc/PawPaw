@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page import="model.entity.User" %>
 <%@ page import="model.entity.FoundationRequest" %>
 <%@ page import="java.util.List" %>
@@ -38,17 +39,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Fundaciones - PawPaw Admin</title>
     
-    <link rel="icon" type="image/png" href="<%= request.getContextPath() %>/images/logo.png">
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
 </head>
 <body>
     <div class="dashboard">
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <a href="<%= request.getContextPath() %>/admin/panel" class="sidebar-logo">
-                    <img src="<%= request.getContextPath() %>/images/logo.png" alt="PawPaw Logo">
+                <a href="${pageContext.request.contextPath}/admin/panel" class="sidebar-logo">
+                    <img src="${pageContext.request.contextPath}/images/logo.png" alt="PawPaw Logo">
                     <span class="sidebar-logo-text">PawPaw</span>
                 </a>
             </div>
@@ -56,31 +57,31 @@
             <div class="sidebar-user">
                 <div class="user-info">
                     <div class="user-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                        <%= userName != null ? userName.substring(0, 1).toUpperCase() : "A" %>
+                        <c:out value="${userName != null ? userName.substring(0, 1).toUpperCase() : 'A'}"/>
                     </div>
                     <div class="user-details">
-                        <h3><%= userName %></h3>
+                        <h3><c:out value="${userName}"/></h3>
                         <p>Administrador</p>
                     </div>
                 </div>
             </div>
             
             <nav class="sidebar-nav">
-                <a href="<%= request.getContextPath() %>/admin/panel" class="nav-item">
+                <a href="${pageContext.request.contextPath}/admin/panel" class="nav-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                     </svg>
                     Dashboard
                 </a>
                 
-                <a href="<%= request.getContextPath() %>/admin/users" class="nav-item">
+                <a href="${pageContext.request.contextPath}/admin/users" class="nav-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                     </svg>
                     Usuarios
                 </a>
                 
-                <a href="<%= request.getContextPath() %>/admin/suggestions" class="nav-item">
+                <a href="${pageContext.request.contextPath}/admin/suggestions" class="nav-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
                     </svg>
@@ -89,7 +90,7 @@
                 
                 <div class="nav-divider"></div>
                 
-                <a href="<%= request.getContextPath() %>/logout" class="nav-item">
+                <a href="${pageContext.request.contextPath}/logout" class="nav-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                     </svg>
@@ -110,13 +111,13 @@
             <!-- Mensajes -->
             <% if (successMessage != null) { %>
                 <div class="alert alert-success">
-                    <%= successMessage %>
+                    <c:out value="${successMessage}"/>
                 </div>
             <% } %>
-            
+
             <% if (errorMessage != null) { %>
                 <div class="alert alert-error">
-                    <%= errorMessage %>
+                    <c:out value="${errorMessage}"/>
                 </div>
             <% } %>
             
@@ -128,7 +129,7 @@
                     </div>
                     <div class="stat-info">
                         <h3>Total Solicitudes</h3>
-                        <p><%= totalRequests %></p>
+                        <p><c:out value="${totalRequests}"/></p>
                     </div>
                 </div>
                 
@@ -138,7 +139,7 @@
                     </div>
                     <div class="stat-info">
                         <h3>Pendientes</h3>
-                        <p><%= pendingRequests %></p>
+                        <p><c:out value="${pendingRequests}"/></p>
                     </div>
                 </div>
                 
@@ -148,7 +149,7 @@
                     </div>
                     <div class="stat-info">
                         <h3>Aprobadas</h3>
-                        <p><%= approvedRequests %></p>
+                        <p><c:out value="${approvedRequests}"/></p>
                     </div>
                 </div>
                 
@@ -158,7 +159,7 @@
                     </div>
                     <div class="stat-info">
                         <h3>Rechazadas</h3>
-                        <p><%= rejectedRequests %></p>
+                        <p><c:out value="${rejectedRequests}"/></p>
                     </div>
                 </div>
             </div>
@@ -166,20 +167,20 @@
             <!-- Filtros -->
             <div class="filter-section">
                 <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
-                    <a href="<%= request.getContextPath() %>/admin/foundations" 
-                       class="filter-btn <%= currentFilter == null || "".equals(currentFilter) ? "active" : "" %>">
+                    <a href="${pageContext.request.contextPath}/admin/foundations" 
+                       class="filter-btn ${currentFilter == null || "".equals(currentFilter) ? "active" : ""}">
                         Todas
                     </a>
-                    <a href="<%= request.getContextPath() %>/admin/foundations?filter=pending" 
-                       class="filter-btn <%= "pending".equals(currentFilter) ? "active" : "" %>">
+                    <a href="${pageContext.request.contextPath}/admin/foundations?filter=pending" 
+                       class="filter-btn ${"pending".equals(currentFilter) ? "active" : ""}">
                         Pendientes
                     </a>
-                    <a href="<%= request.getContextPath() %>/admin/foundations?filter=approved" 
-                       class="filter-btn <%= "approved".equals(currentFilter) ? "active" : "" %>">
+                    <a href="${pageContext.request.contextPath}/admin/foundations?filter=approved" 
+                       class="filter-btn ${"approved".equals(currentFilter) ? "active" : ""}">
                         Aprobadas
                     </a>
-                    <a href="<%= request.getContextPath() %>/admin/foundations?filter=rejected" 
-                       class="filter-btn <%= "rejected".equals(currentFilter) ? "active" : "" %>">
+                    <a href="${pageContext.request.contextPath}/admin/foundations?filter=rejected" 
+                       class="filter-btn ${"rejected".equals(currentFilter) ? "active" : ""}">
                         Rechazadas
                     </a>
                 </div>
@@ -203,10 +204,10 @@
                         <% for (FoundationRequest req : requests) { %>
                         <tr>
                             <td>
-                                <strong><%= req.getFoundationName() %></strong>
+                                <strong><c:out value="${req.getFoundationName()}"/></strong>
                             </td>
-                            <td><%= req.getEmail() %></td>
-                            <td><%= req.getPhone() %></td>
+                            <td><c:out value="${req.getEmail()}"/></td>
+                            <td><c:out value="${req.getPhone()}"/></td>
                             <td><%= dateFormat.format(req.getCreatedAt()) %></td>
                             <td>
                                 <% if ("pending".equals(req.getStatus())) { %>
@@ -220,22 +221,27 @@
                             <td>
                                 <div class="action-buttons">
                                     <% if ("pending".equals(req.getStatus())) { %>
-                                    <button class="btn btn-sm btn-success" 
-                                            onclick="openApproveModal(<%= req.getIdRequest() %>, '<%= req.getFoundationName() %>')">
+                                    <button class="btn btn-sm btn-success"
+                                            data-id="<%= req.getIdRequest() %>"
+                                            data-name="<c:out value="${req.getFoundationName()}"/>"
+                                            onclick="openApproveModal(this.dataset.id, this.dataset.name)">
                                         ✓ Aprobar
                                     </button>
-                                    <button class="btn btn-sm btn-error" 
-                                            onclick="openRejectModal(<%= req.getIdRequest() %>, '<%= req.getFoundationName() %>')">
+                                    <button class="btn btn-sm btn-error"
+                                            data-id="<%= req.getIdRequest() %>"
+                                            data-name="<c:out value="${req.getFoundationName()}"/>"
+                                            onclick="openRejectModal(this.dataset.id, this.dataset.name)">
                                         ✗ Rechazar
                                     </button>
                                     <% } %>
-                                    <button class="btn btn-sm btn-secundario" 
-                                            onclick="viewDetails(<%= req.getIdRequest() %>, 
-                                                                '<%= req.getFoundationName() %>', 
-                                                                '<%= req.getEmail() %>', 
-                                                                '<%= req.getPhone() %>', 
-                                                                '<%= req.getWebsite() != null ? req.getWebsite() : "" %>', 
-                                                                '<%= req.getDescription() != null ? req.getDescription().replace("\n", "\\n").replace("'", "\\'") : "" %>')">
+                                    <button class="btn btn-sm btn-secundario"
+                                            data-id="<%= req.getIdRequest() %>"
+                                            data-name="<c:out value="${req.getFoundationName()}"/>"
+                                            data-email="<c:out value="${req.getEmail()}"/>"
+                                            data-phone="<c:out value="${req.getPhone()}"/>"
+                                            data-website="<c:out value="${req.getWebsite() != null ? req.getWebsite() : ''}"/>"
+                                            data-description="<c:out value="${req.getDescription() != null ? req.getDescription() : ''}"/>"
+                                            onclick="viewDetails(this.dataset.id, this.dataset.name, this.dataset.email, this.dataset.phone, this.dataset.website, this.dataset.description)">
                                         👁️ Ver
                                     </button>
                                 </div>
@@ -295,7 +301,8 @@
                 <h3>Aprobar Solicitud</h3>
                 <button class="modal-close" onclick="closeApproveModal()">&times;</button>
             </div>
-            <form method="post" action="<%= request.getContextPath() %>/admin/foundations">
+            <form method="post" action="${pageContext.request.contextPath}/admin/foundations">
+                <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
                 <input type="hidden" name="action" value="approve">
                 <input type="hidden" name="requestId" id="approveRequestId">
                 <div class="modal-body">
@@ -319,7 +326,8 @@
                 <h3>Rechazar Solicitud</h3>
                 <button class="modal-close" onclick="closeRejectModal()">&times;</button>
             </div>
-            <form method="post" action="<%= request.getContextPath() %>/admin/foundations">
+            <form method="post" action="${pageContext.request.contextPath}/admin/foundations">
+                <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
                 <input type="hidden" name="action" value="reject">
                 <input type="hidden" name="requestId" id="rejectRequestId">
                 <div class="modal-body">

@@ -144,9 +144,13 @@ function togglePassword(inputId, iconId) {
 
 // ==================== UPLOAD DE IMÁGENES ====================
 
-// Configuración de Cloudinary - REEMPLAZA CON TUS CREDENCIALES
-const CLOUDINARY_CLOUD_NAME = 'dcmye4eng';  // ← Solo el nombre, sin URL
-const CLOUDINARY_UPLOAD_PRESET = 'pawpaw_uploads';  // ← Preset unsigned
+// Configuración de Cloudinary (unsigned upload)
+// SEC-003: Configurar restricciones en el dashboard de Cloudinary:
+//   - Limitar tipos de archivo (solo imágenes)
+//   - Configurar tamaño máximo
+//   - Restringir dominios de origen (CORS)
+const CLOUDINARY_CLOUD_NAME = 'dcmye4eng';
+const CLOUDINARY_UPLOAD_PRESET = 'pawpaw_uploads';
 
 // Inicializar eventos de drag & drop
 function inicializarUpload() {

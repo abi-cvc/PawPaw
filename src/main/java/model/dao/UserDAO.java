@@ -312,7 +312,7 @@ public class UserDAO {
      * @param newHashedPassword Nueva contraseña hasheada
      * @return true si se actualizó correctamente
      */
-    public boolean ressetPassword(Integer userId, String newHashedPassword) {
+    public boolean resetPassword(Integer userId, String newHashedPassword) {
         String sql = "UPDATE users SET password = ? WHERE id_user = ?";
         
         try (Connection conn = DatabaseConnection.getConnection();

@@ -67,7 +67,11 @@ public class AuthenticationController extends HttpServlet {
         User user = userDAO.findByEmailAndPassword(email, password);
         
         if (user != null) {
-            // Autenticación exitosa - Crear sesión
+            // Protección contra Session Fixation: invalidar sesión previa y crear nueva
+            HttpSession oldSession = request.getSession(false);
+            if (oldSession != null) {
+                oldSession.invalidate();
+            }
             HttpSession session = request.getSession(true);
             session.setAttribute("userId", user.getIdUser());
             session.setAttribute("user", user.getEmail());

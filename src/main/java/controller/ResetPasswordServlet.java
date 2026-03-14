@@ -136,7 +136,7 @@ public class ResetPasswordServlet extends HttpServlet {
             // Actualizar contraseña del usuario
             user.setPassword(hashedPassword);
             
-            if (userDAO.ressetPassword(user.getIdUser(), hashedPassword)) {
+            if (userDAO.resetPassword(user.getIdUser(), hashedPassword)) {
                 System.out.println("   ✅ Contraseña actualizada para: " + user.getEmail());
                 
                 // Marcar token como usado

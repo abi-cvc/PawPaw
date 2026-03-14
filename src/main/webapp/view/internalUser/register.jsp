@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,34 +7,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Crear Cuenta - PawPaw</title>
     
-    <link rel="icon" type="image/png" href="<%= request.getContextPath() %>/images/logo.png">
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
 </head>
 <body>
     <div class="contenedor-formulario">
         <div class="tarjeta-formulario">
             
             <div class="formulario-encabezado">
-                <a href="<%= request.getContextPath() %>/view/index.jsp">
-                    <img src="<%= request.getContextPath() %>/images/logo.png" alt="Logo PawPaw">
+                <a href="${pageContext.request.contextPath}/view/index.jsp">
+                    <img src="${pageContext.request.contextPath}/images/logo.png" alt="Logo PawPaw">
                 </a>
                 <h1>Crear Cuenta</h1>
                 <p>Únete a PawPaw hoy</p>
             </div>
             
-            <% 
-                String error = (String) request.getAttribute("error");
-                
-                if (error != null && !error.isEmpty()) {
-            %>
+            <c:if test="${not empty error}">
                 <div class="mensaje mensaje-error">
-                    ⚠️ <%= error %>
+                    ⚠️ <c:out value="${error}"/>
                 </div>
-            <% } %>
+            </c:if>
             
-            <form action="<%= request.getContextPath() %>/register" method="post" id="registerForm">
-                
+            <form action="${pageContext.request.contextPath}/register" method="post" id="registerForm">
+                <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
+
                 <div class="form-group">
                     <label for="name" class="form-label required">Nombre completo</label>
                     <input 
@@ -42,7 +40,7 @@
                         name="name" 
                         class="form-input" 
                         placeholder="Ej: María García"
-                        value="<%= request.getAttribute("name") != null ? request.getAttribute("name") : "" %>"
+                        value="<c:out value="${name}"/>"
                         required
                         autocomplete="name">
                 </div>
@@ -55,7 +53,7 @@
                         name="email" 
                         class="form-input" 
                         placeholder="tucorreo@ejemplo.com"
-                        value="<%= request.getAttribute("email") != null ? request.getAttribute("email") : "" %>"
+                        value="<c:out value="${email}"/>"
                         required
                         autocomplete="email">
                 </div>
@@ -91,13 +89,13 @@
             
             <div class="form-footer" style="margin-top: 2rem; text-align: center;">
                 <p style="color: #666; margin-bottom: 1rem;">¿Ya tienes una cuenta?</p>
-                <a href="<%= request.getContextPath() %>/login" class="btn btn-secundario" style="width: 100%;">
+                <a href="${pageContext.request.contextPath}/login" class="btn btn-secundario" style="width: 100%;">
                     Iniciar Sesión
                 </a>
             </div>
         </div>
     </div>
     
-    <script src="<%= request.getContextPath() %>/js/main.js"></script>
+    <script src="${pageContext.request.contextPath}/js/main.js"></script>
 </body>
 </html>

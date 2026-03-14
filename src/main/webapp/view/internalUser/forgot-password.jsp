@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,58 +7,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recuperar Contraseña - PawPaw</title>
     
-    <link rel="icon" type="image/png" href="<%= request.getContextPath() %>/images/logo.png">
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
 </head>
 <body>
     <div class="contenedor-formulario">
         <div class="tarjeta-formulario">
             
             <div class="formulario-encabezado">
-                <a href="<%= request.getContextPath() %>/view/index.jsp">
-                    <img src="<%= request.getContextPath() %>/images/logo.png" alt="Logo PawPaw">
+                <a href="${pageContext.request.contextPath}/view/index.jsp">
+                    <img src="${pageContext.request.contextPath}/images/logo.png" alt="Logo PawPaw">
                 </a>
                 <h1>¿Olvidaste tu contraseña?</h1>
                 <p>No te preocupes, te ayudaremos a recuperarla</p>
             </div>
             
-            <% 
-                String error = (String) request.getAttribute("error");
-                String success = (String) request.getAttribute("success");
-                Boolean emailSent = (Boolean) request.getAttribute("emailSent");
-                Boolean resent = (Boolean) request.getAttribute("resent");
-                String email = (String) request.getAttribute("email");
-                
-                if (error != null && !error.isEmpty()) {
-            %>
+            <c:if test="${not empty error}">
                 <div class="mensaje mensaje-error">
-                    ⚠️ <%= error %>
+                    ⚠️ <c:out value="${error}"/>
                 </div>
-            <% } %>
-            
-            <% if (success != null && !success.isEmpty()) { %>
+            </c:if>
+
+            <c:if test="${not empty success}">
                 <div class="mensaje mensaje-exito">
-                    ✅ <%= success %>
+                    ✅ <c:out value="${success}"/>
                 </div>
-            <% } %>
+            </c:if>
             
-            <% if (emailSent != null && emailSent) { %>
+            <c:if test="${emailSent}">
                 <!-- Si el email fue enviado, mostrar instrucciones y opción de reenviar -->
                 <div style="text-align: center; padding: 2rem 0;">
                     <div style="font-size: 4rem; margin-bottom: 1rem;">📧</div>
                     
-                    <% if (resent != null && resent) { %>
-                        <h3 style="color: var(--color-1); margin-bottom: 1rem;">¡Enlace reenviado!</h3>
-                        <p style="color: #666; margin-bottom: 1rem;">
-                            Hemos enviado un nuevo enlace de recuperación a tu correo.
-                        </p>
-                    <% } else { %>
-                        <h3 style="color: var(--color-1); margin-bottom: 1rem;">Revisa tu email</h3>
-                        <p style="color: #666; margin-bottom: 1rem;">
-                            Si el email existe en nuestro sistema, recibirás un enlace para restablecer tu contraseña.
-                        </p>
-                    <% } %>
+                    <c:choose>
+                        <c:when test="${resent}">
+                            <h3 style="color: var(--color-1); margin-bottom: 1rem;">¡Enlace reenviado!</h3>
+                            <p style="color: #666; margin-bottom: 1rem;">
+                                Hemos enviado un nuevo enlace de recuperación a tu correo.
+                            </p>
+                        </c:when>
+                        <c:otherwise>
+                            <h3 style="color: var(--color-1); margin-bottom: 1rem;">Revisa tu email</h3>
+                            <p style="color: #666; margin-bottom: 1rem;">
+                                Si el email existe en nuestro sistema, recibirás un enlace para restablecer tu contraseña.
+                            </p>
+                        </c:otherwise>
+                    </c:choose>
                     
                     <p style="color: #666; margin-bottom: 1.5rem;">
                         <strong>Revisa tu bandeja de entrada y spam.</strong>
@@ -75,8 +71,9 @@
                             ¿No recibiste el email?
                         </p>
                         
-                        <form action="<%= request.getContextPath() %>/resend-password-reset" method="post" style="margin-bottom: 1rem;">
-                            <input type="hidden" name="email" value="<%= email != null ? email : "" %>">
+                        <form action="${pageContext.request.contextPath}/resend-password-reset" method="post" style="margin-bottom: 1rem;">
+                            <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
+                            <input type="hidden" name="email" value="<c:out value="${email}"/>">
                             <button type="submit" class="btn btn-secundario" id="resendBtn" style="width: 100%;">
                                 🔄 Reenviar Enlace
                             </button>
@@ -89,15 +86,17 @@
                 </div>
                 
                 <div style="text-align: center; margin-top: 2rem;">
-                    <a href="<%= request.getContextPath() %>/login" class="btn btn-primario" style="width: 100%;">
+                    <a href="${pageContext.request.contextPath}/login" class="btn btn-primario" style="width: 100%;">
                         Volver al Login
                     </a>
                 </div>
                 
-            <% } else { %>
+            </c:if>
+            <c:if test="${not emailSent}">
                 <!-- Formulario para ingresar email -->
-                <form action="<%= request.getContextPath() %>/forgot-password" method="post" id="forgotPasswordForm">
-                    
+                <form action="${pageContext.request.contextPath}/forgot-password" method="post" id="forgotPasswordForm">
+                    <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
+
                     <div class="form-group">
                         <label for="email" class="form-label required">Email</label>
                         <input 
@@ -106,7 +105,7 @@
                             name="email" 
                             class="form-input" 
                             placeholder="tucorreo@ejemplo.com"
-                            value="<%= email != null ? email : "" %>"
+                            value="<c:out value="${email}"/>"
                             required
                             autocomplete="email"
                             autofocus>
@@ -122,11 +121,11 @@
                 
                 <div class="form-footer" style="margin-top: 2rem; text-align: center;">
                     <p style="color: #666; margin-bottom: 1rem;">¿Recordaste tu contraseña?</p>
-                    <a href="<%= request.getContextPath() %>/login" class="btn btn-secundario" style="width: 100%;">
+                    <a href="${pageContext.request.contextPath}/login" class="btn btn-secundario" style="width: 100%;">
                         Volver al Login
                     </a>
                 </div>
-            <% } %>
+            </c:if>
             
         </div>
     </div>
@@ -160,6 +159,6 @@
         }
     </script>
     
-    <script src="<%= request.getContextPath() %>/js/main.js"></script>
+    <script src="${pageContext.request.contextPath}/js/main.js"></script>
 </body>
 </html>

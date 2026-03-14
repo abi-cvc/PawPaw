@@ -3,16 +3,18 @@
 <%@ page import="model.entity.Suggestion" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.text.SimpleDateFormat" %>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%
     // Verificar sesión
     if (session == null || session.getAttribute("userId") == null) {
         response.sendRedirect(request.getContextPath() + "/login");
         return;
     }
-    
+
     User user = (User) request.getAttribute("user");
     String userName = user != null ? user.getNameUser() : (String) session.getAttribute("userName");
-    
+    pageContext.setAttribute("userName", userName);
+
     @SuppressWarnings("unchecked")
     List<Suggestion> suggestions = (List<Suggestion>) request.getAttribute("suggestions");
     Integer totalSuggestions = (Integer) request.getAttribute("totalSuggestions");
@@ -20,13 +22,13 @@
     Long reviewedCount = (Long) request.getAttribute("reviewedCount");
     Long resolvedCount = (Long) request.getAttribute("resolvedCount");
     Long rejectedCount = (Long) request.getAttribute("rejectedCount");
-    
+
     if (totalSuggestions == null) totalSuggestions = 0;
     if (pendingCount == null) pendingCount = 0L;
     if (reviewedCount == null) reviewedCount = 0L;
     if (resolvedCount == null) resolvedCount = 0L;
     if (rejectedCount == null) rejectedCount = 0L;
-    
+
     SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm");
 %>
 <!DOCTYPE html>
@@ -35,81 +37,81 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mis Sugerencias - PawPaw</title>
-    
-    <link rel="icon" type="image/png" href="<%= request.getContextPath() %>/images/logo.png">
+
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<%= request.getContextPath() %>/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
 </head>
 <body>
     <div class="dashboard">
-        
+
         <!-- Sidebar -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <a href="<%= request.getContextPath() %>/view/index.jsp" class="sidebar-logo">
-                    <img src="<%= request.getContextPath() %>/images/logo.png" alt="PawPaw Logo">
+                <a href="${pageContext.request.contextPath}/view/index.jsp" class="sidebar-logo">
+                    <img src="${pageContext.request.contextPath}/images/logo.png" alt="PawPaw Logo">
                     <span class="sidebar-logo-text">PawPaw</span>
                 </a>
             </div>
-            
+
             <div class="sidebar-user">
                 <div class="user-info">
                     <div class="user-avatar">
                         <%= userName != null ? userName.substring(0, 1).toUpperCase() : "U" %>
                     </div>
                     <div class="user-details">
-                        <h3><%= userName %></h3>
+                        <h3><c:out value="${userName}"/></h3>
                         <p>Usuario</p>
                     </div>
                 </div>
             </div>
-            
+
             <nav class="sidebar-nav">
-                <a href="<%= request.getContextPath() %>/user/panel" class="nav-item">
+                <a href="${pageContext.request.contextPath}/user/panel" class="nav-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
                     </svg>
                     Panel Principal
                 </a>
-                
-                <a href="<%= request.getContextPath() %>/user/pets" class="nav-item">
+
+                <a href="${pageContext.request.contextPath}/user/pets" class="nav-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
                     Mis Mascotas
                 </a>
-                
-                <a href="<%= request.getContextPath() %>/user/qr-codes" class="nav-item">
+
+                <a href="${pageContext.request.contextPath}/user/qr-codes" class="nav-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
                     </svg>
                     Códigos QR
                 </a>
-                
+
                 <div class="nav-divider"></div>
-                
-                <a href="<%= request.getContextPath() %>/user/profile" class="nav-item">
+
+                <a href="${pageContext.request.contextPath}/user/profile" class="nav-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                     </svg>
                     Mi Perfil
                 </a>
-                
-                <a href="<%= request.getContextPath() %>/user/send-suggestion" class="nav-item">
+
+                <a href="${pageContext.request.contextPath}/user/send-suggestion" class="nav-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
                     </svg>
                     Enviar Sugerencia
                 </a>
-                
-                <a href="<%= request.getContextPath() %>/user/my-suggestions" class="nav-item active">
+
+                <a href="${pageContext.request.contextPath}/user/my-suggestions" class="nav-item active">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
                     </svg>
                     Mis Sugerencias
                 </a>
-                
-                <a href="<%= request.getContextPath() %>/logout" class="nav-item">
+
+                <a href="${pageContext.request.contextPath}/logout" class="nav-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
                     </svg>
@@ -117,7 +119,7 @@
                 </a>
             </nav>
         </aside>
-        
+
         <!-- Main Content -->
         <div class="main-content">
             <!-- Top Bar -->
@@ -126,15 +128,15 @@
                     <h1>Mis Sugerencias</h1>
                 </div>
                 <div class="topbar-actions">
-                    <a href="<%= request.getContextPath() %>/user/send-suggestion" class="btn btn-primario">
+                    <a href="${pageContext.request.contextPath}/user/send-suggestion" class="btn btn-primario">
                         + Nueva Sugerencia
                     </a>
                 </div>
             </div>
-            
+
             <!-- Content -->
             <div class="content">
-                
+
                 <!-- Estadísticas -->
                 <div class="stats-grid" style="margin-bottom: 2rem;">
                     <div class="stat-card">
@@ -166,26 +168,28 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Lista de Sugerencias -->
                 <% if (suggestions != null && !suggestions.isEmpty()) { %>
-                    <% for (Suggestion suggestion : suggestions) { %>
+                    <% for (Suggestion suggestion : suggestions) {
+                        pageContext.setAttribute("sugItem", suggestion);
+                    %>
                         <div class="suggestion-card">
                             <div class="suggestion-header">
                                 <div>
                                     <span class="status-badge <%= suggestion.getStatusClass() %>">
-                                        <%= suggestion.getStatusText() %>
+                                        <c:out value="${sugItem.statusText}"/>
                                     </span>
                                 </div>
                                 <span class="suggestion-date">
                                     <%= suggestion.getSubmissionDate() != null ? dateFormat.format(suggestion.getSubmissionDate()) : "" %>
                                 </span>
                             </div>
-                            
+
                             <div class="suggestion-message">
-                                <%= suggestion.getMessage() != null ? suggestion.getMessage().replace("\n", "<br>") : "" %>
+                                <c:out value="${sugItem.message}"/>
                             </div>
-                            
+
                             <% if (suggestion.getAdminResponse() != null && !suggestion.getAdminResponse().isEmpty()) { %>
                                 <div class="admin-response" style="margin-top: 1rem;">
                                     <strong style="color: var(--color-2); display: flex; align-items: center; gap: 0.5rem;">
@@ -195,7 +199,7 @@
                                         Respuesta del equipo PawPaw:
                                     </strong>
                                     <p style="margin: 0.75rem 0 0 0; color: #333; line-height: 1.6;">
-                                        <%= suggestion.getAdminResponse().replace("\n", "<br>") %>
+                                        <c:out value="${sugItem.adminResponse}"/>
                                     </p>
                                     <% if (suggestion.getResponseDate() != null) { %>
                                         <div style="font-size: 0.85rem; color: #999; margin-top: 0.5rem;">
@@ -219,17 +223,17 @@
                         <p style="color: #999; margin: 0 0 1.5rem 0;">
                             ¿Tienes alguna idea para mejorar PawPaw? ¡Nos encantaría escucharte!
                         </p>
-                        <a href="<%= request.getContextPath() %>/user/send-suggestion" class="btn btn-primario">
+                        <a href="${pageContext.request.contextPath}/user/send-suggestion" class="btn btn-primario">
                             Enviar mi primera sugerencia
                         </a>
                     </div>
                 <% } %>
-                
+
             </div>
         </div>
-        
+
     </div>
-    
-    <script src="<%= request.getContextPath() %>/js/main.js"></script>
+
+    <script src="${pageContext.request.contextPath}/js/main.js"></script>
 </body>
 </html>

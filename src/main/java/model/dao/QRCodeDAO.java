@@ -167,6 +167,28 @@ public class QRCodeDAO {
     }
     
     /**
+     * Cuenta el total de QR codes en el sistema
+     */
+    public int count() {
+        String sql = "SELECT COUNT(*) FROM qrcodes";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error al contar QR codes: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
+    /**
      * Cuenta QRs activos de un usuario
      */
     public int countActiveByUserId(Integer userId) {

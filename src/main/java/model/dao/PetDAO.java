@@ -20,13 +20,14 @@ public class PetDAO {
      * @return true si se creó exitosamente
      */
     public boolean create(Pet pet) {
-    	String sql = "INSERT INTO pets (id_user, name_pet, species, breed, age, " +
-                "description, photo_url, adoption_status) " + // ✅ Agregar adoption_status
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        
+        String sql = "INSERT INTO pets (id_user, name_pet, age_pet, breed, sex_pet, " +
+                "medical_conditions, contact_phone, photo, status_pet, extra_comments, " +
+                "available_for_adoption, adoption_description, adoption_status) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            
+
             pstmt.setInt(1, pet.getIdUser());
             pstmt.setString(2, pet.getNamePet());
             pstmt.setObject(3, pet.getAgePet(), Types.INTEGER);
@@ -37,7 +38,9 @@ public class PetDAO {
             pstmt.setString(8, pet.getPhoto());
             pstmt.setString(9, pet.getStatusPet() != null ? pet.getStatusPet() : "active");
             pstmt.setString(10, pet.getExtraComments());
-            pstmt.setString(8, pet.getAdoptionStatus() != null ? pet.getAdoptionStatus() : "owned");
+            pstmt.setBoolean(11, pet.isAvailableForAdoption());
+            pstmt.setString(12, pet.getAdoptionDescription());
+            pstmt.setString(13, pet.getAdoptionStatus() != null ? pet.getAdoptionStatus() : "owned");
             
             int affectedRows = pstmt.executeUpdate();
             
@@ -176,13 +179,15 @@ public class PetDAO {
      * @return true si se actualizó exitosamente
      */
     public boolean update(Pet pet) {
-    	String sql = "UPDATE pets SET name_pet = ?, species = ?, breed = ?, " +
-                "age = ?, description = ?, photo_url = ?, adoption_status = ? " + // ✅ Agregar
+        String sql = "UPDATE pets SET name_pet = ?, age_pet = ?, breed = ?, " +
+                "sex_pet = ?, medical_conditions = ?, contact_phone = ?, photo = ?, " +
+                "status_pet = ?, extra_comments = ?, available_for_adoption = ?, " +
+                "adoption_description = ?, adoption_status = ? " +
                 "WHERE id_pet = ?";
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
+
             pstmt.setString(1, pet.getNamePet());
             pstmt.setObject(2, pet.getAgePet(), Types.INTEGER);
             pstmt.setString(3, pet.getBreed());
@@ -192,8 +197,10 @@ public class PetDAO {
             pstmt.setString(7, pet.getPhoto());
             pstmt.setString(8, pet.getStatusPet());
             pstmt.setString(9, pet.getExtraComments());
-            pstmt.setInt(10, pet.getIdPet());
-            pstmt.setString(11, pet.getAdoptionStatus() != null ? pet.getAdoptionStatus() : "owned");
+            pstmt.setBoolean(10, pet.isAvailableForAdoption());
+            pstmt.setString(11, pet.getAdoptionDescription());
+            pstmt.setString(12, pet.getAdoptionStatus() != null ? pet.getAdoptionStatus() : "owned");
+            pstmt.setInt(13, pet.getIdPet());
             
             return pstmt.executeUpdate() > 0;
             
@@ -367,8 +374,10 @@ public class PetDAO {
         pet.setStatusPet(rs.getString("status_pet"));
         pet.setCreationDate(rs.getTimestamp("creation_date"));
         pet.setExtraComments(rs.getString("extra_comments"));
-        pet.setAdoptionStatus(rs.getString("adoption_status")); //
-        
+        pet.setAvailableForAdoption(rs.getBoolean("available_for_adoption"));
+        pet.setAdoptionDescription(rs.getString("adoption_description"));
+        pet.setAdoptionStatus(rs.getString("adoption_status"));
+
         return pet;
     }
     
@@ -485,6 +494,52 @@ public class PetDAO {
     /**
      * Obtiene mascotas de fundaciones con info adicional
      */
+    /**
+     * Cuenta mascotas por usuario en bulk (evita N+1 queries)
+     * DB-003: Reemplaza llamadas individuales a countByUserId en loop
+     */
+    public java.util.Map<Integer, Integer> countByUserIdBulk() {
+        java.util.Map<Integer, Integer> counts = new java.util.HashMap<>();
+        String sql = "SELECT id_user, COUNT(*) AS pet_count FROM pets GROUP BY id_user";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                counts.put(rs.getInt("id_user"), rs.getInt("pet_count"));
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error al contar mascotas por usuario (bulk): " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return counts;
+    }
+
+    /**
+     * Cuenta el total de mascotas en el sistema
+     */
+    public int count() {
+        String sql = "SELECT COUNT(*) FROM pets";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error al contar mascotas: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+
     public List<Pet> findFoundationPets(Integer idFoundation) {
         List<Pet> pets = new ArrayList<>();
         String sql = "SELECT p.* FROM pets p " +

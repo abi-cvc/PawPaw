@@ -43,8 +43,13 @@ public class CreatePayPalOrderServlet extends HttpServlet {
             
             JSONObject requestData = new JSONObject(sb.toString());
             int slots = requestData.getInt("slots");
-            double amount = requestData.getDouble("amount");
-            
+
+            // Validación server-side: calcular precio en el servidor, ignorar amount del cliente
+            double amount = calculatePrice(slots);
+            if (amount <= 0) {
+                throw new IllegalArgumentException("Cantidad de slots invalida: " + slots);
+            }
+
             System.out.println("📝 Creando orden PayPal: " + slots + " slots por $" + amount);
             
             // Obtener access token
@@ -166,5 +171,20 @@ public class CreatePayPalOrderServlet extends HttpServlet {
         
         JSONObject jsonResponse = new JSONObject(response.toString());
         return jsonResponse.getString("id");
+    }
+
+    /**
+     * Calcula el precio server-side basado en la cantidad de slots.
+     * NUNCA confiar en el amount enviado desde el cliente.
+     */
+    private double calculatePrice(int slots) {
+        // Tabla de precios server-side
+        if (slots == 1) return 1.99;
+        if (slots == 3) return 4.99;
+        if (slots == 5) return 7.99;
+        if (slots == 10) return 14.99;
+        // Precio por defecto: $1.99 por slot
+        if (slots > 0 && slots <= 50) return slots * 1.99;
+        return -1; // invalido
     }
 }

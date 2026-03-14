@@ -125,18 +125,21 @@
     </mime-mapping>
 
     <!-- ==================== FILTERS ==================== -->
-    <!-- 
+    <!--
         IMPORTANTE: El orden de los filtros importa.
-        StaticResourceFilter debe ir PRIMERO para que fuerce el Content-Type
-        antes que cualquier otro filtro pueda modificarlo.
+        1. StaticResourceFilter - Content-Type para recursos estáticos
+        2. SecurityHeadersFilter - Headers de seguridad
+        3. EncodingFilter - UTF-8
+        4. AuthFilter - Autorización (registrado via @WebFilter)
+        5. CsrfFilter - Protección CSRF (registrado via @WebFilter)
     -->
-    
+
     <!-- Static Resource Filter - DEBE IR PRIMERO -->
     <filter>
         <filter-name>StaticResourceFilter</filter-name>
         <filter-class>filter.StaticResourceFilter</filter-class>
     </filter>
-    
+
     <filter-mapping>
         <filter-name>StaticResourceFilter</filter-name>
         <url-pattern>*.css</url-pattern>
@@ -151,7 +154,19 @@
         <url-pattern>*.otf</url-pattern>
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
-    
+
+    <!-- Security Headers Filter -->
+    <filter>
+        <filter-name>SecurityHeadersFilter</filter-name>
+        <filter-class>filter.SecurityHeadersFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>SecurityHeadersFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
     <!-- Character Encoding Filter -->
     <filter>
         <filter-name>EncodingFilter</filter-name>
@@ -165,7 +180,7 @@
             <param-value>true</param-value>
         </init-param>
     </filter>
-    
+
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -195,23 +210,13 @@
         <cookie-config>
             <name>PAWPAW_SESSION</name>
             <http-only>true</http-only>
-            <secure>false</secure>
+            <secure>true</secure>
             <max-age>1800</max-age>
         </cookie-config>
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>
-    
-    <servlet>
-	    <servlet-name>FoundationFormServlet</servlet-name>
-	    <servlet-class>controller.FoundationFormServlet</servlet-class>
-	</servlet>
-	<servlet-mapping>
-	    <servlet-name>FoundationFormServlet</servlet-name>
-	    <url-pattern>/foundation/apply</url-pattern>
-	</servlet-mapping>
 
-    <!-- ==================== SECURITY (HTTPS cuando se configure) ==================== -->
-    <!--
+    <!-- ==================== SECURITY (HTTPS) ==================== -->
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Secure Area</web-resource-name>
@@ -221,7 +226,6 @@
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         </user-data-constraint>
     </security-constraint>
-    -->
     
     
 

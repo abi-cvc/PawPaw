@@ -1,5 +1,9 @@
 package service;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -94,42 +98,31 @@ public class EmailService {
     }
     
     /**
-     * Construye el payload JSON para Brevo API
+     * Construye el payload JSON para Brevo API usando Gson (SEC-012)
      */
     private String buildJsonPayload(String toEmail, String toName, String subject, String htmlContent, String textContent) {
-        // Escapar comillas en el contenido
-        htmlContent = escapeJson(htmlContent);
-        textContent = escapeJson(textContent);
-        toName = escapeJson(toName);
-        subject = escapeJson(subject);
-        String fromName = escapeJson(FROM_NAME != null ? FROM_NAME : "PawPaw");
-        
-        return "{" +
-                "\"sender\":{" +
-                    "\"name\":\"" + fromName + "\"," +
-                    "\"email\":\"" + FROM_EMAIL + "\"" +
-                "}," +
-                "\"to\":[{" +
-                    "\"email\":\"" + toEmail + "\"," +
-                    "\"name\":\"" + toName + "\"" +
-                "}]," +
-                "\"subject\":\"" + subject + "\"," +
-                "\"htmlContent\":\"" + htmlContent + "\"," +
-                "\"textContent\":\"" + textContent + "\"" +
-                "}";
-    }
-    
-    /**
-     * Escapa caracteres especiales para JSON
-     */
-    private String escapeJson(String str) {
-        if (str == null) return "";
-        return str
-                .replace("\\", "\\\\")
-                .replace("\"", "\\\"")
-                .replace("\n", "\\n")
-                .replace("\r", "\\r")
-                .replace("\t", "\\t");
+        JsonObject payload = new JsonObject();
+
+        // Sender
+        JsonObject sender = new JsonObject();
+        sender.addProperty("name", FROM_NAME != null ? FROM_NAME : "PawPaw");
+        sender.addProperty("email", FROM_EMAIL);
+        payload.add("sender", sender);
+
+        // To
+        JsonArray toArray = new JsonArray();
+        JsonObject to = new JsonObject();
+        to.addProperty("email", toEmail);
+        to.addProperty("name", toName);
+        toArray.add(to);
+        payload.add("to", toArray);
+
+        // Subject and content
+        payload.addProperty("subject", subject);
+        payload.addProperty("htmlContent", htmlContent);
+        payload.addProperty("textContent", textContent);
+
+        return new Gson().toJson(payload);
     }
     
     /**

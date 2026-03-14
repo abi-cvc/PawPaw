@@ -1,1 +1,29 @@
 /target/
+
+# IDE files
+.metadata/
+.settings/
+.classpath
+.project
+.idea/
+*.iml
+.vscode/
+.qodo/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.*
+
+# Docker
+.dockerignore
+
+# Misc
+OOD/
+estructura.txt
+Neon/

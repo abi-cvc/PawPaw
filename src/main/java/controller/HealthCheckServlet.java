@@ -36,7 +36,7 @@ public class HealthCheckServlet extends HttpServlet {
             out.println("<div class='info'><strong>Status:</strong> ONLINE</div>");
             out.println("<div class='info'><strong>Context Path:</strong> " + request.getContextPath() + "</div>");
             out.println("<div class='info'><strong>Servlet Path:</strong> " + request.getServletPath() + "</div>");
-            out.println("<div class='info'><strong>Server Info:</strong> " + getServletContext().getServerInfo() + "</div>");
+            out.println("<div class='info'><strong>Server Info:</strong> [hidden]</div>");
             out.println("<hr>");
             out.println("<p>PawPaw application deployed successfully on Railway!</p>");
             out.println("<p><a href='/view/index.jsp'>Go to Index.jsp</a> | ");
