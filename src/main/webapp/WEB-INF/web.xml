@@ -210,13 +210,15 @@
         <cookie-config>
             <name>PAWPAW_SESSION</name>
             <http-only>true</http-only>
-            <secure>true</secure>
+            <secure>false</secure> <!-- Cambiar a true en producción -->
             <max-age>1800</max-age>
         </cookie-config>
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>
 
     <!-- ==================== SECURITY (HTTPS) ==================== -->
+    <!-- Descomentar en producción (Railway tiene HTTPS automático) -->
+    <!--
     <security-constraint>
         <web-resource-collection>
             <web-resource-name>Secure Area</web-resource-name>
@@ -226,6 +228,7 @@
             <transport-guarantee>CONFIDENTIAL</transport-guarantee>
         </user-data-constraint>
     </security-constraint>
+    -->
     
     
 
