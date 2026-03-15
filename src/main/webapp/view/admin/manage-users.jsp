@@ -245,6 +245,7 @@
                             <th>Límite Slots</th>
                             <th>Mascotas</th>
                             <th>Partner</th>
+                            <th>Visibilidad</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -275,9 +276,13 @@
                                 <% } %>
                             </td>
                             <td>
+                                <% if (user.getIsPartner() != null && user.getIsPartner()) { %>
+                                <span class="status-badge status-active">Ilimitado</span>
+                                <% } else { %>
                                 <span class="slots-display <%= petCount >= limit ? "slots-full" : "" %>">
                                     <c:out value="${petCount}"/>/<c:out value="${limit}"/>
                                 </span>
+                                <% } %>
                             </td>
                             <td><c:out value="${petCount}"/></td>
                             <td>
@@ -285,6 +290,27 @@
                                 <span class="status-badge status-active">✓ Partner</span>
                                 <% } else { %>
                                 <span class="status-badge status-inactive">No</span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <% if (user.getIsPartner() != null && user.getIsPartner()) {
+                                    Boolean visible = user.getPartnerVisible() != null ? user.getPartnerVisible() : true;
+                                %>
+                                    <% if (visible) { %>
+                                    <button class="btn btn-sm btn-success"
+                                            onclick="openVisibilityModal(<%= user.getIdUser() %>, '<%= user.getNameUser().replace("'", "\\'") %>', true)"
+                                            title="Visible en página de Partners">
+                                        Visible
+                                    </button>
+                                    <% } else { %>
+                                    <button class="btn btn-sm btn-error"
+                                            onclick="openVisibilityModal(<%= user.getIdUser() %>, '<%= user.getNameUser().replace("'", "\\'") %>', false)"
+                                            title="Oculta de página de Partners">
+                                        Oculta
+                                    </button>
+                                    <% } %>
+                                <% } else { %>
+                                <span style="color: #999;">-</span>
                                 <% } %>
                             </td>
                             <td>
@@ -381,6 +407,36 @@
         </div>
     </div>
     
+    <!-- Modal de Visibilidad -->
+    <div class="modal-overlay" id="visibilityModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="visModalTitle">Cambiar Visibilidad</h3>
+                <button class="modal-close" onclick="closeVisibilityModal()">&times;</button>
+            </div>
+            <form method="post" action="${pageContext.request.contextPath}/admin/toggle-visibility">
+                <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
+                <input type="hidden" name="userId" id="visUserId">
+                <input type="hidden" name="visibilityAction" id="visAction">
+                <div class="modal-body">
+                    <p id="visMessage"></p>
+                    <div id="visReasonGroup" class="form-group" style="margin-top: 1.5rem; display: none;">
+                        <label for="visReason" class="form-label">Razón (se enviará a la fundación)</label>
+                        <textarea id="visReason"
+                                  name="reason"
+                                  class="form-textarea"
+                                  rows="4"
+                                  placeholder="Ej: Perfil incompleto, pendiente de verificación..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secundario" onclick="closeVisibilityModal()">Cancelar</button>
+                    <button type="submit" class="btn" id="visSubmitBtn">Confirmar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         let currentPetCount = 0;
         
@@ -470,6 +526,39 @@
             if (e.target === this) {
                 closeModal();
             }
+        });
+
+        // --- Visibilidad de fundaciones ---
+        function openVisibilityModal(userId, userName, isCurrentlyVisible) {
+            document.getElementById('visUserId').value = userId;
+            document.getElementById('visModalTitle').textContent = 'Visibilidad - ' + userName;
+            document.getElementById('visReason').value = '';
+
+            if (isCurrentlyVisible) {
+                document.getElementById('visAction').value = 'hide';
+                document.getElementById('visMessage').textContent = '¿Deseas ocultar a "' + userName + '" de la página pública de Partners?';
+                document.getElementById('visReasonGroup').style.display = 'block';
+                document.getElementById('visSubmitBtn').textContent = 'Ocultar';
+                document.getElementById('visSubmitBtn').className = 'btn btn-error';
+            } else {
+                document.getElementById('visAction').value = 'show';
+                document.getElementById('visMessage').textContent = '¿Deseas hacer visible a "' + userName + '" en la página pública de Partners?';
+                document.getElementById('visReasonGroup').style.display = 'none';
+                document.getElementById('visSubmitBtn').textContent = 'Hacer Visible';
+                document.getElementById('visSubmitBtn').className = 'btn btn-success';
+            }
+
+            document.getElementById('visibilityModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeVisibilityModal() {
+            document.getElementById('visibilityModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        document.getElementById('visibilityModal').addEventListener('click', function(e) {
+            if (e.target === this) closeVisibilityModal();
         });
     </script>
 </body>

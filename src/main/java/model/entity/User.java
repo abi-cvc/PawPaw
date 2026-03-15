@@ -20,6 +20,7 @@ public class User {
     private Integer petLimit;
     private Boolean isPartner;
     private String partnerBadge;
+    private Boolean partnerVisible;
     
     // Constructores
     
@@ -140,6 +141,14 @@ public class User {
     
     public void setPartnerBadge(String partnerBadge) {
         this.partnerBadge = partnerBadge;
+    }
+
+    public Boolean getPartnerVisible() {
+        return partnerVisible;
+    }
+
+    public void setPartnerVisible(Boolean partnerVisible) {
+        this.partnerVisible = partnerVisible;
     }
     
     // Métodos útiles ORIGINALES

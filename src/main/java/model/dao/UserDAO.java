@@ -57,6 +57,66 @@ public class UserDAO {
     }
     
     /**
+     * Crea un usuario de fundación con campos de partner
+     */
+    public boolean createFoundation(User user) {
+        String sql = "INSERT INTO users (name_user, email, password, rol, active, pet_limit, is_partner, partner_badge) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
+            String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(12));
+
+            pstmt.setString(1, user.getNameUser());
+            pstmt.setString(2, user.getEmail());
+            pstmt.setString(3, hashedPassword);
+            pstmt.setString(4, user.getRol() != null ? user.getRol() : "user");
+            pstmt.setBoolean(5, user.getActive() != null ? user.getActive() : true);
+            pstmt.setInt(6, user.getPetLimit() != null ? user.getPetLimit() : 9999);
+            pstmt.setBoolean(7, true);
+            pstmt.setString(8, user.getPartnerBadge());
+
+            int affectedRows = pstmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
+                    if (generatedKeys.next()) {
+                        user.setIdUser(generatedKeys.getInt(1));
+                    }
+                }
+                return true;
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Error al crear usuario fundación: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    /**
+     * Actualiza la visibilidad de una fundación en la página pública
+     */
+    public boolean updatePartnerVisibility(Integer userId, boolean visible) {
+        String sql = "UPDATE users SET partner_visible = ? WHERE id_user = ? AND is_partner = true";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setBoolean(1, visible);
+            pstmt.setInt(2, userId);
+
+            return pstmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar visibilidad: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
      * Busca un usuario por su email y verifica la contraseña
      * 
      * @param email Email del usuario
@@ -440,9 +500,15 @@ public class UserDAO {
         try {
             user.setPartnerBadge(rs.getString("partner_badge"));
         } catch (SQLException e) {
-            user.setPartnerBadge(null); // Puede ser null
+            user.setPartnerBadge(null);
         }
-        
+
+        try {
+            user.setPartnerVisible(rs.getObject("partner_visible") != null ? rs.getBoolean("partner_visible") : true);
+        } catch (SQLException e) {
+            user.setPartnerVisible(true);
+        }
+
         return user;
     }
 }

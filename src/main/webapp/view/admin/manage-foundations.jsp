@@ -204,10 +204,10 @@
                         <% for (FoundationRequest req : requests) { %>
                         <tr>
                             <td>
-                                <strong><c:out value="${req.getFoundationName()}"/></strong>
+                                <strong><%= req.getFoundationName() != null ? req.getFoundationName() : "" %></strong>
                             </td>
-                            <td><c:out value="${req.getEmail()}"/></td>
-                            <td><c:out value="${req.getPhone()}"/></td>
+                            <td><%= req.getEmail() != null ? req.getEmail() : "" %></td>
+                            <td><%= req.getPhone() != null ? req.getPhone() : "" %></td>
                             <td><%= dateFormat.format(req.getCreatedAt()) %></td>
                             <td>
                                 <% if ("pending".equals(req.getStatus())) { %>
@@ -223,24 +223,24 @@
                                     <% if ("pending".equals(req.getStatus())) { %>
                                     <button class="btn btn-sm btn-success"
                                             data-id="<%= req.getIdRequest() %>"
-                                            data-name="<c:out value="${req.getFoundationName()}"/>"
+                                            data-name="<%= req.getFoundationName() != null ? req.getFoundationName().replace("\"", "&quot;") : "" %>"
                                             onclick="openApproveModal(this.dataset.id, this.dataset.name)">
                                         ✓ Aprobar
                                     </button>
                                     <button class="btn btn-sm btn-error"
                                             data-id="<%= req.getIdRequest() %>"
-                                            data-name="<c:out value="${req.getFoundationName()}"/>"
+                                            data-name="<%= req.getFoundationName() != null ? req.getFoundationName().replace("\"", "&quot;") : "" %>"
                                             onclick="openRejectModal(this.dataset.id, this.dataset.name)">
                                         ✗ Rechazar
                                     </button>
                                     <% } %>
                                     <button class="btn btn-sm btn-secundario"
                                             data-id="<%= req.getIdRequest() %>"
-                                            data-name="<c:out value="${req.getFoundationName()}"/>"
-                                            data-email="<c:out value="${req.getEmail()}"/>"
-                                            data-phone="<c:out value="${req.getPhone()}"/>"
-                                            data-website="<c:out value="${req.getWebsite() != null ? req.getWebsite() : ''}"/>"
-                                            data-description="<c:out value="${req.getDescription() != null ? req.getDescription() : ''}"/>"
+                                            data-name="<%= req.getFoundationName() != null ? req.getFoundationName().replace("\"", "&quot;") : "" %>"
+                                            data-email="<%= req.getEmail() != null ? req.getEmail().replace("\"", "&quot;") : "" %>"
+                                            data-phone="<%= req.getPhone() != null ? req.getPhone().replace("\"", "&quot;") : "" %>"
+                                            data-website="<%= req.getWebsite() != null ? req.getWebsite().replace("\"", "&quot;") : "" %>"
+                                            data-description="<%= req.getDescription() != null ? req.getDescription().replace("\"", "&quot;") : "" %>"
                                             onclick="viewDetails(this.dataset.id, this.dataset.name, this.dataset.email, this.dataset.phone, this.dataset.website, this.dataset.description)">
                                         👁️ Ver
                                     </button>

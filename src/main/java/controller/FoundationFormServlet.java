@@ -52,11 +52,7 @@ public class FoundationFormServlet extends HttpServlet {
             currentAnimalsStr == null || currentAnimalsStr.trim().isEmpty()) {
             
             request.setAttribute("errorMessage", "Por favor completa todos los campos obligatorios");
-            request.setAttribute("foundationName", foundationName);
-            request.setAttribute("contactName", contactName);
-            request.setAttribute("email", email);
-            request.setAttribute("phone", phone);
-            request.setAttribute("animalTypes", animalTypes);
+            repopulateForm(request, foundationName, contactName, email, phone, whatsapp, animalTypes, currentAnimalsStr, description, website);
             request.getRequestDispatcher("/view/foundations/foundation-form.jsp").forward(request, response);
             return;
         }
@@ -64,10 +60,7 @@ public class FoundationFormServlet extends HttpServlet {
         // Validar email único
         if (foundationDAO.findByEmail(email) != null) {
             request.setAttribute("errorMessage", "Ya existe una solicitud con este email");
-            request.setAttribute("foundationName", foundationName);
-            request.setAttribute("contactName", contactName);
-            request.setAttribute("phone", phone);
-            request.setAttribute("animalTypes", animalTypes);
+            repopulateForm(request, foundationName, contactName, email, phone, whatsapp, animalTypes, currentAnimalsStr, description, website);
             request.getRequestDispatcher("/view/foundations/foundation-form.jsp").forward(request, response);
             return;
         }
@@ -97,12 +90,22 @@ public class FoundationFormServlet extends HttpServlet {
             
         } catch (NumberFormatException e) {
             request.setAttribute("errorMessage", "La cantidad de animales debe ser un número");
-            request.setAttribute("foundationName", foundationName);
-            request.setAttribute("contactName", contactName);
-            request.setAttribute("email", email);
-            request.setAttribute("phone", phone);
-            request.setAttribute("animalTypes", animalTypes);
+            repopulateForm(request, foundationName, contactName, email, phone, whatsapp, animalTypes, currentAnimalsStr, description, website);
             request.getRequestDispatcher("/view/foundations/foundation-form.jsp").forward(request, response);
         }
+    }
+
+    private void repopulateForm(HttpServletRequest request, String foundationName, String contactName,
+            String email, String phone, String whatsapp, String animalTypes,
+            String currentAnimals, String description, String website) {
+        request.setAttribute("foundationName", foundationName);
+        request.setAttribute("contactName", contactName);
+        request.setAttribute("email", email);
+        request.setAttribute("phone", phone);
+        request.setAttribute("whatsapp", whatsapp);
+        request.setAttribute("animalTypes", animalTypes);
+        request.setAttribute("currentAnimals", currentAnimals);
+        request.setAttribute("description", description);
+        request.setAttribute("website", website);
     }
 }

@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="model.entity.User" %>
 <%@ page import="model.entity.PetContactMessage" %>
+<%@ page import="model.entity.SystemMessage" %>
 <%@ page import="java.util.List" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%
@@ -15,7 +16,10 @@
 
     @SuppressWarnings("unchecked")
     List<PetContactMessage> messages = (List<PetContactMessage>) request.getAttribute("messages");
+    @SuppressWarnings("unchecked")
+    List<SystemMessage> systemMessages = (List<SystemMessage>) request.getAttribute("systemMessages");
     Integer unreadCount = (Integer) request.getAttribute("unreadCount");
+    Integer systemUnreadCount = (Integer) request.getAttribute("systemUnreadCount");
     String currentFilter = (String) request.getAttribute("currentFilter");
 
     String successMessage = (String) request.getAttribute("successMessage");
@@ -192,6 +196,50 @@
                     </a>
                 </div>
             </div>
+
+            <!-- Mensajes del Sistema -->
+            <% if (systemMessages != null && !systemMessages.isEmpty()) { %>
+            <div style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem; color: #333;">Notificaciones del Sistema</h3>
+                <div class="messages-container">
+                    <% for (SystemMessage sysMsg : systemMessages) { %>
+                    <div class="message-card <%= sysMsg.isUnread() ? "unread" : "" %>" style="border-left: 4px solid #FF9800;">
+                        <div class="message-header">
+                            <div class="message-pet-info">
+                                <div class="message-pet-photo-placeholder" style="background: linear-gradient(135deg, #FF9800, #F57C00);">🔔</div>
+                                <div>
+                                    <h3><%= sysMsg.getSubject() != null ? sysMsg.getSubject().replace("<", "&lt;").replace(">", "&gt;") : "" %></h3>
+                                </div>
+                            </div>
+                            <% if (sysMsg.isUnread()) { %>
+                            <span class="unread-badge">Sin leer</span>
+                            <% } %>
+                        </div>
+                        <div class="message-body">
+                            <div class="message-time"><%= sysMsg.getTimeAgo() %></div>
+                            <div class="message-text" style="white-space: pre-wrap;"><%= sysMsg.getMessage() != null ? sysMsg.getMessage().replace("<", "&lt;").replace(">", "&gt;") : "" %></div>
+                        </div>
+                        <div class="message-actions">
+                            <% if (sysMsg.isUnread()) { %>
+                            <form method="post" style="display:inline;">
+                                <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
+                                <input type="hidden" name="action" value="mark-sys-read">
+                                <input type="hidden" name="messageId" value="<%= sysMsg.getIdMessage() %>">
+                                <button type="submit" class="btn btn-secundario btn-small">✓ Marcar leído</button>
+                            </form>
+                            <% } %>
+                            <form method="post" style="display:inline;" onsubmit="return confirm('¿Eliminar esta notificación?');">
+                                <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
+                                <input type="hidden" name="action" value="delete-sys">
+                                <input type="hidden" name="messageId" value="<%= sysMsg.getIdMessage() %>">
+                                <button type="submit" class="btn btn-outline btn-small">🗑️ Eliminar</button>
+                            </form>
+                        </div>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+            <% } %>
 
             <!-- Lista de Mensajes -->
             <div class="messages-container">

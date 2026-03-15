@@ -19,8 +19,16 @@
                 <a href="${pageContext.request.contextPath}/view/index.jsp">
                     <img src="${pageContext.request.contextPath}/images/logo.png" alt="Logo PawPaw">
                 </a>
-                <h1>Crear Cuenta</h1>
-                <p>Únete a PawPaw hoy</p>
+                <c:choose>
+                    <c:when test="${not empty foundationToken}">
+                        <h1>Crear Cuenta de Fundación</h1>
+                        <p>Registro de <strong><c:out value="${foundationName}"/></strong></p>
+                    </c:when>
+                    <c:otherwise>
+                        <h1>Crear Cuenta</h1>
+                        <p>Únete a PawPaw hoy</p>
+                    </c:otherwise>
+                </c:choose>
             </div>
             
             <c:if test="${not empty error}">
@@ -31,31 +39,49 @@
             
             <form action="${pageContext.request.contextPath}/register" method="post" id="registerForm">
                 <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
+                <c:if test="${not empty foundationToken}">
+                    <input type="hidden" name="foundationToken" value="<c:out value="${foundationToken}"/>">
+                </c:if>
 
                 <div class="form-group">
                     <label for="name" class="form-label required">Nombre completo</label>
-                    <input 
-                        type="text" 
-                        id="name" 
-                        name="name" 
-                        class="form-input" 
+                    <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        class="form-input"
                         placeholder="Ej: María García"
                         value="<c:out value="${name}"/>"
                         required
                         autocomplete="name">
                 </div>
-                
+
                 <div class="form-group">
                     <label for="email" class="form-label required">Email</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        class="form-input" 
-                        placeholder="tucorreo@ejemplo.com"
-                        value="<c:out value="${email}"/>"
-                        required
-                        autocomplete="email">
+                    <c:choose>
+                        <c:when test="${not empty foundationEmail}">
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                class="form-input"
+                                value="<c:out value="${foundationEmail}"/>"
+                                readonly
+                                style="background-color: #f0f0f0; cursor: not-allowed;">
+                            <small style="color: #666; font-size: 0.85rem;">Este email fue verificado en tu solicitud de fundación</small>
+                        </c:when>
+                        <c:otherwise>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                class="form-input"
+                                placeholder="tucorreo@ejemplo.com"
+                                value="<c:out value="${email}"/>"
+                                required
+                                autocomplete="email">
+                        </c:otherwise>
+                    </c:choose>
                 </div>
                 
                 <div class="form-group">

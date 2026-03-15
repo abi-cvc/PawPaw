@@ -1,8 +1,10 @@
 package controller;
 
 import model.dao.PetContactMessageDAO;
+import model.dao.SystemMessageDAO;
 import model.dao.UserDAO;
 import model.entity.PetContactMessage;
+import model.entity.SystemMessage;
 import model.entity.User;
 
 import jakarta.servlet.ServletException;
@@ -22,6 +24,7 @@ import java.util.List;
 public class MyMessagesServlet extends HttpServlet {
     
     private PetContactMessageDAO messageDAO = new PetContactMessageDAO();
+    private SystemMessageDAO systemMessageDAO = new SystemMessageDAO();
     private UserDAO userDAO = new UserDAO();
     
     @Override
@@ -55,8 +58,14 @@ public class MyMessagesServlet extends HttpServlet {
         // Contar mensajes no leídos
         int unreadCount = messageDAO.countUnreadByUserId(userId);
         
+        // Mensajes del sistema (admin → usuario)
+        List<SystemMessage> systemMessages = systemMessageDAO.findByUserId(userId);
+        int systemUnreadCount = systemMessageDAO.countUnreadByUserId(userId);
+
         request.setAttribute("messages", messages);
-        request.setAttribute("unreadCount", unreadCount);
+        request.setAttribute("systemMessages", systemMessages);
+        request.setAttribute("unreadCount", unreadCount + systemUnreadCount);
+        request.setAttribute("systemUnreadCount", systemUnreadCount);
         request.setAttribute("currentFilter", filter);
         
         // Mensajes de sesión
@@ -94,6 +103,14 @@ public class MyMessagesServlet extends HttpServlet {
                 markAllAsRead(userId, session);
             } else if ("delete".equals(action)) {
                 deleteMessage(request, session);
+            } else if ("mark-sys-read".equals(action)) {
+                Integer msgId = Integer.parseInt(request.getParameter("messageId"));
+                systemMessageDAO.markAsRead(msgId);
+            } else if ("mark-all-sys-read".equals(action)) {
+                systemMessageDAO.markAllAsRead(userId);
+            } else if ("delete-sys".equals(action)) {
+                Integer msgId = Integer.parseInt(request.getParameter("messageId"));
+                systemMessageDAO.delete(msgId);
             }
         } catch (Exception e) {
             System.err.println("❌ Error en acción de mensaje: " + e.getMessage());

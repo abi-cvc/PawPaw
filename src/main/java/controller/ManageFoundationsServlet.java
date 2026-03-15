@@ -128,14 +128,14 @@ public class ManageFoundationsServlet extends HttpServlet {
      */
     private void approveFoundation(HttpServletRequest request, Integer adminId, HttpSession session) {
         try {
-            Integer idRequest = Integer.parseInt(request.getParameter("idRequest"));
+            Integer idRequest = Integer.parseInt(request.getParameter("requestId"));
             FoundationRequest foundationReq = foundationDAO.findById(idRequest);
-            
+
             if (foundationReq == null) {
                 session.setAttribute("errorMessage", "Solicitud no encontrada");
                 return;
             }
-            
+
             // Aprobar solicitud (genera token automáticamente)
             if (foundationDAO.approve(idRequest, adminId)) {
                 // Obtener el token generado
@@ -190,7 +190,7 @@ public class ManageFoundationsServlet extends HttpServlet {
      */
     private void rejectFoundation(HttpServletRequest request, Integer adminId, HttpSession session) {
         try {
-            Integer idRequest = Integer.parseInt(request.getParameter("idRequest"));
+            Integer idRequest = Integer.parseInt(request.getParameter("requestId"));
             String reason = request.getParameter("reason");
             
             FoundationRequest foundationReq = foundationDAO.findById(idRequest);

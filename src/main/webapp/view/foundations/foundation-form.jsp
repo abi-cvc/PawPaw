@@ -6,7 +6,11 @@
     String contactName = (String) request.getAttribute("contactName");
     String email = (String) request.getAttribute("email");
     String phone = (String) request.getAttribute("phone");
+    String whatsapp = (String) request.getAttribute("whatsapp");
     String animalTypes = (String) request.getAttribute("animalTypes");
+    String currentAnimals = (String) request.getAttribute("currentAnimals");
+    String description = (String) request.getAttribute("description");
+    String website = (String) request.getAttribute("website");
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -65,7 +69,14 @@
                     <div class="form-group">
                         <label for="website">Sitio Web</label>
                         <input type="url" id="website" name="website"
+                               value="<c:out value="${website != null ? website : ''}"/>"
                                placeholder="https://www.ejemplo.com" class="form-input">
+                        <div style="margin-top: 0.5rem;">
+                            <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.9rem; color: #666;">
+                                <input type="checkbox" id="noWebsite" onchange="toggleWebsite(this)">
+                                No tengo página web
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -99,6 +110,7 @@
                     <div class="form-group">
                         <label for="whatsapp">WhatsApp (opcional)</label>
                         <input type="tel" id="whatsapp" name="whatsapp"
+                               value="<c:out value="${whatsapp != null ? whatsapp : ''}"/>"
                                maxlength="20" class="form-input"
                                placeholder="0999123456">
                     </div>
@@ -119,6 +131,7 @@
                     <div class="form-group">
                         <label for="currentAnimals">Cantidad Actual de Animales *</label>
                         <input type="number" id="currentAnimals" name="currentAnimals"
+                               value="<c:out value="${currentAnimals != null ? currentAnimals : ''}"/>"
                                required min="1" max="9999" class="form-input"
                                placeholder="Ej: 50">
                     </div>
@@ -127,7 +140,7 @@
                         <label for="description">Descripción de la Fundación</label>
                         <textarea id="description" name="description" rows="4"
                                   maxlength="1000" class="form-textarea"
-                                  placeholder="Cuéntanos sobre su misión y actividades..."></textarea>
+                                  placeholder="Cuéntanos sobre su misión y actividades..."><c:out value="${description != null ? description : ''}"/></textarea>
                     </div>
                 </div>
 
@@ -148,6 +161,21 @@
             </form>
         </div>
     </div>
+
+    <script>
+        function toggleWebsite(checkbox) {
+            var websiteInput = document.getElementById('website');
+            if (checkbox.checked) {
+                websiteInput.value = '';
+                websiteInput.disabled = true;
+                websiteInput.placeholder = 'No aplica';
+                websiteInput.removeAttribute('required');
+            } else {
+                websiteInput.disabled = false;
+                websiteInput.placeholder = 'https://www.ejemplo.com';
+            }
+        }
+    </script>
 
     <!-- Footer -->
     <footer class="footer">

@@ -310,6 +310,25 @@ public class FoundationRequestDAO {
     }
     
     /**
+     * Marca la solicitud como registrada (token ya usado)
+     */
+    public boolean markAsRegistered(Integer idRequest) {
+        String sql = "UPDATE foundation_requests SET status = 'registered' WHERE id_request = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, idRequest);
+            return stmt.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            System.err.println("❌ Error al marcar como registrada: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
      * Extrae una solicitud desde ResultSet
      */
     private FoundationRequest extractFoundationFromResultSet(ResultSet rs) throws SQLException {

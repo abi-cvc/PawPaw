@@ -1,7 +1,9 @@
 package controller;
 
 import model.dao.UserDAO;
+import model.dao.FoundationRequestDAO;
 import model.entity.User;
+import model.entity.FoundationRequest;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -27,22 +29,35 @@ public class UserController extends HttpServlet {
     );
     
     private UserDAO userDAO = new UserDAO();
+    private FoundationRequestDAO foundationDAO = new FoundationRequestDAO();
 
     /**
      * Muestra el formulario de registro
      */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         // Verificar si ya hay una sesión activa
         HttpSession session = request.getSession(false);
         if (session != null && session.getAttribute("userId") != null) {
-            // Si ya está logueado, redirigir al panel
             response.sendRedirect(request.getContextPath() + "/user/panel");
             return;
         }
-        
-        // Mostrar la página de registro
+
+        // Verificar si viene con token de fundación aprobada
+        String token = request.getParameter("token");
+        if (token != null && !token.trim().isEmpty()) {
+            FoundationRequest foundationReq = foundationDAO.findByToken(token);
+            if (foundationReq != null && "approved".equals(foundationReq.getStatus())) {
+                request.setAttribute("foundationToken", token);
+                request.setAttribute("foundationEmail", foundationReq.getEmail());
+                request.setAttribute("foundationName", foundationReq.getFoundationName());
+                request.setAttribute("name", foundationReq.getContactName());
+            } else {
+                request.setAttribute("error", "El enlace de registro no es válido o ya fue utilizado.");
+            }
+        }
+
         request.getRequestDispatcher("/view/internalUser/register.jsp").forward(request, response);
     }
 
@@ -57,38 +72,75 @@ public class UserController extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
         String confirmPassword = request.getParameter("confirmPassword");
-        
+        String foundationToken = request.getParameter("foundationToken");
+
         System.out.println("🔵 Intento de registro:");
         System.out.println("   Nombre: " + name);
         System.out.println("   Email: " + email);
-        
+
         // Validaciones
         String errorMessage = validateRegistration(name, email, password, confirmPassword);
-        
+
         if (errorMessage != null) {
             System.out.println("❌ Error de validación: " + errorMessage);
-            // Hay errores, volver al formulario
             request.setAttribute("error", errorMessage);
             request.setAttribute("name", name);
             request.setAttribute("email", email);
+            // Repoblar datos de fundación si aplica
+            if (foundationToken != null && !foundationToken.isEmpty()) {
+                FoundationRequest fr = foundationDAO.findByToken(foundationToken);
+                if (fr != null) {
+                    request.setAttribute("foundationToken", foundationToken);
+                    request.setAttribute("foundationEmail", fr.getEmail());
+                    request.setAttribute("foundationName", fr.getFoundationName());
+                }
+            }
             request.getRequestDispatcher("/view/internalUser/register.jsp").forward(request, response);
             return;
         }
-        
+
+        // Verificar si es registro de fundación con token
+        boolean isFoundationRegistration = false;
+        FoundationRequest foundationReq = null;
+        if (foundationToken != null && !foundationToken.isEmpty()) {
+            foundationReq = foundationDAO.findByToken(foundationToken);
+            if (foundationReq != null && "approved".equals(foundationReq.getStatus())) {
+                // Forzar el email de la solicitud aprobada
+                email = foundationReq.getEmail();
+                isFoundationRegistration = true;
+            }
+        }
+
         // Intentar registrar usuario
-        if (registerUser(name, email, password)) {
-            System.out.println("✅ Usuario registrado exitosamente");
-            // Registro exitoso, redirigir al login con mensaje
-            request.setAttribute("success", "Cuenta creada exitosamente. Por favor inicia sesión.");
-            request.setAttribute("email", email);
-            request.getRequestDispatcher("/view/internalUser/login.jsp").forward(request, response);
+        if (isFoundationRegistration) {
+            if (registerFoundationUser(name, email, password, foundationReq)) {
+                System.out.println("✅ Fundación registrada exitosamente: " + foundationReq.getFoundationName());
+                request.setAttribute("success", "¡Cuenta de fundación creada exitosamente! Por favor inicia sesión.");
+                request.setAttribute("email", email);
+                request.getRequestDispatcher("/view/internalUser/login.jsp").forward(request, response);
+            } else {
+                System.out.println("❌ Error al registrar fundación");
+                request.setAttribute("error", "El email ya está registrado o hubo un error. Intenta iniciar sesión.");
+                request.setAttribute("name", name);
+                request.setAttribute("email", email);
+                request.setAttribute("foundationToken", foundationToken);
+                request.setAttribute("foundationEmail", email);
+                request.setAttribute("foundationName", foundationReq.getFoundationName());
+                request.getRequestDispatcher("/view/internalUser/register.jsp").forward(request, response);
+            }
         } else {
-            System.out.println("❌ Error: Email ya existe o error en BD");
-            // Error al registrar (ej: email ya existe)
-            request.setAttribute("error", "El email ya está registrado. Intenta con otro o inicia sesión.");
-            request.setAttribute("name", name);
-            request.setAttribute("email", email);
-            request.getRequestDispatcher("/view/internalUser/register.jsp").forward(request, response);
+            if (registerUser(name, email, password)) {
+                System.out.println("✅ Usuario registrado exitosamente");
+                request.setAttribute("success", "Cuenta creada exitosamente. Por favor inicia sesión.");
+                request.setAttribute("email", email);
+                request.getRequestDispatcher("/view/internalUser/login.jsp").forward(request, response);
+            } else {
+                System.out.println("❌ Error: Email ya existe o error en BD");
+                request.setAttribute("error", "El email ya está registrado. Intenta con otro o inicia sesión.");
+                request.setAttribute("name", name);
+                request.setAttribute("email", email);
+                request.getRequestDispatcher("/view/internalUser/register.jsp").forward(request, response);
+            }
         }
     }
     
@@ -140,6 +192,39 @@ public class UserController extends HttpServlet {
      * Registra un nuevo usuario en el sistema
      * AHORA SÍ GUARDA EN LA BASE DE DATOS
      */
+    private boolean registerFoundationUser(String name, String email, String password, FoundationRequest foundationReq) {
+        try {
+            if (userDAO.emailExists(email.trim())) {
+                return false;
+            }
+
+            User newUser = new User();
+            newUser.setNameUser(name.trim());
+            newUser.setEmail(email.trim());
+            newUser.setPassword(password);
+            newUser.setRol("user");
+            newUser.setActive(true);
+            newUser.setPetLimit(9999); // Slots ilimitados
+            newUser.setIsPartner(true);
+            newUser.setPartnerBadge("Aliados PawPaw");
+
+            boolean created = userDAO.createFoundation(newUser);
+
+            if (created) {
+                // Invalidar el token para que no se use de nuevo
+                foundationReq.setStatus("registered");
+                foundationDAO.markAsRegistered(foundationReq.getIdRequest());
+                System.out.println("   ✅ Fundación guardada en BD con ID: " + newUser.getIdUser());
+                return true;
+            }
+            return false;
+        } catch (Exception e) {
+            System.err.println("❌ Excepción al registrar fundación:");
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private boolean registerUser(String name, String email, String password) {
         try {
             // 1. Verificar que el email no exista
