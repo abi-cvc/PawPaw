@@ -21,24 +21,11 @@
 
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=2">
 </head>
 <body>
     <!-- Header -->
-    <header class="header">
-        <nav class="navbar">
-            <div class="navbar-contenedor">
-                <a href="${pageContext.request.contextPath}/" class="navbar-logo">
-                    <img src="${pageContext.request.contextPath}/images/logo.png" alt="PawPaw Logo" class="logo-img">
-                    <span class="logo-texto">PawPaw</span>
-                </a>
-                <div class="navbar-botones">
-                    <a href="${pageContext.request.contextPath}/login" class="btn btn-outline">Iniciar sesión</a>
-                    <a href="${pageContext.request.contextPath}/register" class="btn btn-primario">Registrarse</a>
-                </div>
-            </div>
-        </nav>
-    </header>
+    <jsp:include page="/view/components/navbar.jsp" />
 
     <!-- Foundation Form -->
     <div class="foundation-form-container">

@@ -10,25 +10,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=2">
 </head>
 <body>
 
     <!-- ==================== HEADER ==================== -->
-    <header class="header">
-        <nav class="navbar">
-            <div class="navbar-contenedor">
-                <div class="navbar-logo">
-                    <img src="${pageContext.request.contextPath}/images/logo.png" alt="Logo PawPaw" class="logo-img">
-                    <span class="logo-texto">PawPaw</span>
-                </div>
-                <div class="navbar-botones">
-                    <a href="${pageContext.request.contextPath}/login" class="btn btn-secundario">Iniciar sesión</a>
-                    <a href="${pageContext.request.contextPath}/register" class="btn btn-primario">Crear cuenta</a>
-                </div>
-            </div>
-        </nav>
-    </header>
+    <jsp:include page="/view/components/navbar.jsp" />
 
     <main>
 

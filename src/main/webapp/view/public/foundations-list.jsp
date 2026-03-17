@@ -23,27 +23,12 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=2">
 </head>
 <body>
 
     <!-- ══ NAVBAR ══ -->
-    <header class="header">
-        <nav class="navbar">
-            <div class="navbar-contenedor">
-                <a href="${pageContext.request.contextPath}/" class="navbar-logo" style="text-decoration:none;">
-                    <img src="${pageContext.request.contextPath}/images/logo.png" alt="PawPaw" class="logo-img">
-                    <span class="logo-texto">PawPaw</span>
-                </a>
-                <div class="navbar-botones">
-                    <a href="${pageContext.request.contextPath}/" class="fl-nav-link">Inicio</a>
-                    <a href="${pageContext.request.contextPath}/foundations/public" class="fl-nav-link fl-nav-active">Fundaciones</a>
-                    <a href="${pageContext.request.contextPath}/foundation/apply" class="btn btn-outline">Unirme como fundación</a>
-                    <a href="${pageContext.request.contextPath}/login" class="btn btn-primario">Iniciar sesión</a>
-                </div>
-            </div>
-        </nav>
-    </header>
+    <jsp:include page="/view/components/navbar.jsp" />
 
     <!-- ══ HERO ══ -->
     <section class="fl-hero">

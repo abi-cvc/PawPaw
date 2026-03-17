@@ -31,26 +31,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- CSS — usar SIEMPRE contextPath, nunca ruta relativa -->
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=2">
 </head>
 <body>
-    <!-- Header Público -->
-    <header class="public-header">
-        <div class="container">
-            <div class="header-content">
-                <a href="${pageContext.request.contextPath}/view/index.jsp" class="logo-link">
-                    <img src="${pageContext.request.contextPath}/images/logo.png" alt="PawPaw Logo" class="header-logo">
-                    <span class="logo-text">PawPaw</span>
-                </a>
-
-                <nav class="public-nav">
-                    <a href="${pageContext.request.contextPath}/view/index.jsp">Inicio</a>
-                    <a href="${pageContext.request.contextPath}/foundations/public">Fundaciones</a>
-                    <a href="${pageContext.request.contextPath}/login" class="btn-header">Iniciar Sesión</a>
-                </nav>
-            </div>
-        </div>
-    </header>
+    <!-- Header -->
+    <jsp:include page="/view/components/navbar.jsp" />
 
     <!-- Perfil de Fundación -->
     <section class="foundation-profile-hero">
