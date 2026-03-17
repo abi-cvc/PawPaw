@@ -5,11 +5,10 @@
 <%
     @SuppressWarnings("unchecked")
     List<Map<String, Object>> foundations = (List<Map<String, Object>>) request.getAttribute("foundations");
-    Integer totalFoundations = (Integer) request.getAttribute("totalFoundations");
-    if (totalFoundations == null) totalFoundations = 0;
+    int totalFoundations = (foundations != null) ? foundations.size() : 0;
     int totalAvailable = (foundations != null)
         ? foundations.stream().mapToInt(f -> {
-            Object v = f.get("availablePets");
+            Object v = f.get("available_pets");
             return v instanceof Integer ? (Integer) v : 0;
           }).sum()
         : 0;
@@ -81,11 +80,11 @@
 
             <div class="fl-grid">
                 <% for (Map<String, Object> foundation : foundations) {
-                    Integer availablePets = (Integer) foundation.get("availablePets");
-                    Integer adoptedPets   = (Integer) foundation.get("adoptedPets");
+                    Integer availablePets = (Integer) foundation.get("available_pets");
+                    Integer adoptedPets   = (Integer) foundation.get("adopted_pets");
                     if (availablePets == null) availablePets = 0;
                     if (adoptedPets   == null) adoptedPets   = 0;
-                    String fname = (String) foundation.get("foundationName");
+                    String fname = (String) foundation.get("foundation_name");
                     String initial = (fname != null && !fname.isEmpty())
                         ? String.valueOf(fname.charAt(0)).toUpperCase() : "F";
                 %>
@@ -93,7 +92,7 @@
                 <%
                     String fdesc = (String) foundation.get("description");
                     String fdescTrunc = (fdesc != null && fdesc.length() > 110) ? fdesc.substring(0, 110) + "…" : fdesc;
-                    String fcontact = (String) foundation.get("contactName");
+                    String fcontact = (String) foundation.get("contact_name");
                     String fphone = (String) foundation.get("phone");
                     pageContext.setAttribute("fname", fname);
                     pageContext.setAttribute("fdescTrunc", fdescTrunc);
@@ -120,7 +119,7 @@
 
                     <!-- Contactos -->
                     <div class="fl-card-contacts">
-                        <% if (foundation.get("contactName") != null) { %>
+                        <% if (foundation.get("contact_name") != null) { %>
                         <span class="fl-contact-pill">👤 <c:out value="${fcontact}"/></span>
                         <% } %>
                         <% if (foundation.get("phone") != null) { %>
@@ -144,7 +143,7 @@
 
                     <!-- Acción -->
                     <div class="fl-card-footer">
-                        <a href="${pageContext.request.contextPath}/foundations/<%= foundation.get("idUser") %>"
+                        <a href="${pageContext.request.contextPath}/foundations/<%= foundation.get("id_user") %>"
                            class="btn btn-primario btn-block">
                             Ver mascotas 🐾
                         </a>
