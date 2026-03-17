@@ -283,7 +283,7 @@
                     <a href="${pageContext.request.contextPath}/contact" class="footer-link">Contacto</a>
                     <a href="${pageContext.request.contextPath}/privacy" class="footer-link">Política de privacidad</a>
                     <a href="${pageContext.request.contextPath}/terms" class="footer-link">Términos de uso</a>
-                    <a href="${pageContext.request.contextPath}/foundations/public" class="footer-link">🏡 Fundaciones Aliadas</a>
+                    <a href="${pageContext.request.contextPath}/foundations/public" class="footer-link">Fundaciones Aliadas</a>
                     <a href="${pageContext.request.contextPath}/foundation/apply" class="footer-link">Ser fundación aliada</a>
                 </nav>
             </div>
