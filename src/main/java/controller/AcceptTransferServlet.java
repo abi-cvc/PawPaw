@@ -132,12 +132,27 @@ public class AcceptTransferServlet extends HttpServlet {
 
             // ── RECHAZAR ──────────────────────────────────────────────
             if ("reject".equals(action)) {
-                dao.updateStatus(transfer.getIdTransfer(), "rejected", null);
-                try (Connection conn = DatabaseConnection.getConnection();
-                     PreparedStatement ps = conn.prepareStatement(
-                             "UPDATE pets SET adoption_status = 'available' WHERE id_pet = ?")) {
-                    ps.setInt(1, transfer.getIdPet());
-                    ps.executeUpdate();
+                // DB-002: Transacción para reject (2 tablas: transfer_requests + pets)
+                try (Connection conn = DatabaseConnection.getConnection()) {
+                    conn.setAutoCommit(false);
+                    try {
+                        try (PreparedStatement ps = conn.prepareStatement(
+                                "UPDATE pet_transfer_requests SET status = 'rejected' WHERE id_transfer = ?")) {
+                            ps.setInt(1, transfer.getIdTransfer());
+                            ps.executeUpdate();
+                        }
+                        try (PreparedStatement ps = conn.prepareStatement(
+                                "UPDATE pets SET adoption_status = 'available' WHERE id_pet = ?")) {
+                            ps.setInt(1, transfer.getIdPet());
+                            ps.executeUpdate();
+                        }
+                        conn.commit();
+                    } catch (SQLException e) {
+                        conn.rollback();
+                        throw e;
+                    } finally {
+                        conn.setAutoCommit(true);
+                    }
                 }
                 forward(request, response, "/view/public/transfer-error.jsp",
                         "Has rechazado la adopción. La mascota quedó nuevamente disponible.");
@@ -167,6 +182,14 @@ public class AcceptTransferServlet extends HttpServlet {
                             ps.executeUpdate();
                         }
 
+                        // DB-002: Incluir updateStatus dentro de la transacción
+                        try (PreparedStatement ps = conn.prepareStatement(
+                                "UPDATE pet_transfer_requests SET status = 'accepted', accepted_at = ? WHERE id_transfer = ?")) {
+                            ps.setTimestamp(1, new Timestamp(System.currentTimeMillis()));
+                            ps.setInt(2, transfer.getIdTransfer());
+                            ps.executeUpdate();
+                        }
+
                         conn.commit();
                     } catch (SQLException e) {
                         conn.rollback();
@@ -174,10 +197,6 @@ public class AcceptTransferServlet extends HttpServlet {
                     } finally {
                         conn.setAutoCommit(true);
                     }
-
-                    // Marcar transferencia como aceptada (puede estar fuera de la transacción)
-                    dao.updateStatus(transfer.getIdTransfer(), "accepted",
-                            new Timestamp(System.currentTimeMillis()));
 
                     // Cargar nombre de mascota para la página de éxito
                     loadPetInfo(request, transfer.getIdPet());
