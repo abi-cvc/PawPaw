@@ -1,24 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="model.entity.User" %>
-<%@ page import="model.entity.Pet" %>
-<%@ page import="java.util.List" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%
-    // Verificar sesión
-    if (session == null || session.getAttribute("userId") == null) {
-        response.sendRedirect(request.getContextPath() + "/login");
-        return;
-    }
-
-    User user = (User) request.getAttribute("user");
-    String userName = user != null ? user.getNameUser() : (String) session.getAttribute("userName");
-
-    @SuppressWarnings("unchecked")
-    List<Pet> pets = (List<Pet>) request.getAttribute("pets");
-
-    Boolean isPartner = (Boolean) session.getAttribute("isPartner");
-    if (isPartner == null) isPartner = false;
+    // TODO: Move unread count to servlet
+    Integer unreadCount = null;
+    try {
+        model.dao.PetContactMessageDAO msgDAO = new model.dao.PetContactMessageDAO();
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId != null) {
+            unreadCount = msgDAO.countUnreadByUserId(userId);
+        }
+    } catch (Exception e) { /* silent */ }
+    pageContext.setAttribute("unreadCount", unreadCount);
 %>
+<c:set var="userName" value="${not empty user ? user.nameUser : sessionScope.userName}"/>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -45,10 +40,10 @@
             <div class="sidebar-user">
                 <div class="user-info">
                     <div class="user-avatar">
-                        <%= userName != null ? userName.substring(0, 1).toUpperCase() : "U" %>
+                        ${fn:toUpperCase(fn:substring(userName, 0, 1))}
                     </div>
                     <div class="user-details">
-                        <h3><c:out value="<%= userName %>"/></h3>
+                        <h3><c:out value="${userName}"/></h3>
                         <p>Usuario</p>
                     </div>
                 </div>
@@ -82,22 +77,9 @@
 				              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
 				    </svg>
 				    Mis Mensajes
-				    <%
-				    // Contador de mensajes no leídos
-				    Integer unreadCount = null;
-				    try {
-				        model.dao.PetContactMessageDAO msgDAO = new model.dao.PetContactMessageDAO();
-				        Integer userId = (Integer) session.getAttribute("userId");
-				        if (userId != null) {
-				            unreadCount = msgDAO.countUnreadByUserId(userId);
-				        }
-				    } catch (Exception e) {
-				        // Silenciar si la tabla no existe aún
-				    }
-				    if (unreadCount != null && unreadCount > 0) {
-				    %>
-				    <span class="notification-badge"><%= unreadCount %></span>
-				    <% } %>
+				    <c:if test="${unreadCount != null && unreadCount > 0}">
+				    <span class="notification-badge"><c:out value="${unreadCount}"/></span>
+				    </c:if>
 				</a>
 
                 <div class="nav-divider"></div>
@@ -149,7 +131,8 @@
             <!-- Content -->
             <div class="content">
 
-                <% if (pets == null || pets.isEmpty()) { %>
+                <c:choose>
+                <c:when test="${empty pets}">
                     <!-- Empty State -->
                     <div class="empty-state">
                         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -161,83 +144,87 @@
                             Registrar Mi Primera Mascota
                         </a>
                     </div>
-                <% } else { %>
+                </c:when>
+                <c:otherwise>
                     <!-- Lista de Mascotas -->
                     <div class="pets-section">
                         <div class="pets-header">
-                            <h2>Todas mis mascotas (<%= pets.size() %>)</h2>
+                            <h2>Todas mis mascotas (${fn:length(pets)})</h2>
                             <p>Gestiona la información y códigos QR de tus mascotas</p>
                         </div>
 
                         <div class="pets-grid">
-                            <% for (Pet pet : pets) { %>
+                            <c:forEach var="pet" items="${pets}">
                                 <div class="pet-card">
                                     <!-- Foto de la mascota -->
                                     <div class="pet-photo">
-                                        <% if (pet.getPhoto() != null && !pet.getPhoto().isEmpty()) { %>
-                                            <img src="<%= pet.getPhoto() %>" alt="<c:out value="<%= pet.getNamePet() %>"/>">
-                                        <% } else { %>
+                                        <c:choose>
+                                            <c:when test="${not empty pet.photo}">
+                                            <img src="${fn:escapeXml(pet.photo)}" alt="<c:out value="${pet.namePet}"/>">
+                                            </c:when>
+                                            <c:otherwise>
                                             <span class="pet-photo-placeholder">🐾</span>
-                                        <% } %>
+                                            </c:otherwise>
+                                        </c:choose>
 
                                         <!-- Badge de estado en la esquina -->
-                                        <span class="pet-status-badge pet-status-<%= pet.getStatusPet() %>">
-                                            <%
-                                                if ("active".equals(pet.getStatusPet())) {
-                                                    out.print("Activa");
-                                                } else if ("lost".equals(pet.getStatusPet())) {
-                                                    out.print("Perdida");
-                                                } else if ("found".equals(pet.getStatusPet())) {
-                                                    out.print("Encontrada");
-                                                } else {
-                                                    out.print("Inactiva");
-                                                }
-                                            %>
+                                        <span class="pet-status-badge pet-status-${pet.statusPet}">
+                                            <c:choose>
+                                                <c:when test="${pet.statusPet == 'active'}">Activa</c:when>
+                                                <c:when test="${pet.statusPet == 'lost'}">Perdida</c:when>
+                                                <c:when test="${pet.statusPet == 'found'}">Encontrada</c:when>
+                                                <c:otherwise>Inactiva</c:otherwise>
+                                            </c:choose>
                                         </span>
                                     </div>
 
                                     <!-- Información de la mascota -->
                                     <div class="pet-info">
-                                        <h4><c:out value="<%= pet.getNamePet() %>"/></h4>
+                                        <h4><c:out value="${pet.namePet}"/></h4>
 
                                         <div class="pet-details">
                                             <div class="detail-item">
                                                 <span class="detail-label">🐕 Raza:</span>
-                                                <span class="detail-value"><c:out value="<%= pet.getBreed() != null ? pet.getBreed() : \"No especificada\" %>"/></span>
+                                                <span class="detail-value"><c:out value="${not empty pet.breed ? pet.breed : 'No especificada'}"/></span>
                                             </div>
 
                                             <div class="detail-item">
                                                 <span class="detail-label">🎂 Edad:</span>
-                                                <span class="detail-value"><%= pet.getAgePet() != null ? pet.getAgePet() + " años" : "No especificada" %></span>
+                                                <span class="detail-value">
+                                                    <c:choose>
+                                                        <c:when test="${pet.agePet != null}"><c:out value="${pet.agePet}"/> años</c:when>
+                                                        <c:otherwise>No especificada</c:otherwise>
+                                                    </c:choose>
+                                                </span>
                                             </div>
 
                                             <div class="detail-item">
                                                 <span class="detail-label">⚧ Sexo:</span>
-                                                <span class="detail-value"><c:out value="<%= pet.getSexPet() != null ? pet.getSexPet() : \"No especificado\" %>"/></span>
+                                                <span class="detail-value"><c:out value="${not empty pet.sexPet ? pet.sexPet : 'No especificado'}"/></span>
                                             </div>
 
-                                            <% if (pet.getContactPhone() != null && !pet.getContactPhone().isEmpty()) { %>
+                                            <c:if test="${not empty pet.contactPhone}">
                                             <div class="detail-item">
                                                 <span class="detail-label">📞 Contacto:</span>
-                                                <span class="detail-value"><c:out value="<%= pet.getContactPhone() %>"/></span>
+                                                <span class="detail-value"><c:out value="${pet.contactPhone}"/></span>
                                             </div>
-                                            <% } %>
+                                            </c:if>
 
-                                            <% if (pet.getMedicalConditions() != null && !pet.getMedicalConditions().isEmpty()) { %>
+                                            <c:if test="${not empty pet.medicalConditions}">
                                             <div class="detail-item">
                                                 <span class="detail-label">⚕️ Condiciones:</span>
-                                                <span class="detail-value"><c:out value="<%= pet.getMedicalConditions() %>"/></span>
+                                                <span class="detail-value"><c:out value="${pet.medicalConditions}"/></span>
                                             </div>
-                                            <% } %>
+                                            </c:if>
                                         </div>
                                     </div>
 
                                     <!-- Acciones -->
                                     <div class="pet-actions">
-                                        <a href="${pageContext.request.contextPath}/user/pets/edit?id=<%= pet.getIdPet() %>" class="btn btn-secundario">
+                                        <a href="${pageContext.request.contextPath}/user/pets/edit?id=${pet.idPet}" class="btn btn-secundario">
                                             ✏️ Editar
                                         </a>
-                                        <a href="${pageContext.request.contextPath}/pet/<%= pet.getIdPet() %>" target="_blank" class="btn btn-primario">
+                                        <a href="${pageContext.request.contextPath}/pet/${pet.idPet}" target="_blank" class="btn btn-primario">
                                             📱 Ver Perfil
                                         </a>
                                     </div>
@@ -246,17 +233,18 @@
                                     <div class="pet-delete">
                                         <form method="POST" action="${pageContext.request.contextPath}/user/pets/delete" style="display:inline;">
                                             <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
-                                            <input type="hidden" name="id" value="<%= pet.getIdPet() %>">
-                                            <button type="submit" class="btn-delete" onclick="return confirm('¿Estás seguro de eliminar a <%= pet.getNamePet() %>? Esta acción no se puede deshacer.');">
+                                            <input type="hidden" name="id" value="${pet.idPet}">
+                                            <button type="submit" class="btn-delete" onclick="return confirm('¿Estás seguro de eliminar a ${fn:replace(pet.namePet, "'", "\\'")}? Esta acción no se puede deshacer.');">
                                                 🗑️ Eliminar
                                             </button>
                                         </form>
                                     </div>
                                 </div>
-                            <% } %>
+                            </c:forEach>
                         </div>
                     </div>
-                <% } %>
+                </c:otherwise>
+                </c:choose>
 
             </div>
         </div>

@@ -1,22 +1,19 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="model.entity.User" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%
-    // Verificar sesión
-    if (session == null || session.getAttribute("userId") == null) {
-        response.sendRedirect(request.getContextPath() + "/login");
-        return;
-    }
-
-    User user = (User) request.getAttribute("user");
-    String userName = user != null ? user.getNameUser() : "";
-    String userEmail = user != null ? user.getEmail() : "";
-
-    String error = (String) request.getAttribute("error");
-    String success = (String) request.getAttribute("success");
-    String errorPassword = (String) request.getAttribute("errorPassword");
-    String successPassword = (String) request.getAttribute("successPassword");
+    // TODO: Move unread count to servlet
+    Integer unreadCount = null;
+    try {
+        model.dao.PetContactMessageDAO msgDAO = new model.dao.PetContactMessageDAO();
+        Integer userId = (Integer) session.getAttribute("userId");
+        if (userId != null) {
+            unreadCount = msgDAO.countUnreadByUserId(userId);
+        }
+    } catch (Exception e) { /* silent */ }
+    pageContext.setAttribute("unreadCount", unreadCount);
 %>
+<c:set var="userName" value="${not empty user ? user.nameUser : ''}"/>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -43,10 +40,10 @@
             <div class="sidebar-user">
                 <div class="user-info">
                     <div class="user-avatar">
-                        <%= userName != null ? userName.substring(0, 1).toUpperCase() : "U" %>
+                        ${fn:toUpperCase(fn:substring(userName, 0, 1))}
                     </div>
                     <div class="user-details">
-                        <h3><c:out value="${requestScope.user.nameUser}"/></h3>
+                        <h3><c:out value="${userName}"/></h3>
                         <p>Usuario</p>
                     </div>
                 </div>
@@ -80,22 +77,9 @@
 				              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
 				    </svg>
 				    Mis Mensajes
-				    <%
-				    // Contador de mensajes no leídos
-				    Integer unreadCount = null;
-				    try {
-				        model.dao.PetContactMessageDAO msgDAO = new model.dao.PetContactMessageDAO();
-				        Integer userId = (Integer) session.getAttribute("userId");
-				        if (userId != null) {
-				            unreadCount = msgDAO.countUnreadByUserId(userId);
-				        }
-				    } catch (Exception e) {
-				        // Silenciar si la tabla no existe aún
-				    }
-				    if (unreadCount != null && unreadCount > 0) {
-				    %>
-				    <span class="notification-badge"><%= unreadCount %></span>
-				    <% } %>
+				    <c:if test="${unreadCount != null && unreadCount > 0}">
+				    <span class="notification-badge"><c:out value="${unreadCount}"/></span>
+				    </c:if>
 				</a>
 
                 <div class="nav-divider"></div>
@@ -148,17 +132,17 @@
                     <div class="profile-section">
                         <h2>Información Personal</h2>
 
-                        <% if (error != null) { %>
+                        <c:if test="${not empty error}">
                             <div class="mensaje mensaje-error">
-                                ⚠️ <c:out value="${requestScope.error}"/>
+                                ⚠️ <c:out value="${error}"/>
                             </div>
-                        <% } %>
+                        </c:if>
 
-                        <% if (success != null) { %>
+                        <c:if test="${not empty success}">
                             <div class="mensaje mensaje-exito">
-                                ✅ <c:out value="${requestScope.success}"/>
+                                ✅ <c:out value="${success}"/>
                             </div>
-                        <% } %>
+                        </c:if>
 
                         <form method="POST" action="${pageContext.request.contextPath}/user/profile">
                             <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
@@ -170,7 +154,7 @@
                                        id="name"
                                        name="name"
                                        class="form-input"
-                                       value="<c:out value="${requestScope.user.nameUser}"/>"
+                                       value="<c:out value="${user.nameUser}"/>"
                                        required>
                             </div>
 
@@ -180,7 +164,7 @@
                                        id="email"
                                        name="email"
                                        class="form-input"
-                                       value="<c:out value="${requestScope.user.email}"/>"
+                                       value="<c:out value="${user.email}"/>"
                                        required>
                             </div>
 
@@ -196,17 +180,17 @@
                     <div class="profile-section">
                         <h2>Cambiar Contraseña</h2>
 
-                        <% if (errorPassword != null) { %>
+                        <c:if test="${not empty errorPassword}">
                             <div class="mensaje mensaje-error">
-                                ⚠️ <c:out value="${requestScope.errorPassword}"/>
+                                ⚠️ <c:out value="${errorPassword}"/>
                             </div>
-                        <% } %>
+                        </c:if>
 
-                        <% if (successPassword != null) { %>
+                        <c:if test="${not empty successPassword}">
                             <div class="mensaje mensaje-exito">
-                                ✅ <c:out value="${requestScope.successPassword}"/>
+                                ✅ <c:out value="${successPassword}"/>
                             </div>
-                        <% } %>
+                        </c:if>
 
                         <form method="POST" action="${pageContext.request.contextPath}/user/profile">
                             <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
@@ -255,8 +239,8 @@
                         <div class="account-info">
                             <div class="info-item">
                                 <strong>Rol:</strong>
-                                <span class="badge <%= user != null && "admin".equals(user.getRol()) ? "badge-admin" : "badge-user" %>">
-                                    <%= user != null ? user.getRol().toUpperCase() : "USER" %>
+                                <span class="badge ${user.rol == 'admin' ? 'badge-admin' : 'badge-user'}">
+                                    <c:out value="${fn:toUpperCase(not empty user.rol ? user.rol : 'USER')}"/>
                                 </span>
                             </div>
 
@@ -269,7 +253,7 @@
 
                             <div class="info-item">
                                 <strong>Fecha de registro:</strong>
-                                <span><%= user != null && user.getRegistrationDate() != null ? user.getRegistrationDate() : "N/A" %></span>
+                                <span><c:out value="${not empty user.registrationDate ? user.registrationDate : 'N/A'}"/></span>
                             </div>
                         </div>
                     </div>

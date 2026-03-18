@@ -1,12 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="model.entity.PetTransferRequest" %>
-<%@ page import="model.entity.User" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%
-    PetTransferRequest transfer = (PetTransferRequest) request.getAttribute("transfer");
-    User user = (User) request.getAttribute("user");
-    String token = (String) request.getAttribute("token");
-%>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -51,20 +45,20 @@
                     <div class="detail-row">
                         <span class="detail-label">Válido hasta:</span>
                         <span class="detail-value">
-                            <%= transfer.getDaysRemaining() %> días restantes
-                            <% if (transfer.isExpiringSoon()) { %>
+                            <c:out value="${transfer.daysRemaining}"/> días restantes
+                            <c:if test="${transfer.expiringSoon}">
                             <span class="badge-warning">⚠️ Expira pronto</span>
-                            <% } %>
+                            </c:if>
                         </span>
                     </div>
                 </div>
 
-                <% if (transfer.getMessage() != null && !transfer.getMessage().trim().isEmpty()) { %>
+                <c:if test="${not empty fn:trim(transfer.message)}">
                 <div class="transfer-message">
                     <h3>Mensaje de la fundación:</h3>
                     <p>"<c:out value="${transfer.message}"/>"</p>
                 </div>
-                <% } %>
+                </c:if>
 
                 <div class="transfer-info-box">
                     <h3>¿Qué sucederá al aceptar?</h3>
@@ -81,19 +75,19 @@
                         Estás iniciando sesión como: <strong><c:out value="${user.nameUser}"/></strong>
                         (<c:out value="${user.email}"/>)
                     </p>
-                    <% if (!user.getEmail().equalsIgnoreCase(transfer.getAdopterEmail())) { %>
+                    <c:if test="${fn:toLowerCase(user.email) != fn:toLowerCase(transfer.adopterEmail)}">
                     <p class="warning-text">
                         ⚠️ Nota: El email de tu cuenta (<c:out value="${user.email}"/>)
                         es diferente al email del adoptante (<c:out value="${transfer.adopterEmail}"/>).
                         Asegúrate de ser la persona correcta.
                     </p>
-                    <% } %>
+                    </c:if>
                 </div>
 
                 <form method="post" action="${pageContext.request.contextPath}/accept-transfer"
                       onsubmit="return confirmAccept()">
                     <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
-                    <input type="hidden" name="token" value="<c:out value="${token}"/>">
+                    <input type="hidden" name="token" value="${fn:escapeXml(token)}">
                     <input type="hidden" name="action" value="accept">
 
                     <div class="transfer-actions">
@@ -125,7 +119,7 @@
             </div>
             <form method="post" action="${pageContext.request.contextPath}/accept-transfer">
                 <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
-                <input type="hidden" name="token" value="<c:out value="${token}"/>">
+                <input type="hidden" name="token" value="${fn:escapeXml(token)}">
                 <input type="hidden" name="action" value="reject">
 
                 <div class="modal-body">
@@ -147,7 +141,7 @@
 
     <script>
         function confirmAccept() {
-            return confirm('¿Confirmas que deseas aceptar la transferencia de <%= transfer.getPetName() %>?\n\nAl aceptar, te convertirás en el dueño oficial.');
+            return confirm('¿Confirmas que deseas aceptar la transferencia de ${fn:replace(transfer.petName, "'", "\\'")}?\n\nAl aceptar, te convertirás en el dueño oficial.');
         }
 
         function showRejectModal() {

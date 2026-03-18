@@ -1,21 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.Map" %>
-<%@ page import="java.util.List" %>
-<%@ page import="model.entity.Pet" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%
-    @SuppressWarnings("unchecked")
-    Map<String, Object> foundation = (Map<String, Object>) request.getAttribute("foundation");
-    @SuppressWarnings("unchecked")
-    List<Pet> availablePets = (List<Pet>) request.getAttribute("availablePets");
-    @SuppressWarnings("unchecked")
-    List<Pet> adoptedPets = (List<Pet>) request.getAttribute("adoptedPets");
-    Integer totalAvailable = (Integer) request.getAttribute("totalAvailable");
-    Integer totalAdopted = (Integer) request.getAttribute("totalAdopted");
-
-    if (totalAvailable == null) totalAvailable = 0;
-    if (totalAdopted == null) totalAdopted = 0;
-%>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -53,121 +38,122 @@
                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                     </svg>
-                    <a href="mailto:<c:out value="${foundation.email}"/>"><c:out value="${foundation.email}"/></a>
+                    <a href="mailto:${fn:escapeXml(foundation.email)}"><c:out value="${foundation.email}"/></a>
                 </div>
 
-                <% if (foundation.get("phone") != null) { %>
+                <c:if test="${not empty foundation.phone}">
                 <div class="contact-item">
                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                     </svg>
-                    <a href="tel:<c:out value="${foundation.phone}"/>"><c:out value="${foundation.phone}"/></a>
+                    <a href="tel:${fn:escapeXml(foundation.phone)}"><c:out value="${foundation.phone}"/></a>
                 </div>
-                <% } %>
+                </c:if>
 
-                <% if (foundation.get("website") != null) { %>
+                <c:if test="${not empty foundation.website}">
                 <div class="contact-item">
                     <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path>
                     </svg>
-                    <a href="<c:out value="${foundation.website}"/>" target="_blank" rel="noopener"><c:out value="${foundation.website}"/></a>
+                    <a href="${fn:escapeXml(foundation.website)}" target="_blank" rel="noopener"><c:out value="${foundation.website}"/></a>
                 </div>
-                <% } %>
+                </c:if>
             </div>
 
-            <% if (foundation.get("description") != null) { %>
+            <c:if test="${not empty foundation.description}">
             <div class="profile-description">
                 <p><c:out value="${foundation.description}"/></p>
             </div>
-            <% } %>
+            </c:if>
         </div>
     </section>
 
     <!-- Mascotas en Adopción -->
-    <% if (availablePets != null && !availablePets.isEmpty()) { %>
+    <c:if test="${not empty availablePets}">
     <section class="pets-section">
         <div class="container">
             <div class="section-header">
-                <h2>🏠 En Adopción (<%= totalAvailable %>)</h2>
+                <h2>🏠 En Adopción (<c:out value="${totalAvailable != null ? totalAvailable : 0}"/>)</h2>
                 <p>Estas mascotas están buscando un hogar</p>
             </div>
 
             <div class="pets-grid">
-                <% for (Pet pet : availablePets) {
-                    pageContext.setAttribute("petItem", pet);
-                %>
+                <c:forEach var="pet" items="${availablePets}">
                 <div class="pet-card">
                     <div class="pet-image">
-                        <% if (pet.getPhoto() != null && !pet.getPhoto().isEmpty()) { %>
-                        <img src="<c:out value="${petItem.photo}"/>" alt="<c:out value="${petItem.namePet}"/>">
-                        <% } else { %>
+                        <c:choose>
+                            <c:when test="${not empty pet.photo}">
+                        <img src="${fn:escapeXml(pet.photo)}" alt="<c:out value="${pet.namePet}"/>">
+                            </c:when>
+                            <c:otherwise>
                         <div class="pet-image-placeholder">🐾</div>
-                        <% } %>
+                            </c:otherwise>
+                        </c:choose>
                         <span class="pet-badge adoption-available">En Adopción</span>
                     </div>
 
                     <div class="pet-info">
-                        <h3 class="pet-name"><c:out value="${petItem.namePet}"/></h3>
+                        <h3 class="pet-name"><c:out value="${pet.namePet}"/></h3>
                         <p class="pet-details">
-                            <span><c:out value="${petItem.breed != null ? petItem.breed : 'Mestizo'}"/></span>
-                            <% if (pet.getAgePet() != null) { %>
-                            <span>• <%= pet.getAgePet() %> años</span>
-                            <% } %>
+                            <span><c:out value="${not empty pet.breed ? pet.breed : 'Mestizo'}"/></span>
+                            <c:if test="${pet.agePet != null}">
+                            <span>• <c:out value="${pet.agePet}"/> años</span>
+                            </c:if>
                         </p>
-                        <a href="${pageContext.request.contextPath}/pet/public/<%= pet.getIdPet() %>"
+                        <a href="${pageContext.request.contextPath}/pet/public/${pet.idPet}"
                            class="btn btn-sm btn-primario">
                             Ver Perfil
                         </a>
                     </div>
                 </div>
-                <% } %>
+                </c:forEach>
             </div>
         </div>
     </section>
-    <% } %>
+    </c:if>
 
     <!-- Mascotas Adoptadas -->
-    <% if (adoptedPets != null && !adoptedPets.isEmpty()) { %>
+    <c:if test="${not empty adoptedPets}">
     <section class="pets-section pets-section-gray">
         <div class="container">
             <div class="section-header">
-                <h2>✅ Adoptados (<%= totalAdopted %>)</h2>
+                <h2>✅ Adoptados (<c:out value="${totalAdopted != null ? totalAdopted : 0}"/>)</h2>
                 <p>Historias de éxito - Estos peluditos ya encontraron hogar</p>
             </div>
 
             <div class="pets-grid">
-                <% for (Pet pet : adoptedPets) {
-                    pageContext.setAttribute("petItem", pet);
-                %>
+                <c:forEach var="pet" items="${adoptedPets}">
                 <div class="pet-card pet-card-adopted">
                     <div class="pet-image">
-                        <% if (pet.getPhoto() != null && !pet.getPhoto().isEmpty()) { %>
-                        <img src="<c:out value="${petItem.photo}"/>" alt="<c:out value="${petItem.namePet}"/>">
-                        <% } else { %>
+                        <c:choose>
+                            <c:when test="${not empty pet.photo}">
+                        <img src="${fn:escapeXml(pet.photo)}" alt="<c:out value="${pet.namePet}"/>">
+                            </c:when>
+                            <c:otherwise>
                         <div class="pet-image-placeholder">🐾</div>
-                        <% } %>
+                            </c:otherwise>
+                        </c:choose>
                         <span class="pet-badge adoption-transferred">Adoptado</span>
                     </div>
 
                     <div class="pet-info">
-                        <h3 class="pet-name"><c:out value="${petItem.namePet}"/></h3>
+                        <h3 class="pet-name"><c:out value="${pet.namePet}"/></h3>
                         <p class="pet-details">
-                            <span><c:out value="${petItem.breed != null ? petItem.breed : 'Mestizo'}"/></span>
-                            <% if (pet.getAgePet() != null) { %>
-                            <span>• <%= pet.getAgePet() %> años</span>
-                            <% } %>
+                            <span><c:out value="${not empty pet.breed ? pet.breed : 'Mestizo'}"/></span>
+                            <c:if test="${pet.agePet != null}">
+                            <span>• <c:out value="${pet.agePet}"/> años</span>
+                            </c:if>
                         </p>
                     </div>
                 </div>
-                <% } %>
+                </c:forEach>
             </div>
         </div>
     </section>
-    <% } %>
+    </c:if>
 
     <!-- Si no hay mascotas -->
-    <% if ((availablePets == null || availablePets.isEmpty()) &&
-           (adoptedPets == null || adoptedPets.isEmpty())) { %>
+    <c:if test="${empty availablePets && empty adoptedPets}">
     <section class="pets-section">
         <div class="container">
             <div class="empty-state">
@@ -177,7 +163,7 @@
             </div>
         </div>
     </section>
-    <% } %>
+    </c:if>
 
     <!-- Call to Action -->
     <section class="cta-section">
@@ -185,7 +171,7 @@
             <div class="cta-content">
                 <h2>¿Quieres adoptar?</h2>
                 <p>Contáctate directamente con la fundación para más información</p>
-                <a href="mailto:<c:out value="${foundation.email}"/>" class="btn btn-lg btn-primario">
+                <a href="mailto:${fn:escapeXml(foundation.email)}" class="btn btn-lg btn-primario">
                     📧 Contactar Fundación
                 </a>
             </div>

@@ -54,7 +54,15 @@ public class PublicFoundationsServlet extends HttpServlet {
                 }
             }
 
+            // Compute totals for JSTL (avoids scriptlet computation in JSP)
+            int totalAvailablePets = 0;
+            for (Map<String, Object> f : foundations) {
+                Object v = f.get("available_pets");
+                if (v instanceof Integer) totalAvailablePets += (Integer) v;
+            }
             request.setAttribute("foundations", foundations);
+            request.setAttribute("totalFoundations", foundations.size());
+            request.setAttribute("totalAvailablePets", totalAvailablePets);
             request.getRequestDispatcher("/view/public/foundations-list.jsp")
                    .forward(request, response);
 

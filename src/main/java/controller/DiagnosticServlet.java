@@ -14,7 +14,7 @@ import java.io.PrintWriter;
  * y servido de archivos estáticos.
  * PROTEGIDO: Solo accesible por administradores autenticados.
  */
-@WebServlet("/diagnostic")
+@WebServlet("/admin/diagnostic")
 public class DiagnosticServlet extends HttpServlet {
 
     @Override

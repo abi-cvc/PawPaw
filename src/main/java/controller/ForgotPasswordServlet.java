@@ -17,6 +17,7 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.sql.Timestamp;
 import java.util.Base64;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Servlet para manejar la solicitud de recuperación de contraseña
@@ -27,6 +28,11 @@ public class ForgotPasswordServlet extends HttpServlet {
     private UserDAO userDAO = new UserDAO();
     private PasswordResetTokenDAO tokenDAO = new PasswordResetTokenDAO();
     private EmailService emailService = new EmailService();
+
+    // SEC-013: Rate limiting por IP — máximo 5 intentos por minuto
+    private static final int MAX_ATTEMPTS = 5;
+    private static final long WINDOW_MS = 60_000; // 1 minuto
+    private static final ConcurrentHashMap<String, long[]> rateLimitMap = new ConcurrentHashMap<>();
     
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) 
@@ -40,8 +46,16 @@ public class ForgotPasswordServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) 
             throws ServletException, IOException {
         
+        // SEC-013: Rate limiting por IP
+        String clientIp = request.getRemoteAddr();
+        if (isRateLimited(clientIp)) {
+            request.setAttribute("error", "Demasiados intentos. Por favor espera un minuto antes de intentar de nuevo.");
+            request.getRequestDispatcher("/view/internalUser/forgot-password.jsp").forward(request, response);
+            return;
+        }
+
         String email = request.getParameter("email");
-        
+
         // Validar que el email no esté vacío
         if (email == null || email.trim().isEmpty()) {
             request.setAttribute("error", "Por favor ingresa tu email");
@@ -113,6 +127,50 @@ public class ForgotPasswordServlet extends HttpServlet {
         request.getRequestDispatcher("/view/internalUser/forgot-password.jsp").forward(request, response);
     }
     
+    /**
+     * SEC-013: Verifica si una IP ha excedido el límite de intentos.
+     * Usa ventana deslizante con array de timestamps.
+     */
+    private boolean isRateLimited(String ip) {
+        long now = System.currentTimeMillis();
+        long[] attempts = rateLimitMap.compute(ip, (key, existing) -> {
+            if (existing == null) {
+                long[] arr = new long[MAX_ATTEMPTS];
+                arr[0] = now;
+                return arr;
+            }
+            // Contar intentos dentro de la ventana
+            int count = 0;
+            for (long t : existing) {
+                if (now - t < WINDOW_MS) count++;
+            }
+            if (count >= MAX_ATTEMPTS) {
+                return existing; // No registrar, está limitado
+            }
+            // Buscar slot libre o el más viejo para reemplazar
+            int oldestIdx = 0;
+            long oldestTime = Long.MAX_VALUE;
+            for (int i = 0; i < existing.length; i++) {
+                if (existing[i] == 0 || now - existing[i] >= WINDOW_MS) {
+                    existing[i] = now;
+                    return existing;
+                }
+                if (existing[i] < oldestTime) {
+                    oldestTime = existing[i];
+                    oldestIdx = i;
+                }
+            }
+            existing[oldestIdx] = now;
+            return existing;
+        });
+
+        int count = 0;
+        for (long t : attempts) {
+            if (now - t < WINDOW_MS) count++;
+        }
+        return count >= MAX_ATTEMPTS;
+    }
+
     /**
      * Genera un token seguro aleatorio
      */

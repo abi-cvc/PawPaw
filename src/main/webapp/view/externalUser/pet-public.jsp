@@ -1,25 +1,18 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="model.entity.Pet" %>
-<%@ page import="model.entity.User" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%
-    Pet pet = (Pet) request.getAttribute("pet");
-    User owner = (User) request.getAttribute("owner");
-    String ownerName = (String) request.getAttribute("ownerName");
-
-    // Mensajes de sesión (después de POST)
+    // Session flash messages require removeAttribute (no JSTL equivalent)
     String successMessage = (String) session.getAttribute("successMessage");
     String errorMessage = (String) session.getAttribute("errorMessage");
     session.removeAttribute("successMessage");
     session.removeAttribute("errorMessage");
     if (successMessage != null) pageContext.setAttribute("successMsg", successMessage);
     if (errorMessage != null) pageContext.setAttribute("errorMsg", errorMessage);
-
-    if (pet == null) {
-        response.sendRedirect(request.getContextPath() + "/");
-        return;
-    }
 %>
+<c:if test="${empty pet}">
+    <% response.sendRedirect(request.getContextPath() + "/"); return; %>
+</c:if>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -31,9 +24,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
 
-    <% if (successMessage != null) { %>
+    <c:if test="${not empty successMsg}">
     <script>
-        // Auto-scroll al mensaje de éxito
         window.addEventListener('DOMContentLoaded', function() {
             setTimeout(function() {
                 document.querySelector('.alert-success').scrollIntoView({
@@ -43,7 +35,7 @@
             }, 300);
         });
     </script>
-    <% } %>
+    </c:if>
 </head>
 <body class="public-page">
 
@@ -62,7 +54,7 @@
         <div class="public-container">
 
             <!-- Mensajes MÁS VISIBLES -->
-            <% if (successMessage != null) { %>
+            <c:if test="${not empty successMsg}">
                 <div class="alert alert-success alert-big">
                     <div class="alert-icon">✅</div>
                     <div class="alert-content">
@@ -70,9 +62,9 @@
                         <p><c:out value="${successMsg}"/></p>
                     </div>
                 </div>
-            <% } %>
+            </c:if>
 
-            <% if (errorMessage != null) { %>
+            <c:if test="${not empty errorMsg}">
                 <div class="alert alert-error alert-big">
                     <div class="alert-icon">⚠️</div>
                     <div class="alert-content">
@@ -80,31 +72,35 @@
                         <p><c:out value="${errorMsg}"/></p>
                     </div>
                 </div>
-            <% } %>
+            </c:if>
 
             <!-- Card de la mascota -->
             <div class="pet-public-card">
 
                 <!-- Foto grande -->
                 <div class="pet-public-photo">
-                    <% if (pet.getPhoto() != null && !pet.getPhoto().isEmpty()) { %>
-                        <img src="<c:out value="${pet.photo}"/>" alt="<c:out value="${pet.namePet}"/>">
-                    <% } else { %>
+                    <c:choose>
+                        <c:when test="${not empty pet.photo}">
+                        <img src="${fn:escapeXml(pet.photo)}" alt="<c:out value="${pet.namePet}"/>">
+                        </c:when>
+                        <c:otherwise>
                         <div class="pet-photo-placeholder-large">
                             🐾
                         </div>
-                    <% } %>
+                        </c:otherwise>
+                    </c:choose>
 
                     <!-- Badge de estado -->
-                    <% if ("lost".equals(pet.getStatusPet())) { %>
+                    <c:if test="${pet.statusPet == 'lost'}">
                         <div class="pet-public-status lost">
                             🚨 MASCOTA PERDIDA
                         </div>
-                    <% } else if ("found".equals(pet.getStatusPet())) { %>
+                    </c:if>
+                    <c:if test="${pet.statusPet == 'found'}">
                         <div class="pet-public-status found">
                             ✅ MASCOTA ENCONTRADA
                         </div>
-                    <% } %>
+                    </c:if>
                 </div>
 
                 <!-- Información -->
@@ -116,7 +112,7 @@
                             <span class="detail-icon">🐕</span>
                             <div class="detail-content">
                                 <span class="detail-label">Raza</span>
-                                <span class="detail-value"><c:out value="${pet.breed != null ? pet.breed : 'No especificada'}"/></span>
+                                <span class="detail-value"><c:out value="${not empty pet.breed ? pet.breed : 'No especificada'}"/></span>
                             </div>
                         </div>
 
@@ -124,7 +120,12 @@
                             <span class="detail-icon">🎂</span>
                             <div class="detail-content">
                                 <span class="detail-label">Edad</span>
-                                <span class="detail-value"><%= pet.getAgePet() != null ? pet.getAgePet() + " años" : "No especificada" %></span>
+                                <span class="detail-value">
+                                    <c:choose>
+                                        <c:when test="${pet.agePet != null}"><c:out value="${pet.agePet}"/> años</c:when>
+                                        <c:otherwise>No especificada</c:otherwise>
+                                    </c:choose>
+                                </span>
                             </div>
                         </div>
 
@@ -132,11 +133,11 @@
                             <span class="detail-icon">⚧</span>
                             <div class="detail-content">
                                 <span class="detail-label">Sexo</span>
-                                <span class="detail-value"><c:out value="${pet.sexPet != null ? pet.sexPet : 'No especificado'}"/></span>
+                                <span class="detail-value"><c:out value="${not empty pet.sexPet ? pet.sexPet : 'No especificado'}"/></span>
                             </div>
                         </div>
 
-                        <% if (pet.getMedicalConditions() != null && !pet.getMedicalConditions().isEmpty()) { %>
+                        <c:if test="${not empty pet.medicalConditions}">
                         <div class="detail-row important">
                             <span class="detail-icon">⚕️</span>
                             <div class="detail-content">
@@ -144,9 +145,9 @@
                                 <span class="detail-value"><c:out value="${pet.medicalConditions}"/></span>
                             </div>
                         </div>
-                        <% } %>
+                        </c:if>
 
-                        <% if (pet.getExtraComments() != null && !pet.getExtraComments().isEmpty()) { %>
+                        <c:if test="${not empty pet.extraComments}">
                         <div class="detail-row important">
                             <span class="detail-icon">💬</span>
                             <div class="detail-content">
@@ -154,40 +155,40 @@
                                 <span class="detail-value"><c:out value="${pet.extraComments}"/></span>
                             </div>
                         </div>
-                        <% } %>
+                        </c:if>
                     </div>
 
                     <!-- Información del dueño -->
                     <div class="owner-info">
                         <h3>👤 Mi dueño es <c:out value="${ownerName}"/></h3>
-                        <% if (pet.getContactPhone() != null && !pet.getContactPhone().isEmpty()) { %>
-                        <a href="tel:<c:out value="${pet.contactPhone}"/>" class="contact-phone">
+                        <c:if test="${not empty pet.contactPhone}">
+                        <a href="tel:${fn:escapeXml(pet.contactPhone)}" class="contact-phone">
                             📞 <c:out value="${pet.contactPhone}"/>
                         </a>
-                        <% } %>
+                        </c:if>
                     </div>
 
                     <!-- Acciones principales -->
                     <div class="public-actions">
 
                         <!-- Reportar encontrada (solo si está perdida) -->
-                        <% if ("lost".equals(pet.getStatusPet())) { %>
-                        <form method="POST" action="${pageContext.request.contextPath}/pet/<%= pet.getIdPet() %>" class="inline-form">
+                        <c:if test="${pet.statusPet == 'lost'}">
+                        <form method="POST" action="${pageContext.request.contextPath}/pet/${pet.idPet}" class="inline-form">
                             <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
                             <input type="hidden" name="action" value="report-found">
-                            <input type="hidden" name="petId" value="<%= pet.getIdPet() %>">
-                            <button type="submit" class="btn btn-primario btn-grande" onclick="return confirm('¿Confirmas que encontraste a <%= pet.getNamePet() %>?');">
+                            <input type="hidden" name="petId" value="${pet.idPet}">
+                            <button type="submit" class="btn btn-primario btn-grande" onclick="return confirm('¿Confirmas que encontraste a ${fn:replace(pet.namePet, "'", "\\'")}?');">
                                 🏠 ¡Encontré a <c:out value="${pet.namePet}"/>!
                             </button>
                         </form>
-                        <% } %>
+                        </c:if>
 
                         <!-- Botón para llamar -->
-                        <% if (pet.getContactPhone() != null && !pet.getContactPhone().isEmpty()) { %>
-                        <a href="tel:<c:out value="${pet.contactPhone}"/>" class="btn btn-secundario btn-grande">
+                        <c:if test="${not empty pet.contactPhone}">
+                        <a href="tel:${fn:escapeXml(pet.contactPhone)}" class="btn btn-secundario btn-grande">
                             📞 Llamar al dueño
                         </a>
-                        <% } %>
+                        </c:if>
                     </div>
 
                     <!-- Formulario de contacto -->
@@ -195,10 +196,10 @@
                         <h3>💬 Enviar mensaje al dueño</h3>
                         <p class="form-description">Déjale un mensaje al dueño de <c:out value="${pet.namePet}"/></p>
 
-                        <form method="POST" action="${pageContext.request.contextPath}/pet/<%= pet.getIdPet() %>" class="contact-form" id="contactForm">
+                        <form method="POST" action="${pageContext.request.contextPath}/pet/${pet.idPet}" class="contact-form" id="contactForm">
                             <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
                             <input type="hidden" name="action" value="send-message">
-                            <input type="hidden" name="petId" value="<%= pet.getIdPet() %>">
+                            <input type="hidden" name="petId" value="${pet.idPet}">
 
                             <div class="form-group">
                                 <label for="senderName" class="form-label">Tu nombre *</label>
@@ -230,7 +231,7 @@
                                           rows="4"
                                           required
                                           maxlength="500"
-                                          placeholder="Cuéntale al dueño dónde viste a <%= pet.getNamePet() %> o cómo pueden contactarte..."></textarea>
+                                          placeholder="Cuéntale al dueño dónde viste a ${fn:replace(pet.namePet, "'", "\\'")} o cómo pueden contactarte..."></textarea>
                             </div>
 
                             <button type="submit" class="btn btn-primario btn-grande" id="submitBtn">

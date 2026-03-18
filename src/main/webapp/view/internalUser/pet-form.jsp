@@ -1,37 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="model.entity.Pet" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%
-    // Verificar sesión
-    if (session == null || session.getAttribute("userId") == null) {
-        response.sendRedirect(request.getContextPath() + "/login");
-        return;
-    }
-
-    String action = (String) request.getAttribute("action");
-    Pet pet = (Pet) request.getAttribute("pet");
-    boolean isEdit = "edit".equals(action);
-    String pageTitle = isEdit ? "Editar Mascota" : "Registrar Nueva Mascota";
-
-    // Valores por defecto
-    String name = pet != null ? pet.getNamePet() : "";
-    Integer age = pet != null ? pet.getAgePet() : null;
-    String breed = pet != null && pet.getBreed() != null ? pet.getBreed() : "";
-    String sex = pet != null && pet.getSexPet() != null ? pet.getSexPet() : "";
-    String medicalConditions = pet != null && pet.getMedicalConditions() != null ? pet.getMedicalConditions() : "";
-    String contactPhone = pet != null && pet.getContactPhone() != null ? pet.getContactPhone() : "";
-    String photo = pet != null && pet.getPhoto() != null ? pet.getPhoto() : "";
-    String status = pet != null && pet.getStatusPet() != null ? pet.getStatusPet() : "active";
-    String extraComments = pet != null && pet.getExtraComments() != null ? pet.getExtraComments() : "";
-
-    String errorMessage = (String) request.getAttribute("error");
-%>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
+<c:set var="isEdit" value="${action == 'edit'}"/>
+<c:set var="pageTitle" value="${isEdit ? 'Editar Mascota' : 'Registrar Nueva Mascota'}"/>
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><c:out value="<%= pageTitle %>"/> - PawPaw</title>
+    <title><c:out value="${pageTitle}"/> - PawPaw</title>
 
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -42,24 +19,24 @@
         <div class="tarjeta-formulario" style="max-width: 800px;">
 
             <div class="formulario-encabezado">
-                <h1>🐾 <%= pageTitle %></h1>
+                <h1>🐾 <c:out value="${pageTitle}"/></h1>
                 <p>Completa la información de tu mascota</p>
             </div>
 
-            <% if (errorMessage != null) { %>
+            <c:if test="${not empty error}">
                 <div class="mensaje mensaje-error">
-                    ⚠️ <c:out value="${requestScope.error}"/>
+                    ⚠️ <c:out value="${error}"/>
                 </div>
-            <% } %>
+            </c:if>
 
-            <form method="POST" action="${pageContext.request.contextPath}/user/pets/<%= isEdit ? "edit" : "new" %>" class="form-grid" id="petForm">
+            <form method="POST" action="${pageContext.request.contextPath}/user/pets/${isEdit ? 'edit' : 'new'}" class="form-grid" id="petForm">
                 <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
 
-                <% if (isEdit && pet != null) { %>
-                    <input type="hidden" name="id" value="<%= pet.getIdPet() %>">
-                <% } %>
+                <c:if test="${isEdit && pet != null}">
+                    <input type="hidden" name="id" value="${pet.idPet}">
+                </c:if>
 
-                <input type="hidden" name="photo" id="photoUrl" value="<c:out value="<%= photo %>"/>">
+                <input type="hidden" name="photo" id="photoUrl" value="${fn:escapeXml(pet.photo)}">
 
                 <!-- Nombre de la mascota -->
                 <div class="form-group form-group-full">
@@ -68,7 +45,7 @@
                            id="name"
                            name="name"
                            class="form-input"
-                           value="<c:out value="<%= name %>"/>"
+                           value="<c:out value="${pet.namePet}"/>"
                            required
                            placeholder="Ej: Max, Luna, Rocky">
                 </div>
@@ -80,7 +57,7 @@
                            id="breed"
                            name="breed"
                            class="form-input"
-                           value="<c:out value="<%= breed %>"/>"
+                           value="<c:out value="${pet.breed}"/>"
                            required
                            placeholder="Ej: Labrador, Mestizo">
                 </div>
@@ -92,7 +69,7 @@
                            id="age"
                            name="age"
                            class="form-input"
-                           value="<%= age != null ? age : "" %>"
+                           value="${pet.agePet != null ? pet.agePet : ''}"
                            min="0"
                            max="50"
                            required
@@ -104,9 +81,9 @@
                     <label for="sex" class="form-label">Sexo</label>
                     <select id="sex" name="sex" class="form-select form-input">
                         <option value="">Selecciona...</option>
-                        <option value="Macho" <%= "Macho".equals(sex) ? "selected" : "" %>>🦁 Macho</option>
-                        <option value="Hembra" <%= "Hembra".equals(sex) ? "selected" : "" %>>🦄 Hembra</option>
-                        <option value="Otro" <%= "Otro".equals(sex) ? "selected" : "" %>>⭐ Otro</option>
+                        <option value="Macho" ${pet.sexPet == 'Macho' ? 'selected' : ''}>🦁 Macho</option>
+                        <option value="Hembra" ${pet.sexPet == 'Hembra' ? 'selected' : ''}>🦄 Hembra</option>
+                        <option value="Otro" ${pet.sexPet == 'Otro' ? 'selected' : ''}>⭐ Otro</option>
                     </select>
                 </div>
 
@@ -117,22 +94,23 @@
                            id="contactPhone"
                            name="contactPhone"
                            class="form-input"
-                           value="<c:out value="<%= contactPhone %>"/>"
+                           value="<c:out value="${pet.contactPhone}"/>"
                            placeholder="Ej: 0999999999">
                 </div>
 
                 <!-- Estado (solo en edición) -->
-                <% if (isEdit) { %>
+                <c:if test="${isEdit}">
                 <div class="form-group">
                     <label for="status" class="form-label">Estado</label>
+                    <c:set var="petStatus" value="${not empty pet.statusPet ? pet.statusPet : 'active'}"/>
                     <select id="status" name="status" class="form-select form-input">
-                        <option value="active" <%= "active".equals(status) ? "selected" : "" %>>✅ Activa</option>
-                        <option value="lost" <%= "lost".equals(status) ? "selected" : "" %>>⚠️ Perdida</option>
-                        <option value="found" <%= "found".equals(status) ? "selected" : "" %>>🎉 Encontrada</option>
-                        <option value="inactive" <%= "inactive".equals(status) ? "selected" : "" %>>💤 Inactiva</option>
+                        <option value="active" ${petStatus == 'active' ? 'selected' : ''}>✅ Activa</option>
+                        <option value="lost" ${petStatus == 'lost' ? 'selected' : ''}>⚠️ Perdida</option>
+                        <option value="found" ${petStatus == 'found' ? 'selected' : ''}>🎉 Encontrada</option>
+                        <option value="inactive" ${petStatus == 'inactive' ? 'selected' : ''}>💤 Inactiva</option>
                     </select>
                 </div>
-                <% } %>
+                </c:if>
 
                 <!-- Condiciones médicas -->
                 <div class="form-group form-group-full">
@@ -140,7 +118,7 @@
                     <textarea id="medicalConditions"
                               name="medicalConditions"
                               class="form-textarea form-input"
-                              placeholder="Ej: Alérgico al pollo, artritis, toma medicamento X"><c:out value="<%= medicalConditions %>"/></textarea>
+                              placeholder="Ej: Alérgico al pollo, artritis, toma medicamento X"><c:out value="${pet.medicalConditions}"/></textarea>
                 </div>
 
                 <!-- Upload de foto -->
@@ -175,13 +153,13 @@
                     <textarea id="extraComments"
                               name="extraComments"
                               class="form-textarea form-input"
-                              placeholder="Información adicional sobre tu mascota (comportamiento, preferencias, etc.)"><c:out value="<%= extraComments %>"/></textarea>
+                              placeholder="Información adicional sobre tu mascota (comportamiento, preferencias, etc.)"><c:out value="${pet.extraComments}"/></textarea>
                 </div>
 
                 <!-- Botones de acción -->
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primario" id="submitBtn">
-                        <%= isEdit ? "💾 Guardar Cambios" : "✅ Registrar Mascota" %>
+                        ${isEdit ? '💾 Guardar Cambios' : '✅ Registrar Mascota'}
                     </button>
                     <a href="${pageContext.request.contextPath}/user/panel" class="btn btn-secundario">
                         ← Cancelar

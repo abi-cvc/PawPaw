@@ -1,18 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.Map" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%
-    @SuppressWarnings("unchecked")
-    List<Map<String, Object>> foundations = (List<Map<String, Object>>) request.getAttribute("foundations");
-    int totalFoundations = (foundations != null) ? foundations.size() : 0;
-    int totalAvailable = (foundations != null)
-        ? foundations.stream().mapToInt(f -> {
-            Object v = f.get("available_pets");
-            return v instanceof Integer ? (Integer) v : 0;
-          }).sum()
-        : 0;
-%>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -46,11 +34,11 @@
             </div>
             <div class="fl-hero-stats">
                 <div class="fl-stat-card">
-                    <span class="fl-stat-num"><%= totalFoundations %></span>
+                    <span class="fl-stat-num"><c:out value="${totalFoundations}" default="0"/></span>
                     <span class="fl-stat-lbl">Fundaciones activas</span>
                 </div>
                 <div class="fl-stat-card">
-                    <span class="fl-stat-num"><%= totalAvailable %></span>
+                    <span class="fl-stat-num"><c:out value="${totalAvailablePets}" default="0"/></span>
                     <span class="fl-stat-lbl">Mascotas en adopción</span>
                 </div>
             </div>
@@ -61,34 +49,24 @@
     <section class="fl-section">
         <div class="fl-container">
 
-            <% if (foundations != null && !foundations.isEmpty()) { %>
+            <c:if test="${not empty foundations}">
 
             <div class="fl-grid">
-                <% for (Map<String, Object> foundation : foundations) {
-                    Integer availablePets = (Integer) foundation.get("available_pets");
-                    Integer adoptedPets   = (Integer) foundation.get("adopted_pets");
-                    if (availablePets == null) availablePets = 0;
-                    if (adoptedPets   == null) adoptedPets   = 0;
-                    String fname = (String) foundation.get("foundation_name");
-                    String initial = (fname != null && !fname.isEmpty())
-                        ? String.valueOf(fname.charAt(0)).toUpperCase() : "F";
-                %>
+                <c:forEach var="foundation" items="${foundations}">
+                    <c:set var="fname" value="${foundation['foundation_name']}"/>
+                    <c:set var="fdesc" value="${foundation['description']}"/>
+                    <c:set var="fcontact" value="${foundation['contact_name']}"/>
+                    <c:set var="fphone" value="${foundation['phone']}"/>
+                    <c:set var="availablePets" value="${foundation['available_pets'] != null ? foundation['available_pets'] : 0}"/>
+                    <c:set var="adoptedPets" value="${foundation['adopted_pets'] != null ? foundation['adopted_pets'] : 0}"/>
+                    <c:set var="initial" value="${not empty fname ? fn:toUpperCase(fn:substring(fname, 0, 1)) : 'F'}"/>
+                    <c:set var="fdescTrunc" value="${not empty fdesc && fn:length(fdesc) > 110 ? fn:substring(fdesc, 0, 110).concat('…') : fdesc}"/>
 
-                <%
-                    String fdesc = (String) foundation.get("description");
-                    String fdescTrunc = (fdesc != null && fdesc.length() > 110) ? fdesc.substring(0, 110) + "…" : fdesc;
-                    String fcontact = (String) foundation.get("contact_name");
-                    String fphone = (String) foundation.get("phone");
-                    pageContext.setAttribute("fname", fname);
-                    pageContext.setAttribute("fdescTrunc", fdescTrunc);
-                    pageContext.setAttribute("fcontact", fcontact);
-                    pageContext.setAttribute("fphone", fphone);
-                %>
                 <div class="fl-card">
 
                     <!-- Cabecera -->
                     <div class="fl-card-header">
-                        <div class="fl-avatar"><%= initial %></div>
+                        <div class="fl-avatar"><c:out value="${initial}"/></div>
                         <div class="fl-card-meta">
                             <h3 class="fl-card-name"><c:out value="${fname}"/></h3>
                             <span class="fl-badge-partner">✓ Partner PawPaw</span>
@@ -96,49 +74,51 @@
                     </div>
 
                     <!-- Descripción -->
-                    <% if (foundation.get("description") != null) { %>
+                    <c:if test="${not empty fdesc}">
                     <p class="fl-card-desc">
                         <c:out value="${fdescTrunc}"/>
                     </p>
-                    <% } %>
+                    </c:if>
 
                     <!-- Contactos -->
                     <div class="fl-card-contacts">
-                        <% if (foundation.get("contact_name") != null) { %>
+                        <c:if test="${not empty fcontact}">
                         <span class="fl-contact-pill">👤 <c:out value="${fcontact}"/></span>
-                        <% } %>
-                        <% if (foundation.get("phone") != null) { %>
-                        <a href="tel:<c:out value="${fphone}"/>" class="fl-contact-pill fl-contact-link">
+                        </c:if>
+                        <c:if test="${not empty fphone}">
+                        <a href="tel:${fn:escapeXml(fphone)}" class="fl-contact-pill fl-contact-link">
                             📞 <c:out value="${fphone}"/>
                         </a>
-                        <% } %>
+                        </c:if>
                     </div>
 
                     <!-- Stats -->
                     <div class="fl-card-stats">
                         <div class="fl-mini-stat fl-stat-green">
-                            <span class="fl-mini-num"><%= availablePets %></span>
+                            <span class="fl-mini-num"><c:out value="${availablePets}"/></span>
                             <span class="fl-mini-lbl">En adopción</span>
                         </div>
                         <div class="fl-mini-stat fl-stat-blue">
-                            <span class="fl-mini-num"><%= adoptedPets %></span>
+                            <span class="fl-mini-num"><c:out value="${adoptedPets}"/></span>
                             <span class="fl-mini-lbl">Adoptados</span>
                         </div>
                     </div>
 
                     <!-- Acción -->
                     <div class="fl-card-footer">
-                        <a href="${pageContext.request.contextPath}/foundations/<%= foundation.get("id_user") %>"
+                        <a href="${pageContext.request.contextPath}/foundations/${foundation['id_user']}"
                            class="btn btn-primario btn-block">
                             Ver mascotas 🐾
                         </a>
                     </div>
                 </div>
 
-                <% } %>
+                </c:forEach>
             </div>
 
-            <% } else { %>
+            </c:if>
+
+            <c:if test="${empty foundations}">
 
             <div class="fl-empty">
                 <div class="fl-empty-icon">🏠</div>
@@ -149,7 +129,7 @@
                 </a>
             </div>
 
-            <% } %>
+            </c:if>
 
         </div>
     </section>
