@@ -3,6 +3,8 @@ package test;
 import config.DatabaseConnection;
 import model.dao.UserDAO;
 import model.entity.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -11,242 +13,204 @@ import java.util.List;
 /**
  * Clase de prueba para verificar la conexión a la base de datos
  * y el funcionamiento del UserDAO desde consola
- * 
+ *
  * Ejecuta como: Java Application (Run As → Java Application)
  */
 public class TestDatabase {
-    
+
+    private static final Logger logger = LoggerFactory.getLogger(TestDatabase.class);
+
     public static void main(String[] args) {
-        System.out.println("╔════════════════════════════════════════════╗");
-        System.out.println("║   🧪 TEST DE BASE DE DATOS - PAWPAW       ║");
-        System.out.println("╚════════════════════════════════════════════╝");
-        System.out.println();
-        
+        logger.info("TEST DE BASE DE DATOS - PAWPAW");
+
         // TEST 1: Verificar conexión
         testConnection();
-        
+
         // TEST 2: Estadísticas del pool
         testConnectionPool();
-        
+
         // TEST 3: Contar usuarios
         testUserCount();
-        
+
         // TEST 4: Listar usuarios
         testListUsers();
-        
+
         // TEST 5: Crear usuario de prueba (descomenta para probar)
         testCreateUser();
-        
+
         // TEST 6: Buscar usuario
         testFindUser();
-        
+
         // TEST 7: Verificar autenticación
         testAuthentication();
-        
-        System.out.println();
-        System.out.println("╔════════════════════════════════════════════╗");
-        System.out.println("║   ✅ TESTS COMPLETADOS                     ║");
-        System.out.println("╚════════════════════════════════════════════╝");
+
+        logger.info("TESTS COMPLETADOS");
     }
-    
+
     /**
      * TEST 1: Verificar conexión a PostgreSQL
      */
     private static void testConnection() {
-        System.out.println("📡 TEST 1: Conexión a Base de Datos");
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        
+        logger.info("TEST 1: Conexion a Base de Datos");
+
         try (Connection conn = DatabaseConnection.getConnection()) {
             if (conn != null && !conn.isClosed()) {
-                System.out.println("✅ Conexión EXITOSA a PostgreSQL");
-                System.out.println("   Base de datos: " + conn.getCatalog());
-                System.out.println("   URL: " + conn.getMetaData().getURL());
-                System.out.println("   Driver: " + conn.getMetaData().getDriverName() + 
-                                 " v" + conn.getMetaData().getDriverVersion());
+                logger.info("Conexion EXITOSA a PostgreSQL");
+                logger.info("  Base de datos: {}", conn.getCatalog());
+                logger.info("  URL: {}", conn.getMetaData().getURL());
+                logger.info("  Driver: {} v{}", conn.getMetaData().getDriverName(), conn.getMetaData().getDriverVersion());
             } else {
-                System.out.println("❌ Conexión cerrada o nula");
+                logger.info("Conexion cerrada o nula");
             }
         } catch (SQLException e) {
-            System.out.println("❌ ERROR de conexión:");
-            System.out.println("   " + e.getMessage());
-            e.printStackTrace();
+            logger.error("ERROR de conexion: {}", e.getMessage());
+            logger.error("Error al conectar a la base de datos", e);
         }
-        
-        System.out.println();
     }
-    
+
     /**
      * TEST 2: Estadísticas del pool de conexiones
      */
     private static void testConnectionPool() {
-        System.out.println("📊 TEST 2: Pool de Conexiones (HikariCP)");
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        
+        logger.info("TEST 2: Pool de Conexiones (HikariCP)");
+
         try {
             DatabaseConnection.imprimirEstadisticas();
-            System.out.println("✅ Pool de conexiones funcionando");
+            logger.info("Pool de conexiones funcionando");
         } catch (Exception e) {
-            System.out.println("❌ Error al obtener estadísticas del pool");
-            e.printStackTrace();
+            logger.error("Error al obtener estadisticas del pool", e);
         }
-        
-        System.out.println();
     }
-    
+
     /**
      * TEST 3: Contar usuarios en la base de datos
      */
     private static void testUserCount() {
-        System.out.println("👥 TEST 3: Conteo de Usuarios");
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        
+        logger.info("TEST 3: Conteo de Usuarios");
+
         try {
             UserDAO userDAO = new UserDAO();
             int count = userDAO.count();
-            
-            System.out.println("✅ Total de usuarios en BD: " + count);
-            
+
+            logger.info("Total de usuarios en BD: {}", count);
+
             if (count == 0) {
-                System.out.println("   ℹ️  No hay usuarios registrados aún.");
-                System.out.println("   💡 Crea uno usando /register o descomenta testCreateUser()");
+                logger.info("No hay usuarios registrados aun.");
+                logger.info("Crea uno usando /register o descomenta testCreateUser()");
             }
         } catch (Exception e) {
-            System.out.println("❌ Error al contar usuarios");
-            e.printStackTrace();
+            logger.error("Error al contar usuarios", e);
         }
-        
-        System.out.println();
     }
-    
+
     /**
      * TEST 4: Listar todos los usuarios
      */
     private static void testListUsers() {
-        System.out.println("📋 TEST 4: Lista de Usuarios");
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        
+        logger.info("TEST 4: Lista de Usuarios");
+
         try {
             UserDAO userDAO = new UserDAO();
             List<User> users = userDAO.findAll();
-            
+
             if (users.isEmpty()) {
-                System.out.println("ℹ️  No hay usuarios para mostrar");
+                logger.info("No hay usuarios para mostrar");
             } else {
-                System.out.println("✅ Usuarios encontrados: " + users.size());
-                System.out.println();
-                System.out.println("┌────┬─────────────────────┬──────────────────────────┬────────┬────────┐");
-                System.out.println("│ ID │ Nombre              │ Email                    │ Rol    │ Activo │");
-                System.out.println("├────┼─────────────────────┼──────────────────────────┼────────┼────────┤");
-                
+                logger.info("Usuarios encontrados: {}", users.size());
+
                 for (User user : users) {
-                    System.out.printf("│ %-2d │ %-19s │ %-24s │ %-6s │ %-6s │%n",
+                    logger.info("  ID: {} | Nombre: {} | Email: {} | Rol: {} | Activo: {}",
                         user.getIdUser(),
                         truncate(user.getNameUser(), 19),
                         truncate(user.getEmail(), 24),
                         user.getRol(),
-                        user.getActive() ? "✓" : "✗"
+                        user.getActive() ? "Si" : "No"
                     );
                 }
-                
-                System.out.println("└────┴─────────────────────┴──────────────────────────┴────────┴────────┘");
             }
         } catch (Exception e) {
-            System.out.println("❌ Error al listar usuarios");
-            e.printStackTrace();
+            logger.error("Error al listar usuarios", e);
         }
-        
-        System.out.println();
     }
-    
+
     /**
      * TEST 5: Crear un usuario de prueba
      * DESCOMENTA en main() para ejecutar
      */
     private static void testCreateUser() {
-        System.out.println("➕ TEST 5: Crear Usuario de Prueba");
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        
+        logger.info("TEST 5: Crear Usuario de Prueba");
+
         try {
             UserDAO userDAO = new UserDAO();
-            
+
             // Crear usuario con timestamp para que sea único
             String timestamp = String.valueOf(System.currentTimeMillis()).substring(7);
-            
+
             User testUser = new User();
             testUser.setNameUser("Test User " + timestamp);
             testUser.setEmail("test" + timestamp + "@pawpaw.test");
             testUser.setPassword("test123");
             testUser.setRol("user");
             testUser.setActive(true);
-            
+
             boolean created = userDAO.create(testUser);
-            
+
             if (created) {
-                System.out.println("✅ Usuario creado exitosamente!");
-                System.out.println("   ID: " + testUser.getIdUser());
-                System.out.println("   Nombre: " + testUser.getNameUser());
-                System.out.println("   Email: " + testUser.getEmail());
-                System.out.println("   Contraseña: test123 (hasheada con BCrypt)");
+                logger.info("Usuario creado exitosamente!");
+                logger.info("  ID: {}", testUser.getIdUser());
+                logger.info("  Nombre: {}", testUser.getNameUser());
+                logger.info("  Email: {}", testUser.getEmail());
+                logger.info("  Contrasena: test123 (hasheada con BCrypt)");
             } else {
-                System.out.println("❌ No se pudo crear el usuario");
+                logger.info("No se pudo crear el usuario");
             }
         } catch (Exception e) {
-            System.out.println("❌ Error al crear usuario");
-            e.printStackTrace();
+            logger.error("Error al crear usuario", e);
         }
-        
-        System.out.println();
     }
-    
+
     /**
      * TEST 6: Buscar usuario por email
      */
     private static void testFindUser() {
-        System.out.println("🔍 TEST 6: Buscar Usuario por Email");
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        
+        logger.info("TEST 6: Buscar Usuario por Email");
+
         try {
             UserDAO userDAO = new UserDAO();
             List<User> users = userDAO.findAll();
-            
+
             if (!users.isEmpty()) {
                 User firstUser = users.get(0);
                 User found = userDAO.findByEmail(firstUser.getEmail());
-                
+
                 if (found != null) {
-                    System.out.println("✅ Búsqueda funcionando correctamente");
-                    System.out.println("   Email buscado: " + firstUser.getEmail());
-                    System.out.println("   Usuario encontrado: " + found.getNameUser());
+                    logger.info("Busqueda funcionando correctamente");
+                    logger.info("  Email buscado: {}", firstUser.getEmail());
+                    logger.info("  Usuario encontrado: {}", found.getNameUser());
                 } else {
-                    System.out.println("❌ No se encontró el usuario");
+                    logger.info("No se encontro el usuario");
                 }
             } else {
-                System.out.println("ℹ️  No hay usuarios para buscar");
-                System.out.println("   Crea uno primero");
+                logger.info("No hay usuarios para buscar");
+                logger.info("Crea uno primero");
             }
         } catch (Exception e) {
-            System.out.println("❌ Error en búsqueda");
-            e.printStackTrace();
+            logger.error("Error en busqueda", e);
         }
-        
-        System.out.println();
     }
-    
+
     /**
      * TEST 7: Verificar sistema de autenticación
      */
     private static void testAuthentication() {
-        System.out.println("🔐 TEST 7: Sistema de Autenticación");
-        System.out.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-        
-        System.out.println("✅ BCrypt configurado correctamente");
-        System.out.println("   Factor de complejidad: 12 rounds");
-        System.out.println("   Las contraseñas se hashean automáticamente");
-        System.out.println("   Verificación segura implementada");
-        
-        System.out.println();
+        logger.info("TEST 7: Sistema de Autenticacion");
+
+        logger.info("BCrypt configurado correctamente");
+        logger.info("  Factor de complejidad: 12 rounds");
+        logger.info("  Las contrasenas se hashean automaticamente");
+        logger.info("  Verificacion segura implementada");
     }
-    
+
     /**
      * Método auxiliar para truncar strings
      */

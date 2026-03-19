@@ -2,6 +2,8 @@ package model.dao;
 
 import config.DatabaseConnection;
 import model.entity.Suggestion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.List;
  * DAO para gestionar sugerencias
  */
 public class SuggestionDAO {
+    private static final Logger logger = LoggerFactory.getLogger(SuggestionDAO.class);
     
     /**
      * Crea una nueva sugerencia
@@ -33,13 +36,12 @@ public class SuggestionDAO {
                         suggestion.setIdSuggestion(generatedKeys.getInt(1));
                     }
                 }
-                System.out.println("✅ Sugerencia creada con ID: " + suggestion.getIdSuggestion());
+                logger.info("Sugerencia creada con ID: {}", suggestion.getIdSuggestion());
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al crear sugerencia: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al crear sugerencia: {}", e.getMessage(), e);
         }
         
         return false;
@@ -64,8 +66,7 @@ public class SuggestionDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener sugerencias: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener sugerencias: {}", e.getMessage(), e);
         }
         
         return suggestions;
@@ -94,8 +95,7 @@ public class SuggestionDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener sugerencias por estado: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener sugerencias por estado: {}", e.getMessage(), e);
         }
         
         return suggestions;
@@ -124,8 +124,7 @@ public class SuggestionDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener sugerencias del usuario: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener sugerencias del usuario: {}", e.getMessage(), e);
         }
         
         return suggestions;
@@ -152,8 +151,7 @@ public class SuggestionDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar sugerencia por ID: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar sugerencia por ID: {}", e.getMessage(), e);
         }
         
         return null;
@@ -174,13 +172,12 @@ public class SuggestionDAO {
             int rowsAffected = pstmt.executeUpdate();
             
             if (rowsAffected > 0) {
-                System.out.println("✅ Estado actualizado a '" + newStatus + "' para sugerencia ID: " + idSuggestion);
+                logger.info("Estado actualizado a '{}' para sugerencia ID: {}", newStatus, idSuggestion);
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al actualizar estado: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al actualizar estado: {}", e.getMessage(), e);
         }
         
         return false;
@@ -202,13 +199,12 @@ public class SuggestionDAO {
             int rowsAffected = pstmt.executeUpdate();
             
             if (rowsAffected > 0) {
-                System.out.println("✅ Sugerencia ID " + idSuggestion + " actualizada con respuesta");
+                logger.info("Sugerencia ID {} actualizada con respuesta", idSuggestion);
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al actualizar sugerencia con respuesta: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al actualizar sugerencia con respuesta: {}", e.getMessage(), e);
         }
         
         return false;
@@ -232,13 +228,12 @@ public class SuggestionDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al contar sugerencias: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar sugerencias: {}", e.getMessage(), e);
         }
-        
+
         return 0;
     }
-    
+
     /**
      * Obtiene el conteo total de sugerencias
      */
@@ -254,8 +249,7 @@ public class SuggestionDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al contar sugerencias: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar sugerencias: {}", e.getMessage(), e);
         }
         
         return 0;
@@ -274,8 +268,7 @@ public class SuggestionDAO {
             return pstmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al eliminar sugerencia: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al eliminar sugerencia: {}", e.getMessage(), e);
         }
         
         return false;

@@ -7,6 +7,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.sql.*;
 import java.util.*;
@@ -20,6 +23,8 @@ import java.util.*;
  */
 @WebServlet("/foundations/*")
 public class FoundationProfileServlet extends HttpServlet {
+
+    private static final Logger logger = LoggerFactory.getLogger(FoundationProfileServlet.class);
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -136,7 +141,7 @@ public class FoundationProfileServlet extends HttpServlet {
                    .forward(request, response);
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error al cargar perfil de fundacion", e);
             response.sendError(500);
         }
     }

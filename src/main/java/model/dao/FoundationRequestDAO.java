@@ -2,6 +2,8 @@ package model.dao;
 
 import config.DatabaseConnection;
 import model.entity.FoundationRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.UUID;
  * DAO para gestión de solicitudes de fundaciones
  */
 public class FoundationRequestDAO {
+    private static final Logger logger = LoggerFactory.getLogger(FoundationRequestDAO.class);
     
     /**
      * Crea una solicitud de fundación
@@ -41,13 +44,12 @@ public class FoundationRequestDAO {
                 if (rs.next()) {
                     request.setIdRequest(rs.getInt(1));
                 }
-                System.out.println("✅ Solicitud de fundación creada: " + request.getFoundationName());
+                logger.info("Solicitud de fundación creada: {}", request.getFoundationName());
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al crear solicitud: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al crear solicitud: {}", e.getMessage(), e);
         }
         
         return false;
@@ -73,8 +75,7 @@ public class FoundationRequestDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar solicitud: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar solicitud: {}", e.getMessage(), e);
         }
         
         return null;
@@ -100,8 +101,7 @@ public class FoundationRequestDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar solicitud por email: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar solicitud por email: {}", e.getMessage(), e);
         }
         
         return null;
@@ -127,8 +127,7 @@ public class FoundationRequestDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar solicitud por token: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar solicitud por token: {}", e.getMessage(), e);
         }
         
         return null;
@@ -155,8 +154,7 @@ public class FoundationRequestDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar solicitudes por estado: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar solicitudes por estado: {}", e.getMessage(), e);
         }
         
         return requests;
@@ -180,11 +178,10 @@ public class FoundationRequestDAO {
                 requests.add(extractFoundationFromResultSet(rs));
             }
             
-            System.out.println("✅ Solicitudes de fundación encontradas: " + requests.size());
+            logger.info("Solicitudes de fundación encontradas: {}", requests.size());
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al listar solicitudes: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al listar solicitudes: {}", e.getMessage(), e);
         }
         
         return requests;
@@ -215,13 +212,12 @@ public class FoundationRequestDAO {
             int affected = stmt.executeUpdate();
             
             if (affected > 0) {
-                System.out.println("✅ Solicitud aprobada: " + idRequest + " - Token: " + token);
+                logger.info("Solicitud aprobada: {} - Token: {}", idRequest, token);
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al aprobar solicitud: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al aprobar solicitud: {}", e.getMessage(), e);
         }
         
         return false;
@@ -251,13 +247,12 @@ public class FoundationRequestDAO {
             int affected = stmt.executeUpdate();
             
             if (affected > 0) {
-                System.out.println("✅ Solicitud rechazada: " + idRequest);
+                logger.info("Solicitud rechazada: {}", idRequest);
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al rechazar solicitud: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al rechazar solicitud: {}", e.getMessage(), e);
         }
         
         return false;
@@ -280,13 +275,12 @@ public class FoundationRequestDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al contar solicitudes: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar solicitudes: {}", e.getMessage(), e);
         }
-        
+
         return 0;
     }
-    
+
     /**
      * Cuenta total de solicitudes
      */
@@ -302,8 +296,7 @@ public class FoundationRequestDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al contar solicitudes: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar solicitudes: {}", e.getMessage(), e);
         }
         
         return 0;
@@ -322,8 +315,7 @@ public class FoundationRequestDAO {
             return stmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("❌ Error al marcar como registrada: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al marcar como registrada: {}", e.getMessage(), e);
         }
         return false;
     }

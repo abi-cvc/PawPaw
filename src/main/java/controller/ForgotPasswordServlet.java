@@ -12,6 +12,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
@@ -24,7 +27,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @WebServlet("/forgot-password")
 public class ForgotPasswordServlet extends HttpServlet {
-    
+    private static final Logger logger = LoggerFactory.getLogger(ForgotPasswordServlet.class);
+
     private UserDAO userDAO = new UserDAO();
     private PasswordResetTokenDAO tokenDAO = new PasswordResetTokenDAO();
     private EmailService emailService = new EmailService();
@@ -33,19 +37,19 @@ public class ForgotPasswordServlet extends HttpServlet {
     private static final int MAX_ATTEMPTS = 5;
     private static final long WINDOW_MS = 60_000; // 1 minuto
     private static final ConcurrentHashMap<String, long[]> rateLimitMap = new ConcurrentHashMap<>();
-    
+
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         // Mostrar formulario de recuperación
         request.getRequestDispatcher("/view/internalUser/forgot-password.jsp").forward(request, response);
     }
-    
+
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         // SEC-013: Rate limiting por IP
         String clientIp = request.getRemoteAddr();
         if (isRateLimited(clientIp)) {
@@ -62,71 +66,70 @@ public class ForgotPasswordServlet extends HttpServlet {
             request.getRequestDispatcher("/view/internalUser/forgot-password.jsp").forward(request, response);
             return;
         }
-        
+
         email = email.trim().toLowerCase();
-        
-        System.out.println("🔑 Solicitud de recuperación para: " + email);
-        
+
+        logger.info("Solicitud de recuperacion para: {}", email);
+
         // Buscar usuario por email
         User user = userDAO.findByEmail(email);
-        
+
         // Por seguridad, siempre mostramos el mismo mensaje
         // (para no revelar si el email existe o no)
         String successMessage = "Si el email existe en nuestro sistema, recibirás un enlace de recuperación en los próximos minutos.";
-        
+
         if (user != null && user.getActive()) {
             try {
                 // Invalidar tokens anteriores del usuario
                 tokenDAO.invalidateUserTokens(user.getIdUser());
-                
+
                 // Generar token único y seguro
                 String token = generateSecureToken();
-                
+
                 // Token expira en 1 hora
                 Timestamp expirationDate = new Timestamp(System.currentTimeMillis() + (60 * 60 * 1000));
-                
+
                 // Crear token en BD
                 PasswordResetToken resetToken = new PasswordResetToken(
                     user.getIdUser(),
                     token,
                     expirationDate
                 );
-                
+
                 if (tokenDAO.create(resetToken)) {
-                    System.out.println("   ✅ Token creado en BD");
-                    
+                    logger.info("Token creado en BD");
+
                     // Enviar email con token
                     boolean emailSent = emailService.sendPasswordResetEmail(
                         user.getEmail(),
                         user.getNameUser(),
                         token
                     );
-                    
+
                     if (emailSent) {
-                        System.out.println("   ✅ Email enviado a: " + email);
+                        logger.info("Email enviado a: {}", email);
                     } else {
-                        System.err.println("   ❌ Error al enviar email");
+                        logger.error("Error al enviar email");
                         // Aun así mostramos mensaje de éxito por seguridad
                     }
                 } else {
-                    System.err.println("   ❌ Error al crear token en BD");
+                    logger.error("Error al crear token en BD");
                 }
-                
+
             } catch (Exception e) {
-                System.err.println("❌ Error en proceso de recuperación: " + e.getMessage());
-                e.printStackTrace();
+                logger.error("Error en proceso de recuperacion: {}", e.getMessage(), e);
             }
         } else {
-            System.out.println("   ⚠️ Email no encontrado o usuario inactivo");
+            logger.info("Email no encontrado o usuario inactivo");
             // Por seguridad, no revelamos que el email no existe
         }
-        
+
         // Siempre mostrar mensaje de éxito
         request.setAttribute("success", successMessage);
         request.setAttribute("emailSent", true);
         request.getRequestDispatcher("/view/internalUser/forgot-password.jsp").forward(request, response);
     }
-    
+
     /**
      * SEC-013: Verifica si una IP ha excedido el límite de intentos.
      * Usa ventana deslizante con array de timestamps.
@@ -180,14 +183,14 @@ public class ForgotPasswordServlet extends HttpServlet {
             SecureRandom random = new SecureRandom();
             byte[] bytes = new byte[32];
             random.nextBytes(bytes);
-            
+
             // Crear hash SHA-256
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             byte[] hash = digest.digest(bytes);
-            
+
             // Convertir a Base64 URL-safe
             return Base64.getUrlEncoder().withoutPadding().encodeToString(hash);
-            
+
         } catch (Exception e) {
             // Fallback: usar timestamp + random
             return Base64.getUrlEncoder().withoutPadding()

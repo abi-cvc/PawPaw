@@ -3,6 +3,8 @@ package service;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -14,32 +16,34 @@ import java.nio.charset.StandardCharsets;
  * Esta versión NO usa SMTP, por lo que funciona en Railway
  */
 public class EmailService {
-    
+
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
+
     private static final String API_KEY = System.getenv("BREVO_API_KEY");
     private static final String FROM_EMAIL = System.getenv("BREVO_FROM_EMAIL");
     private static final String FROM_NAME = System.getenv("BREVO_FROM_NAME");
     private static final String APP_BASE_URL = System.getenv("APP_BASE_URL");
     private static final String BREVO_API_URL = "https://api.brevo.com/v3/smtp/email";
-    
+
     /**
      * Envía email de recuperación de contraseña usando Brevo API
      */
     public boolean sendPasswordResetEmail(String toEmail, String toName, String resetToken) {
-        System.out.println("📧 Iniciando envío de email vía Brevo API");
-        System.out.println("   Destinatario: " + toEmail);
-        
+        logger.info("Iniciando envio de email via Brevo API");
+        logger.info("Destinatario: {}", toEmail);
+
         // Verificar configuración
         if (API_KEY == null || FROM_EMAIL == null || APP_BASE_URL == null) {
-            System.err.println("❌ ERROR: Variables de entorno no configuradas");
-            System.err.println("   API_KEY: " + (API_KEY != null ? "✅" : "❌ NULL"));
-            System.err.println("   FROM_EMAIL: " + (FROM_EMAIL != null ? "✅" : "❌ NULL"));
-            System.err.println("   APP_BASE_URL: " + (APP_BASE_URL != null ? "✅" : "❌ NULL"));
+            logger.error("Variables de entorno no configuradas");
+            logger.error("API_KEY: {}", API_KEY != null ? "configurada" : "NULL");
+            logger.error("FROM_EMAIL: {}", FROM_EMAIL != null ? "configurada" : "NULL");
+            logger.error("APP_BASE_URL: {}", APP_BASE_URL != null ? "configurada" : "NULL");
             return false;
         }
-        
+
         try {
             String resetUrl = APP_BASE_URL + "/reset-password?token=" + resetToken;
-            
+
             // Construir JSON del email
             String htmlContent = buildPasswordResetEmailHtml(toName, resetUrl);
             String textContent = "Hola " + toName + ",\n\n" +
@@ -50,15 +54,15 @@ public class EmailService {
                     "Si no solicitaste restablecer tu contraseña, ignora este email.\n\n" +
                     "Saludos,\n" +
                     "Equipo PawPaw";
-            
+
             String jsonPayload = buildJsonPayload(toEmail, toName, "Recuperar contraseña - PawPaw", htmlContent, textContent);
-            
-            System.out.println("   Enviando request a Brevo API...");
-            
+
+            logger.info("Enviando request a Brevo API...");
+
             // Crear conexión HTTP
             URL url = new URL(BREVO_API_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            
+
             // Configurar request
             conn.setRequestMethod("POST");
             conn.setRequestProperty("accept", "application/json");
@@ -67,36 +71,35 @@ public class EmailService {
             conn.setDoOutput(true);
             conn.setConnectTimeout(15000); // 15 segundos
             conn.setReadTimeout(15000);
-            
+
             // Enviar JSON
             try (OutputStream os = conn.getOutputStream()) {
                 byte[] input = jsonPayload.getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
             }
-            
+
             // Leer respuesta
             int responseCode = conn.getResponseCode();
-            
+
             if (responseCode >= 200 && responseCode < 300) {
-                System.out.println("✅ Email enviado exitosamente vía Brevo API");
-                System.out.println("   Response code: " + responseCode);
+                logger.info("Email enviado exitosamente via Brevo API");
+                logger.info("Response code: {}", responseCode);
                 return true;
             } else {
-                System.err.println("❌ Error en Brevo API:");
-                System.err.println("   Response code: " + responseCode);
-                System.err.println("   Message: " + conn.getResponseMessage());
+                logger.error("Error en Brevo API:");
+                logger.error("Response code: {}", responseCode);
+                logger.error("Message: {}", conn.getResponseMessage());
                 return false;
             }
-            
+
         } catch (Exception e) {
-            System.err.println("❌ Excepción al enviar email:");
-            System.err.println("   Tipo: " + e.getClass().getName());
-            System.err.println("   Mensaje: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Excepcion al enviar email de tipo: {}", e.getClass().getName());
+            logger.error("Mensaje: {}", e.getMessage());
+            logger.error("Error al enviar email de recuperacion", e);
             return false;
         }
     }
-    
+
     /**
      * Construye el payload JSON para Brevo API usando Gson (SEC-012)
      */
@@ -124,7 +127,7 @@ public class EmailService {
 
         return new Gson().toJson(payload);
     }
-    
+
     /**
      * Construye el HTML del email de recuperación de contraseña
      */
@@ -209,13 +212,13 @@ public class EmailService {
                 "</body>" +
                 "</html>";
     }
-    
+
     /**
      * Envía email de confirmación de cambio de contraseña
      */
     public boolean sendPasswordChangedEmail(String toEmail, String toName) {
-        System.out.println("📧 Enviando email de confirmación vía Brevo API");
-        
+        logger.info("Enviando email de confirmacion via Brevo API");
+
         try {
             String htmlContent = "<!DOCTYPE html>" +
                     "<html lang='es'>" +
@@ -226,14 +229,14 @@ public class EmailService {
                     "    <p>Saludos,<br>Equipo PawPaw</p>" +
                     "</body>" +
                     "</html>";
-            
+
             String textContent = "Hola " + toName + ",\n\n" +
                     "Tu contraseña ha sido actualizada exitosamente.\n\n" +
                     "Si no realizaste este cambio, por favor contacta a soporte inmediatamente.\n\n" +
                     "Saludos,\nEquipo PawPaw";
-            
+
             String jsonPayload = buildJsonPayload(toEmail, toName, "Contraseña actualizada - PawPaw", htmlContent, textContent);
-            
+
             URL url = new URL(BREVO_API_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
@@ -243,39 +246,39 @@ public class EmailService {
             conn.setDoOutput(true);
             conn.setConnectTimeout(15000);
             conn.setReadTimeout(15000);
-            
+
             try (OutputStream os = conn.getOutputStream()) {
                 byte[] input = jsonPayload.getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
             }
-            
+
             int responseCode = conn.getResponseCode();
-            
+
             if (responseCode >= 200 && responseCode < 300) {
-                System.out.println("✅ Email de confirmación enviado exitosamente");
+                logger.info("Email de confirmacion enviado exitosamente");
                 return true;
             } else {
-                System.err.println("❌ Error al enviar email de confirmación: " + responseCode);
+                logger.error("Error al enviar email de confirmacion: {}", responseCode);
                 return false;
             }
-            
+
         } catch (Exception e) {
-            System.err.println("❌ Error al enviar email de confirmación: " + e.getMessage());
+            logger.error("Error al enviar email de confirmacion: {}", e.getMessage());
             return false;
         }
     }
-    
+
     /**
      * Envía email de notificación administrativa a pawpawsystem@gmail.com
      */
     public boolean sendNotificationEmail(String toEmail, String toName, String subject, String message) {
-        System.out.println("📧 Enviando notificación administrativa a " + toEmail);
-        
+        logger.info("Enviando notificacion administrativa a {}", toEmail);
+
         if (API_KEY == null || FROM_EMAIL == null) {
-            System.err.println("❌ ERROR: Variables de entorno no configuradas");
+            logger.error("Variables de entorno no configuradas");
             return false;
         }
-        
+
         try {
             // Construir HTML simple pero claro
             String htmlContent = "<!DOCTYPE html>" +
@@ -287,8 +290,8 @@ public class EmailService {
                     "    <div style='max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);'>" +
                     "        <h2 style='color: #884A39; margin-top: 0;'>🔔 Notificación Administrativa</h2>" +
                     "        <div style='background: #f9f9f9; padding: 20px; border-radius: 8px; border-left: 4px solid #884A39;'>" +
-                    "            <pre style='font-family: monospace; font-size: 14px; line-height: 1.6; margin: 0; white-space: pre-wrap; word-wrap: break-word;'>" + 
-                    escapeHtml(message) + 
+                    "            <pre style='font-family: monospace; font-size: 14px; line-height: 1.6; margin: 0; white-space: pre-wrap; word-wrap: break-word;'>" +
+                    escapeHtml(message) +
                     "</pre>" +
                     "        </div>" +
                     "        <p style='margin-top: 20px; color: #999; font-size: 12px;'>" +
@@ -297,9 +300,9 @@ public class EmailService {
                     "    </div>" +
                     "</body>" +
                     "</html>";
-            
+
             String jsonPayload = buildJsonPayload(toEmail, toName, subject, htmlContent, message);
-            
+
             URL url = new URL(BREVO_API_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
@@ -309,29 +312,28 @@ public class EmailService {
             conn.setDoOutput(true);
             conn.setConnectTimeout(15000);
             conn.setReadTimeout(15000);
-            
+
             try (OutputStream os = conn.getOutputStream()) {
                 byte[] input = jsonPayload.getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
             }
-            
+
             int responseCode = conn.getResponseCode();
-            
+
             if (responseCode >= 200 && responseCode < 300) {
-                System.out.println("✅ Notificación administrativa enviada exitosamente");
+                logger.info("Notificacion administrativa enviada exitosamente");
                 return true;
             } else {
-                System.err.println("❌ Error al enviar notificación: " + responseCode);
+                logger.error("Error al enviar notificacion: {}", responseCode);
                 return false;
             }
-            
+
         } catch (Exception e) {
-            System.err.println("❌ Error al enviar notificación: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al enviar notificacion", e);
             return false;
         }
     }
-    
+
     /**
      * Escapa caracteres HTML para evitar problemas en el email
      */
@@ -344,7 +346,7 @@ public class EmailService {
                 .replace("\"", "&quot;")
                 .replace("'", "&#39;");
     }
-    
+
     /**
      * Envía el email de invitación de adopción al adoptante.
      * Usa el mismo mecanismo Brevo HTTP que los demás métodos del servicio.
@@ -358,18 +360,18 @@ public class EmailService {
     public boolean sendTransferEmail(String adopterEmail, String adopterName,
                                      String petName, String foundationName,
                                      String acceptUrl) {
-        System.out.println("📧 Enviando email de transferencia a " + adopterEmail);
- 
+        logger.info("Enviando email de transferencia a {}", adopterEmail);
+
         if (API_KEY == null || FROM_EMAIL == null) {
-            System.err.println("❌ ERROR: Variables de entorno no configuradas para email de transferencia");
+            logger.error("Variables de entorno no configuradas para email de transferencia");
             return false;
         }
- 
+
         try {
-            String subject = "🐾 " + foundationName + " quiere transferirte a " + petName + " - PawPaw";
- 
+            String subject = foundationName + " quiere transferirte a " + petName + " - PawPaw";
+
             String htmlContent = buildTransferEmailHtml(adopterName, foundationName, petName, acceptUrl);
- 
+
             String textContent = "Hola " + adopterName + ",\n\n"
                     + foundationName + " te ha seleccionado como el nuevo dueño de " + petName + ".\n\n"
                     + "Para aceptar la adopción, ingresa aquí:\n"
@@ -377,9 +379,9 @@ public class EmailService {
                     + "Este enlace es válido por 7 días.\n\n"
                     + "Si no esperabas este mensaje, puedes ignorarlo.\n\n"
                     + "Equipo PawPaw";
- 
+
             String jsonPayload = buildJsonPayload(adopterEmail, adopterName, subject, htmlContent, textContent);
- 
+
             URL url = new URL(BREVO_API_URL);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setRequestMethod("POST");
@@ -389,29 +391,28 @@ public class EmailService {
             conn.setDoOutput(true);
             conn.setConnectTimeout(15000);
             conn.setReadTimeout(15000);
- 
+
             try (OutputStream os = conn.getOutputStream()) {
                 byte[] input = jsonPayload.getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
             }
- 
+
             int responseCode = conn.getResponseCode();
- 
+
             if (responseCode >= 200 && responseCode < 300) {
-                System.out.println("✅ Email de transferencia enviado exitosamente a " + adopterEmail);
+                logger.info("Email de transferencia enviado exitosamente a {}", adopterEmail);
                 return true;
             } else {
-                System.err.println("❌ Error al enviar email de transferencia: " + responseCode + " - " + conn.getResponseMessage());
+                logger.error("Error al enviar email de transferencia: {} - {}", responseCode, conn.getResponseMessage());
                 return false;
             }
- 
+
         } catch (Exception e) {
-            System.err.println("❌ Excepción al enviar email de transferencia: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Excepcion al enviar email de transferencia", e);
             return false;
         }
     }
- 
+
     /**
      * Construye el HTML del email de invitación de adopción
      */
@@ -424,47 +425,47 @@ public class EmailService {
                 "<table width='100%' cellpadding='0' cellspacing='0' style='background-color:#f5f5f5;padding:40px 20px;'>" +
                 "<tr><td align='center'>" +
                 "<table width='600' cellpadding='0' cellspacing='0' style='background-color:#ffffff;border-radius:12px;box-shadow:0 4px 12px rgba(0,0,0,0.1);'>" +
- 
+
                 // Header
                 "<tr><td style='padding:40px;text-align:center;background:linear-gradient(135deg,#E07B39 0%,#c85e1e 100%);border-radius:12px 12px 0 0;'>" +
                 "<h1 style='margin:0;color:#ffffff;font-size:32px;font-weight:700;'>🐾 PawPaw</h1>" +
                 "<p style='margin:10px 0 0;color:#ffe8d6;font-size:16px;'>Sistema de identificación de mascotas</p>" +
                 "</td></tr>" +
- 
+
                 // Body
                 "<tr><td style='padding:40px;'>" +
                 "<h2 style='margin:0 0 16px;color:#1a1a1a;font-size:22px;'>¡Hola, " + escapeHtml(adopterName) + "! 👋</h2>" +
                 "<p style='margin:0 0 16px;color:#555;font-size:15px;line-height:1.6;'>" +
                 "La fundación <strong style='color:#c85e1e;'>" + escapeHtml(foundationName) + "</strong> " +
                 "te ha seleccionado como el/la nuevo/a dueño/a de <strong>" + escapeHtml(petName) + "</strong>.</p>" +
- 
+
                 "<div style='background:#fff7ed;border-left:4px solid #E07B39;border-radius:0 8px 8px 0;padding:16px 20px;margin:20px 0;'>" +
                 "<p style='margin:0;color:#7c4516;font-size:14px;line-height:1.6;'>" +
                 "🐾 Al aceptar, el perfil QR de <strong>" + escapeHtml(petName) + "</strong> se transferirá " +
                 "automáticamente a tu cuenta PawPaw. El mismo código en su placa seguirá funcionando, " +
                 "pero ahora mostrará <strong>tu</strong> información de contacto.</p>" +
                 "</div>" +
- 
+
                 "<p style='margin:0 0 8px;color:#555;font-size:15px;line-height:1.6;'>" +
                 "Haz clic en el botón para aceptar la adopción:</p>" +
- 
+
                 "<div style='text-align:center;margin:30px 0;'>" +
                 "<a href='" + acceptUrl + "' style='background:#E07B39;color:#ffffff;padding:14px 32px;" +
                 "border-radius:8px;text-decoration:none;font-size:16px;font-weight:700;display:inline-block;'>" +
                 "✅ Aceptar Adopción</a>" +
                 "</div>" +
- 
+
                 "<p style='margin:0;color:#999;font-size:13px;line-height:1.5;'>" +
                 "⏳ Este enlace es válido por 7 días.<br>" +
                 "Si no esperabas este mensaje, puedes ignorarlo sin problemas.</p>" +
                 "</td></tr>" +
- 
+
                 // Footer
                 "<tr><td style='padding:24px 40px;text-align:center;border-top:1px solid #f0f0f0;'>" +
                 "<p style='margin:0;color:#aaa;font-size:12px;'>" +
                 "© PawPaw — La seguridad de tu mascota, a un escaneo de distancia.</p>" +
                 "</td></tr>" +
- 
+
                 "</table></td></tr></table>" +
                 "</body></html>";
     }

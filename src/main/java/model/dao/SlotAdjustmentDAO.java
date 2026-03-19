@@ -2,6 +2,8 @@ package model.dao;
 
 import config.DatabaseConnection;
 import model.entity.SlotAdjustment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.List;
  * DAO para gestión de ajustes de slots
  */
 public class SlotAdjustmentDAO {
+    private static final Logger logger = LoggerFactory.getLogger(SlotAdjustmentDAO.class);
     
     /**
      * Crear un registro de ajuste
@@ -35,13 +38,12 @@ public class SlotAdjustmentDAO {
                 if (rs.next()) {
                     adjustment.setIdAdjustment(rs.getInt(1));
                 }
-                System.out.println("✅ Ajuste de slots registrado: " + adjustment);
+                logger.info("Ajuste de slots registrado: {}", adjustment);
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al crear ajuste: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al crear ajuste: {}", e.getMessage(), e);
         }
         
         return false;
@@ -65,8 +67,7 @@ public class SlotAdjustmentDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener ajustes: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener ajustes: {}", e.getMessage(), e);
         }
         
         return adjustments;
@@ -88,8 +89,7 @@ public class SlotAdjustmentDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener todos los ajustes: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener todos los ajustes: {}", e.getMessage(), e);
         }
         
         return adjustments;
@@ -113,8 +113,7 @@ public class SlotAdjustmentDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener ajustes del admin: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener ajustes del admin: {}", e.getMessage(), e);
         }
         
         return adjustments;
@@ -135,8 +134,7 @@ public class SlotAdjustmentDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al contar ajustes: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar ajustes: {}", e.getMessage(), e);
         }
         
         return 0;
@@ -159,8 +157,7 @@ public class SlotAdjustmentDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener último ajuste: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener último ajuste: {}", e.getMessage(), e);
         }
         
         return null;

@@ -12,6 +12,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.regex.Pattern;
 
@@ -22,12 +25,13 @@ import java.util.regex.Pattern;
 @WebServlet("/register")
 public class UserController extends HttpServlet {
     private static final long serialVersionUID = 1L;
-    
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     // Patrón para validar email
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
         "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
     );
-    
+
     private UserDAO userDAO = new UserDAO();
     private FoundationRequestDAO foundationDAO = new FoundationRequestDAO();
 
@@ -64,9 +68,9 @@ public class UserController extends HttpServlet {
     /**
      * Procesa el formulario de registro
      */
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         // Obtener parámetros del formulario
         String name = request.getParameter("name");
         String email = request.getParameter("email");
@@ -74,15 +78,13 @@ public class UserController extends HttpServlet {
         String confirmPassword = request.getParameter("confirmPassword");
         String foundationToken = request.getParameter("foundationToken");
 
-        System.out.println("🔵 Intento de registro:");
-        System.out.println("   Nombre: " + name);
-        System.out.println("   Email: " + email);
+        logger.info("Intento de registro - Nombre: {}, Email: {}", name, email);
 
         // Validaciones
         String errorMessage = validateRegistration(name, email, password, confirmPassword);
 
         if (errorMessage != null) {
-            System.out.println("❌ Error de validación: " + errorMessage);
+            logger.info("Error de validacion: {}", errorMessage);
             request.setAttribute("error", errorMessage);
             request.setAttribute("name", name);
             request.setAttribute("email", email);
@@ -114,12 +116,12 @@ public class UserController extends HttpServlet {
         // Intentar registrar usuario
         if (isFoundationRegistration) {
             if (registerFoundationUser(name, email, password, foundationReq)) {
-                System.out.println("✅ Fundación registrada exitosamente: " + foundationReq.getFoundationName());
+                logger.info("Fundacion registrada exitosamente: {}", foundationReq.getFoundationName());
                 request.setAttribute("success", "¡Cuenta de fundación creada exitosamente! Por favor inicia sesión.");
                 request.setAttribute("email", email);
                 request.getRequestDispatcher("/view/internalUser/login.jsp").forward(request, response);
             } else {
-                System.out.println("❌ Error al registrar fundación");
+                logger.error("Error al registrar fundacion");
                 request.setAttribute("error", "El email ya está registrado o hubo un error. Intenta iniciar sesión.");
                 request.setAttribute("name", name);
                 request.setAttribute("email", email);
@@ -130,12 +132,12 @@ public class UserController extends HttpServlet {
             }
         } else {
             if (registerUser(name, email, password)) {
-                System.out.println("✅ Usuario registrado exitosamente");
+                logger.info("Usuario registrado exitosamente");
                 request.setAttribute("success", "Cuenta creada exitosamente. Por favor inicia sesión.");
                 request.setAttribute("email", email);
                 request.getRequestDispatcher("/view/internalUser/login.jsp").forward(request, response);
             } else {
-                System.out.println("❌ Error: Email ya existe o error en BD");
+                logger.error("Error: Email ya existe o error en BD");
                 request.setAttribute("error", "El email ya está registrado. Intenta con otro o inicia sesión.");
                 request.setAttribute("name", name);
                 request.setAttribute("email", email);
@@ -143,7 +145,7 @@ public class UserController extends HttpServlet {
             }
         }
     }
-    
+
     /**
      * Valida los datos del registro
      */
@@ -152,42 +154,42 @@ public class UserController extends HttpServlet {
         if (name == null || name.trim().isEmpty()) {
             return "El nombre es obligatorio";
         }
-        
+
         if (email == null || email.trim().isEmpty()) {
             return "El email es obligatorio";
         }
-        
+
         if (password == null || password.isEmpty()) {
             return "La contraseña es obligatoria";
         }
-        
+
         if (confirmPassword == null || confirmPassword.isEmpty()) {
             return "Debes confirmar la contraseña";
         }
-        
+
         // Validar formato de email
         if (!EMAIL_PATTERN.matcher(email).matches()) {
             return "El formato del email no es válido";
         }
-        
+
         // Validar longitud de contraseña
         if (password.length() < 6) {
             return "La contraseña debe tener al menos 6 caracteres";
         }
-        
+
         // Validar que las contraseñas coincidan
         if (!password.equals(confirmPassword)) {
             return "Las contraseñas no coinciden";
         }
-        
+
         // Validar nombre (mínimo 2 caracteres)
         if (name.trim().length() < 2) {
             return "El nombre debe tener al menos 2 caracteres";
         }
-        
+
         return null; // Todo válido
     }
-    
+
     /**
      * Registra un nuevo usuario en el sistema
      * AHORA SÍ GUARDA EN LA BASE DE DATOS
@@ -214,13 +216,12 @@ public class UserController extends HttpServlet {
                 // Invalidar el token para que no se use de nuevo
                 foundationReq.setStatus("registered");
                 foundationDAO.markAsRegistered(foundationReq.getIdRequest());
-                System.out.println("   ✅ Fundación guardada en BD con ID: " + newUser.getIdUser());
+                logger.info("Fundacion guardada en BD con ID: {}", newUser.getIdUser());
                 return true;
             }
             return false;
         } catch (Exception e) {
-            System.err.println("❌ Excepción al registrar fundación:");
-            e.printStackTrace();
+            logger.error("Excepcion al registrar fundacion", e);
             return false;
         }
     }
@@ -229,12 +230,12 @@ public class UserController extends HttpServlet {
         try {
             // 1. Verificar que el email no exista
             if (userDAO.emailExists(email.trim())) {
-                System.out.println("   ⚠️ Email ya existe en BD");
+                logger.info("Email ya existe en BD");
                 return false;
             }
-            
-            System.out.println("   📝 Email disponible, creando usuario...");
-            
+
+            logger.info("Email disponible, creando usuario...");
+
             // 2. Crear objeto User
             User newUser = new User();
             newUser.setNameUser(name.trim());
@@ -242,21 +243,20 @@ public class UserController extends HttpServlet {
             newUser.setPassword(password); // UserDAO se encarga de hashear con BCrypt
             newUser.setRol("user"); // Rol por defecto
             newUser.setActive(true);
-            
+
             // 3. Insertar en BD usando UserDAO
             boolean created = userDAO.create(newUser);
-            
+
             if (created) {
-                System.out.println("   ✅ Usuario guardado en BD con ID: " + newUser.getIdUser());
+                logger.info("Usuario guardado en BD con ID: {}", newUser.getIdUser());
                 return true;
             } else {
-                System.out.println("   ❌ Error al guardar en BD");
+                logger.error("Error al guardar en BD");
                 return false;
             }
-            
+
         } catch (Exception e) {
-            System.err.println("❌ Excepción al registrar usuario:");
-            e.printStackTrace();
+            logger.error("Excepcion al registrar usuario", e);
             return false;
         }
     }

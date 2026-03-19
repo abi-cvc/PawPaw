@@ -13,6 +13,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -21,24 +24,25 @@ import java.util.List;
  */
 @WebServlet("/admin/users/*/slot-history")
 public class UserSlotHistoryServlet extends HttpServlet {
-    
+    private static final Logger logger = LoggerFactory.getLogger(UserSlotHistoryServlet.class);
+
     private UserDAO userDAO = new UserDAO();
     private PetDAO petDAO = new PetDAO();
     private SlotAdjustmentDAO adjustmentDAO = new SlotAdjustmentDAO();
-    
+
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         HttpSession session = request.getSession(false);
-        
+
         // Verificar que es admin - CORREGIDO: usar "userRole"
-        if (session == null || session.getAttribute("userRole") == null || 
+        if (session == null || session.getAttribute("userRole") == null ||
             !"admin".equals(session.getAttribute("userRole"))) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-        
+
         try {
             // Extraer userId de la URL
             String pathInfo = request.getPathInfo();
@@ -46,10 +50,10 @@ public class UserSlotHistoryServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/admin/users");
                 return;
             }
-            
+
             String userIdStr = pathInfo.split("/")[1];
             Integer userId = Integer.parseInt(userIdStr);
-            
+
             // Obtener usuario
             User user = userDAO.findById(userId);
             if (user == null) {
@@ -57,34 +61,33 @@ public class UserSlotHistoryServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/admin/users");
                 return;
             }
-            
+
             // Obtener historial de ajustes
             List<SlotAdjustment> adjustments = adjustmentDAO.findByUserId(userId);
-            
+
             // Contar mascotas actuales
             int currentPetCount = petDAO.countByUserId(userId);
-            
+
             // Estadísticas
             int totalAdjustments = adjustments.size();
             long increases = adjustments.stream().filter(SlotAdjustment::isIncrease).count();
             long decreases = adjustments.stream().filter(SlotAdjustment::isDecrease).count();
-            
+
             request.setAttribute("user", user);
             request.setAttribute("adjustments", adjustments);
             request.setAttribute("currentPetCount", currentPetCount);
             request.setAttribute("totalAdjustments", totalAdjustments);
             request.setAttribute("increases", increases);
             request.setAttribute("decreases", decreases);
-            
-            System.out.println("📜 Viendo historial de slots para usuario " + userId + ". Total ajustes: " + totalAdjustments);
-            
+
+            logger.info("Viendo historial de slots para usuario {}. Total ajustes: {}", userId, totalAdjustments);
+
             request.getRequestDispatcher("/view/admin/user-slot-history.jsp").forward(request, response);
-            
+
         } catch (NumberFormatException e) {
             response.sendRedirect(request.getContextPath() + "/admin/users");
         } catch (Exception e) {
-            System.err.println("❌ Error al cargar historial: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al cargar historial: {}", e.getMessage(), e);
             session.setAttribute("errorMessage", "Error al cargar historial");
             response.sendRedirect(request.getContextPath() + "/admin/users");
         }

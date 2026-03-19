@@ -2,6 +2,8 @@ package model.dao;
 
 import config.DatabaseConnection;
 import model.entity.PetContactMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.List;
  * DAO para gestión de mensajes de contacto de mascotas
  */
 public class PetContactMessageDAO {
+    private static final Logger logger = LoggerFactory.getLogger(PetContactMessageDAO.class);
     
     /**
      * Crear un nuevo mensaje
@@ -35,13 +38,12 @@ public class PetContactMessageDAO {
                 if (rs.next()) {
                     message.setIdMessage(rs.getInt(1));
                 }
-                System.out.println("✅ Mensaje guardado en BD: ID " + message.getIdMessage());
+                logger.info("Mensaje guardado en BD: ID {}", message.getIdMessage());
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al crear mensaje: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al crear mensaje: {}", e.getMessage(), e);
         }
         
         return false;
@@ -65,8 +67,7 @@ public class PetContactMessageDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener mensajes: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener mensajes: {}", e.getMessage(), e);
         }
         
         return messages;
@@ -91,8 +92,7 @@ public class PetContactMessageDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener mensajes no leídos: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener mensajes no leídos: {}", e.getMessage(), e);
         }
         
         return messages;
@@ -115,8 +115,7 @@ public class PetContactMessageDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al contar mensajes no leídos: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar mensajes no leídos: {}", e.getMessage(), e);
         }
         
         return 0;
@@ -135,13 +134,12 @@ public class PetContactMessageDAO {
             int affected = stmt.executeUpdate();
             
             if (affected > 0) {
-                System.out.println("✅ Mensaje " + messageId + " marcado como leído");
+                logger.info("Mensaje {} marcado como leído", messageId);
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al marcar mensaje como leído: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al marcar mensaje como leído: {}", e.getMessage(), e);
         }
         
         return false;
@@ -160,13 +158,12 @@ public class PetContactMessageDAO {
             int affected = stmt.executeUpdate();
             
             if (affected > 0) {
-                System.out.println("✅ " + affected + " mensajes marcados como leídos");
+                logger.info("{} mensajes marcados como leídos", affected);
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al marcar todos como leídos: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al marcar todos como leídos: {}", e.getMessage(), e);
         }
         
         return false;
@@ -189,8 +186,7 @@ public class PetContactMessageDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar mensaje: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar mensaje: {}", e.getMessage(), e);
         }
         
         return null;
@@ -209,13 +205,12 @@ public class PetContactMessageDAO {
             int affected = stmt.executeUpdate();
             
             if (affected > 0) {
-                System.out.println("✅ Mensaje " + messageId + " eliminado");
+                logger.info("Mensaje {} eliminado", messageId);
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al eliminar mensaje: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al eliminar mensaje: {}", e.getMessage(), e);
         }
         
         return false;

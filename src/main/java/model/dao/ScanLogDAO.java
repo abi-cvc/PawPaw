@@ -2,6 +2,8 @@ package model.dao;
 
 import config.DatabaseConnection;
 import model.entity.ScanLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import java.util.List;
  * Tabla BD: scan_logs
  */
 public class ScanLogDAO {
+    private static final Logger logger = LoggerFactory.getLogger(ScanLogDAO.class);
 
     /**
      * Registra un nuevo escaneo de QR
@@ -41,8 +44,7 @@ public class ScanLogDAO {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error al registrar escaneo: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al registrar escaneo: {}", e.getMessage(), e);
         }
 
         return false;
@@ -67,8 +69,7 @@ public class ScanLogDAO {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error al obtener escaneos: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener escaneos: {}", e.getMessage(), e);
         }
 
         return logs;
@@ -92,8 +93,7 @@ public class ScanLogDAO {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error al contar escaneos: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar escaneos: {}", e.getMessage(), e);
         }
 
         return 0;
@@ -114,8 +114,7 @@ public class ScanLogDAO {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error al contar escaneos totales: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar escaneos totales: {}", e.getMessage(), e);
         }
 
         return 0;

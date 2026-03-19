@@ -12,10 +12,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 
 @WebServlet("/admin/toggle-visibility")
 public class TogglePartnerVisibilityServlet extends HttpServlet {
+    private static final Logger logger = LoggerFactory.getLogger(TogglePartnerVisibilityServlet.class);
 
     private UserDAO userDAO = new UserDAO();
     private SystemMessageDAO systemMessageDAO = new SystemMessageDAO();
@@ -64,15 +68,14 @@ public class TogglePartnerVisibilityServlet extends HttpServlet {
                 session.setAttribute("successMessage",
                     makeVisible ? "Fundación visible en la página de Partners"
                                 : "Fundación ocultada de la página de Partners");
-                System.out.println("✅ Visibilidad de fundación " + userId + " cambiada a: " + makeVisible);
+                logger.info("Visibilidad de fundacion {} cambiada a: {}", userId, makeVisible);
             } else {
                 session.setAttribute("errorMessage", "Error al cambiar la visibilidad");
             }
 
         } catch (Exception e) {
             session.setAttribute("errorMessage", "Error al procesar la solicitud");
-            System.err.println("❌ Error: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al cambiar visibilidad: {}", e.getMessage(), e);
         }
 
         response.sendRedirect(request.getContextPath() + "/admin/users");

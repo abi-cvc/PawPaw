@@ -7,6 +7,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.sql.*;
 import java.util.Set;
@@ -18,6 +21,8 @@ import java.util.Set;
  */
 @WebServlet("/pet/adoption-status")
 public class UpdateAdoptionStatusServlet extends HttpServlet {
+
+    private static final Logger logger = LoggerFactory.getLogger(UpdateAdoptionStatusServlet.class);
 
     private static final Set<String> ALLOWED_STATUSES = Set.of(
         "owned", "available", "adopted_pending", "adopted_transferred"
@@ -83,7 +88,7 @@ public class UpdateAdoptionStatusServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/user/pets?success=statusUpdated");
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error al actualizar adoption_status", e);
             response.sendRedirect(request.getContextPath() + "/user/pets?error=dbError");
         }
     }

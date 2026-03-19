@@ -2,6 +2,8 @@ package model.dao;
 
 import config.DatabaseConnection;
 import model.entity.Pet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.List;
  * Maneja todas las operaciones de base de datos relacionadas con mascotas
  */
 public class PetDAO {
+    private static final Logger logger = LoggerFactory.getLogger(PetDAO.class);
     
     /**
      * Crea una nueva mascota en la base de datos
@@ -54,8 +57,7 @@ public class PetDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al crear mascota: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al crear mascota: {}", e.getMessage(), e);
         }
         
         return false;
@@ -82,8 +84,7 @@ public class PetDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al buscar mascota por ID: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar mascota por ID: {}", e.getMessage(), e);
         }
         
         return null;
@@ -111,8 +112,7 @@ public class PetDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al obtener mascotas del usuario: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener mascotas del usuario: {}", e.getMessage(), e);
         }
         
         return pets;
@@ -140,8 +140,7 @@ public class PetDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al obtener mascotas activas: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener mascotas activas: {}", e.getMessage(), e);
         }
         
         return pets;
@@ -165,8 +164,7 @@ public class PetDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al obtener todas las mascotas: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener todas las mascotas: {}", e.getMessage(), e);
         }
         
         return pets;
@@ -205,8 +203,7 @@ public class PetDAO {
             return pstmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
-            System.err.println("Error al actualizar mascota: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al actualizar mascota: {}", e.getMessage(), e);
         }
         
         return false;
@@ -231,8 +228,7 @@ public class PetDAO {
             return pstmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
-            System.err.println("Error al actualizar estado de mascota: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al actualizar estado de mascota: {}", e.getMessage(), e);
         }
         
         return false;
@@ -254,8 +250,7 @@ public class PetDAO {
             return pstmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
-            System.err.println("Error al eliminar mascota: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al eliminar mascota: {}", e.getMessage(), e);
         }
         
         return false;
@@ -282,13 +277,12 @@ public class PetDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al contar mascotas: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar mascotas: {}", e.getMessage(), e);
         }
-        
+
         return 0;
     }
-    
+
     /**
      * Cuenta las mascotas activas de un usuario
      * 
@@ -310,8 +304,7 @@ public class PetDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al contar mascotas activas: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar mascotas activas: {}", e.getMessage(), e);
         }
         
         return 0;
@@ -340,8 +333,7 @@ public class PetDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al verificar propiedad de mascota: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al verificar propiedad de mascota: {}", e.getMessage(), e);
         }
         
         return false;
@@ -399,8 +391,7 @@ public class PetDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar mascotas por estado: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar mascotas por estado: {}", e.getMessage(), e);
         }
         
         return pets;
@@ -425,8 +416,7 @@ public class PetDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar mascotas por usuario y estado: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar mascotas por usuario y estado: {}", e.getMessage(), e);
         }
         
         return pets;
@@ -447,13 +437,12 @@ public class PetDAO {
             int affected = stmt.executeUpdate();
             
             if (affected > 0) {
-                System.out.println("✅ Estado de adopción actualizado: " + idPet + " → " + newStatus);
+                logger.info("Estado de adopción actualizado: {} -> {}", idPet, newStatus);
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al actualizar estado de adopción: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al actualizar estado de adopción: {}", e.getMessage(), e);
         }
         
         return false;
@@ -477,8 +466,7 @@ public class PetDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al contar mascotas por estado: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar mascotas por estado: {}", e.getMessage(), e);
         }
         
         return 0;
@@ -511,8 +499,7 @@ public class PetDAO {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error al contar mascotas por usuario (bulk): " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar mascotas por usuario (bulk): {}", e.getMessage(), e);
         }
 
         return counts;
@@ -533,8 +520,7 @@ public class PetDAO {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error al contar mascotas: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar mascotas: {}", e.getMessage(), e);
         }
 
         return 0;
@@ -564,8 +550,7 @@ public class PetDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar mascotas de fundación: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar mascotas de fundación: {}", e.getMessage(), e);
         }
         
         return pets;

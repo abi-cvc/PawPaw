@@ -2,6 +2,8 @@ package model.dao;
 
 import config.DatabaseConnection;
 import model.entity.AdminAuditLog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.List;
  * DAO para gestionar el registro de auditoría administrativa
  */
 public class AdminAuditLogDAO {
+    private static final Logger logger = LoggerFactory.getLogger(AdminAuditLogDAO.class);
     
     /**
      * Crea un nuevo registro de auditoría
@@ -41,13 +44,12 @@ public class AdminAuditLogDAO {
                         log.setIdAudit(generatedKeys.getInt(1));
                     }
                 }
-                System.out.println("📝 Audit log created: " + log.getAction() + " by admin " + log.getIdAdmin());
+                logger.info("Audit log created: {} by admin {}", log.getAction(), log.getIdAdmin());
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al crear audit log: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al crear audit log: {}", e.getMessage(), e);
         }
         
         return false;
@@ -72,8 +74,7 @@ public class AdminAuditLogDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener audit logs: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener audit logs: {}", e.getMessage(), e);
         }
         
         return logs;
@@ -102,8 +103,7 @@ public class AdminAuditLogDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener logs por acción: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener logs por acción: {}", e.getMessage(), e);
         }
         
         return logs;
@@ -132,8 +132,7 @@ public class AdminAuditLogDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener logs del admin: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener logs del admin: {}", e.getMessage(), e);
         }
         
         return logs;
@@ -163,8 +162,7 @@ public class AdminAuditLogDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener logs por target: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener logs por target: {}", e.getMessage(), e);
         }
         
         return logs;
@@ -193,8 +191,7 @@ public class AdminAuditLogDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener logs recientes: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener logs recientes: {}", e.getMessage(), e);
         }
         
         return logs;
@@ -215,8 +212,7 @@ public class AdminAuditLogDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al contar logs: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar logs: {}", e.getMessage(), e);
         }
         
         return 0;
@@ -240,8 +236,7 @@ public class AdminAuditLogDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al contar logs por acción: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar logs por acción: {}", e.getMessage(), e);
         }
         
         return 0;
@@ -260,8 +255,7 @@ public class AdminAuditLogDAO {
             return stmt.executeUpdate(sql);
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al eliminar logs antiguos: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al eliminar logs antiguos: {}", e.getMessage(), e);
         }
         
         return 0;

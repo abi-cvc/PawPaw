@@ -2,6 +2,8 @@ package model.dao;
 
 import config.DatabaseConnection;
 import model.entity.QRcode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.List;
  * DAO para gestionar códigos QR de mascotas
  */
 public class QRCodeDAO {
+    private static final Logger logger = LoggerFactory.getLogger(QRCodeDAO.class);
     
     /**
      * Crea un nuevo código QR para una mascota
@@ -37,8 +40,7 @@ public class QRCodeDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al crear código QR: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al crear código QR: {}", e.getMessage(), e);
         }
         
         return false;
@@ -62,8 +64,7 @@ public class QRCodeDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al buscar código QR: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar código QR: {}", e.getMessage(), e);
         }
         
         return null;
@@ -87,8 +88,7 @@ public class QRCodeDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al buscar QR por mascota: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar QR por mascota: {}", e.getMessage(), e);
         }
         
         return null;
@@ -116,8 +116,7 @@ public class QRCodeDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al obtener QRs del usuario: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener QRs del usuario: {}", e.getMessage(), e);
         }
         
         return qrCodes;
@@ -139,8 +138,7 @@ public class QRCodeDAO {
             return pstmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
-            System.err.println("Error al actualizar QR: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al actualizar QR: {}", e.getMessage(), e);
         }
         
         return false;
@@ -159,8 +157,7 @@ public class QRCodeDAO {
             return pstmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
-            System.err.println("Error al incrementar contador: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al incrementar contador: {}", e.getMessage(), e);
         }
         
         return false;
@@ -181,8 +178,7 @@ public class QRCodeDAO {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error al contar QR codes: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar QR codes: {}", e.getMessage(), e);
         }
 
         return 0;
@@ -208,8 +204,7 @@ public class QRCodeDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al contar QRs: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar QRs: {}", e.getMessage(), e);
         }
         
         return 0;
@@ -228,8 +223,7 @@ public class QRCodeDAO {
             return pstmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
-            System.err.println("Error al eliminar QR: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al eliminar QR: {}", e.getMessage(), e);
         }
         
         return false;

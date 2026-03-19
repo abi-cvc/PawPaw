@@ -10,6 +10,9 @@ import model.dao.PetTransferRequestDAO;
 import model.entity.PetTransferRequest;
 import service.EmailService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -23,6 +26,7 @@ import java.util.UUID;
  */
 @WebServlet("/pet/transfer/initiate")
 public class InitiateTransferServlet extends HttpServlet {
+    private static final Logger logger = LoggerFactory.getLogger(InitiateTransferServlet.class);
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -127,14 +131,14 @@ public class InitiateTransferServlet extends HttpServlet {
             );
 
             if (!emailSent) {
-                System.err.println("⚠️ Transferencia creada pero el email no se pudo enviar a " + adopterEmail);
+                logger.error("Transferencia creada pero el email no se pudo enviar a {}", adopterEmail);
             }
 
             String encoded = URLEncoder.encode(petName, StandardCharsets.UTF_8);
             response.sendRedirect(request.getContextPath() + "/user/pets?success=transferInitiated&petName=" + encoded);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error al iniciar transferencia", e);
             response.sendRedirect(request.getContextPath() + "/user/pets?error=transferFailed");
         }
     }

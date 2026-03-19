@@ -2,6 +2,8 @@ package model.dao;
 
 import config.DatabaseConnection;
 import model.entity.PaymentRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -12,6 +14,7 @@ import java.util.List;
  * DAO para gestión de pagos de slots
  */
 public class PaymentRequestDAO {
+    private static final Logger logger = LoggerFactory.getLogger(PaymentRequestDAO.class);
     
     /**
      * Crea una solicitud de pago
@@ -49,13 +52,12 @@ public class PaymentRequestDAO {
                 if (rs.next()) {
                     payment.setIdPayment(rs.getInt(1));
                 }
-                System.out.println("✅ Pago registrado: " + payment.getIdPayment());
+                logger.info("Pago registrado: {}", payment.getIdPayment());
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al crear pago: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al crear pago: {}", e.getMessage(), e);
         }
         
         return false;
@@ -82,8 +84,7 @@ public class PaymentRequestDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar pago: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar pago: {}", e.getMessage(), e);
         }
         
         return null;
@@ -111,8 +112,7 @@ public class PaymentRequestDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar pagos por usuario: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar pagos por usuario: {}", e.getMessage(), e);
         }
         
         return payments;
@@ -140,8 +140,7 @@ public class PaymentRequestDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar pagos por estado: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar pagos por estado: {}", e.getMessage(), e);
         }
         
         return payments;
@@ -166,11 +165,10 @@ public class PaymentRequestDAO {
                 payments.add(extractPaymentFromResultSet(rs));
             }
             
-            System.out.println("✅ Pagos encontrados: " + payments.size());
+            logger.info("Pagos encontrados: {}", payments.size());
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al listar pagos: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al listar pagos: {}", e.getMessage(), e);
         }
         
         return payments;
@@ -200,13 +198,12 @@ public class PaymentRequestDAO {
             int affected = stmt.executeUpdate();
             
             if (affected > 0) {
-                System.out.println("✅ Estado de pago actualizado: " + idPayment + " -> " + newStatus);
+                logger.info("Estado de pago actualizado: {} -> {}", idPayment, newStatus);
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al actualizar estado: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al actualizar estado: {}", e.getMessage(), e);
         }
         
         return false;
@@ -227,13 +224,12 @@ public class PaymentRequestDAO {
             int affected = stmt.executeUpdate();
             
             if (affected > 0) {
-                System.out.println("✅ Notas actualizadas para pago: " + idPayment);
+                logger.info("Notas actualizadas para pago: {}", idPayment);
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al actualizar notas: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al actualizar notas: {}", e.getMessage(), e);
         }
         
         return false;
@@ -254,13 +250,12 @@ public class PaymentRequestDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al contar pagos: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar pagos: {}", e.getMessage(), e);
         }
-        
+
         return 0;
     }
-    
+
     /**
      * Cuenta pagos por estado
      */
@@ -278,8 +273,7 @@ public class PaymentRequestDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al contar pagos por estado: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar pagos por estado: {}", e.getMessage(), e);
         }
         
         return 0;

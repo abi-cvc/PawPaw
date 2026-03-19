@@ -2,12 +2,15 @@ package model.dao;
 
 import config.DatabaseConnection;
 import model.entity.SystemMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class SystemMessageDAO {
+    private static final Logger logger = LoggerFactory.getLogger(SystemMessageDAO.class);
 
     public boolean create(SystemMessage msg) {
         String sql = "INSERT INTO system_messages (id_user, subject, message) VALUES (?, ?, ?)";
@@ -29,8 +32,7 @@ public class SystemMessageDAO {
                 return true;
             }
         } catch (SQLException e) {
-            System.err.println("Error al crear mensaje de sistema: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al crear mensaje de sistema: {}", e.getMessage(), e);
         }
         return false;
     }
@@ -49,8 +51,7 @@ public class SystemMessageDAO {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error al buscar mensajes de sistema: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar mensajes de sistema: {}", e.getMessage(), e);
         }
         return messages;
     }
@@ -66,7 +67,7 @@ public class SystemMessageDAO {
                 if (rs.next()) return rs.getInt(1);
             }
         } catch (SQLException e) {
-            System.err.println("Error al contar mensajes no leídos: " + e.getMessage());
+            logger.error("Error al contar mensajes no leídos: {}", e.getMessage(), e);
         }
         return 0;
     }
@@ -80,7 +81,7 @@ public class SystemMessageDAO {
             pstmt.setInt(1, messageId);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("Error al marcar mensaje como leído: " + e.getMessage());
+            logger.error("Error al marcar mensaje como leído: {}", e.getMessage(), e);
         }
         return false;
     }
@@ -94,7 +95,7 @@ public class SystemMessageDAO {
             pstmt.setInt(1, userId);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("Error al marcar todos como leídos: " + e.getMessage());
+            logger.error("Error al marcar todos como leídos: {}", e.getMessage(), e);
         }
         return false;
     }
@@ -108,7 +109,7 @@ public class SystemMessageDAO {
             pstmt.setInt(1, messageId);
             return pstmt.executeUpdate() > 0;
         } catch (SQLException e) {
-            System.err.println("Error al eliminar mensaje: " + e.getMessage());
+            logger.error("Error al eliminar mensaje: {}", e.getMessage(), e);
         }
         return false;
     }

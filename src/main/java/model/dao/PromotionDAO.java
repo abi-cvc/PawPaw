@@ -2,6 +2,8 @@ package model.dao;
 
 import config.DatabaseConnection;
 import model.entity.Promotion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -12,6 +14,7 @@ import java.util.List;
  * DAO para gestión de promociones
  */
 public class PromotionDAO {
+    private static final Logger logger = LoggerFactory.getLogger(PromotionDAO.class);
     
     /**
      * Crea una nueva promoción
@@ -53,13 +56,12 @@ public class PromotionDAO {
                 if (rs.next()) {
                     promotion.setIdPromotion(rs.getInt(1));
                 }
-                System.out.println("✅ Promoción creada: " + promotion.getPromoName());
+                logger.info("Promoción creada: {}", promotion.getPromoName());
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al crear promoción: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al crear promoción: {}", e.getMessage(), e);
         }
         
         return false;
@@ -82,8 +84,7 @@ public class PromotionDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar promoción: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar promoción: {}", e.getMessage(), e);
         }
         
         return null;
@@ -104,11 +105,10 @@ public class PromotionDAO {
                 promotions.add(extractPromotionFromResultSet(rs));
             }
             
-            System.out.println("✅ Promociones encontradas: " + promotions.size());
+            logger.info("Promociones encontradas: {}", promotions.size());
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al listar promociones: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al listar promociones: {}", e.getMessage(), e);
         }
         
         return promotions;
@@ -133,8 +133,7 @@ public class PromotionDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al buscar promociones activas: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar promociones activas: {}", e.getMessage(), e);
         }
         
         return promotions;
@@ -161,8 +160,7 @@ public class PromotionDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al obtener promoción activa: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener promoción activa: {}", e.getMessage(), e);
         }
         
         return null;
@@ -208,13 +206,12 @@ public class PromotionDAO {
             int affected = stmt.executeUpdate();
             
             if (affected > 0) {
-                System.out.println("✅ Promoción actualizada: " + promotion.getIdPromotion());
+                logger.info("Promoción actualizada: {}", promotion.getIdPromotion());
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al actualizar promoción: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al actualizar promoción: {}", e.getMessage(), e);
         }
         
         return false;
@@ -241,13 +238,12 @@ public class PromotionDAO {
             int affected = stmt.executeUpdate();
             
             if (affected > 0) {
-                System.out.println("✅ Estado de promoción cambiado: " + idPromotion);
+                logger.info("Estado de promoción cambiado: {}", idPromotion);
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al cambiar estado: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al cambiar estado: {}", e.getMessage(), e);
         }
         
         return false;
@@ -266,13 +262,12 @@ public class PromotionDAO {
             int affected = stmt.executeUpdate();
             
             if (affected > 0) {
-                System.out.println("✅ Promoción eliminada: " + idPromotion);
+                logger.info("Promoción eliminada: {}", idPromotion);
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al eliminar promoción: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al eliminar promoción: {}", e.getMessage(), e);
         }
         
         return false;
@@ -293,8 +288,7 @@ public class PromotionDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al contar promociones: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar promociones: {}", e.getMessage(), e);
         }
         
         return 0;

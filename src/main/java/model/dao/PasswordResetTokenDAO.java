@@ -2,6 +2,8 @@ package model.dao;
 
 import config.DatabaseConnection;
 import model.entity.PasswordResetToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 
@@ -9,6 +11,7 @@ import java.sql.*;
  * DAO para gestionar tokens de recuperación de contraseña
  */
 public class PasswordResetTokenDAO {
+    private static final Logger logger = LoggerFactory.getLogger(PasswordResetTokenDAO.class);
     
     /**
      * Crea un nuevo token de recuperación
@@ -35,8 +38,7 @@ public class PasswordResetTokenDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al crear token de recuperación: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al crear token de recuperación: {}", e.getMessage(), e);
         }
         
         return false;
@@ -60,8 +62,7 @@ public class PasswordResetTokenDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al buscar token: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar token: {}", e.getMessage(), e);
         }
         
         return null;
@@ -80,8 +81,7 @@ public class PasswordResetTokenDAO {
             return pstmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
-            System.err.println("Error al marcar token como usado: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al marcar token como usado: {}", e.getMessage(), e);
         }
         
         return false;
@@ -101,8 +101,7 @@ public class PasswordResetTokenDAO {
             return true;
             
         } catch (SQLException e) {
-            System.err.println("Error al invalidar tokens del usuario: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al invalidar tokens del usuario: {}", e.getMessage(), e);
         }
         
         return false;
@@ -120,8 +119,7 @@ public class PasswordResetTokenDAO {
             return pstmt.executeUpdate();
             
         } catch (SQLException e) {
-            System.err.println("Error al eliminar tokens expirados: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al eliminar tokens expirados: {}", e.getMessage(), e);
         }
         
         return 0;

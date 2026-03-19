@@ -9,6 +9,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import model.dao.PetTransferRequestDAO;
 import model.entity.PetTransferRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.sql.*;
 
@@ -27,6 +30,8 @@ import java.sql.*;
  */
 @WebServlet("/accept-transfer")
 public class AcceptTransferServlet extends HttpServlet {
+
+    private static final Logger logger = LoggerFactory.getLogger(AcceptTransferServlet.class);
 
     // ──────────────────────────────────────────────────────────────────
     // GET: mostrar página de aceptación
@@ -84,7 +89,7 @@ public class AcceptTransferServlet extends HttpServlet {
             request.getRequestDispatcher("/view/public/accept-transfer.jsp").forward(request, response);
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error en transferencia de mascota", e);
             forward(request, response, "/view/public/transfer-error.jsp", "Error interno al procesar la solicitud.");
         }
     }
@@ -211,7 +216,7 @@ public class AcceptTransferServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("Error en transferencia de mascota", e);
             forward(request, response, "/view/public/transfer-error.jsp", "Error interno al procesar la adopción.");
         }
     }
@@ -235,7 +240,7 @@ public class AcceptTransferServlet extends HttpServlet {
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            logger.error("Error en transferencia de mascota", e);
         }
     }
 

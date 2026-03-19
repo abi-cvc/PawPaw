@@ -12,6 +12,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -20,33 +23,34 @@ import java.util.List;
  */
 @WebServlet("/user/my-suggestions")
 public class MySuggestionsServlet extends HttpServlet {
-    
+    private static final Logger logger = LoggerFactory.getLogger(MySuggestionsServlet.class);
+
     private SuggestionDAO suggestionDAO = new SuggestionDAO();
     private UserDAO userDAO = new UserDAO();
-    
+
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         HttpSession session = request.getSession(false);
-        
+
         // Verificar sesión
         if (session == null || session.getAttribute("userId") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-        
+
         Integer userId = (Integer) session.getAttribute("userId");
-        
+
         // Obtener información del usuario
         User user = userDAO.findById(userId);
         if (user != null) {
             request.setAttribute("user", user);
         }
-        
+
         // Obtener todas las sugerencias del usuario
         List<Suggestion> suggestions = suggestionDAO.findByUserId(userId);
-        
+
         // Contar por estado
         long pendingCount = suggestions.stream()
                 .filter(s -> "pending".equals(s.getStatusSuggestion()))
@@ -60,16 +64,16 @@ public class MySuggestionsServlet extends HttpServlet {
         long rejectedCount = suggestions.stream()
                 .filter(s -> "rejected".equals(s.getStatusSuggestion()))
                 .count();
-        
+
         request.setAttribute("suggestions", suggestions);
         request.setAttribute("totalSuggestions", suggestions.size());
         request.setAttribute("pendingCount", pendingCount);
         request.setAttribute("reviewedCount", reviewedCount);
         request.setAttribute("resolvedCount", resolvedCount);
         request.setAttribute("rejectedCount", rejectedCount);
-        
-        System.out.println("📋 Usuario " + userId + " viendo sus sugerencias. Total: " + suggestions.size());
-        
+
+        logger.info("Usuario {} viendo sus sugerencias. Total: {}", userId, suggestions.size());
+
         request.getRequestDispatcher("/view/internalUser/my-suggestions.jsp").forward(request, response);
     }
 }

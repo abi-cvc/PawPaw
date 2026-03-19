@@ -12,6 +12,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 
@@ -20,28 +23,29 @@ import java.math.BigDecimal;
  */
 @WebServlet("/user/purchase-slots")
 public class PurchaseSlotsServlet extends HttpServlet {
-    
+    private static final Logger logger = LoggerFactory.getLogger(PurchaseSlotsServlet.class);
+
     private PromotionDAO promotionDAO = new PromotionDAO();
     private UserDAO userDAO = new UserDAO();
-    
+
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         HttpSession session = request.getSession(false);
-        
+
         // Verificar sesión
         if (session == null || session.getAttribute("userId") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-        
+
         Integer userId = (Integer) session.getAttribute("userId");
         User user = userDAO.findById(userId);
-        
+
         if (user != null) {
             request.setAttribute("user", user);
-            
+
             // CORREGIDO: Verificar si es partner usando reflexión o query directa
             // Por ahora comentamos esta validación hasta actualizar User.java
             /*
@@ -52,22 +56,22 @@ public class PurchaseSlotsServlet extends HttpServlet {
             }
             */
         }
-        
+
         // Obtener promoción activa
         Promotion activePromo = promotionDAO.getCurrentActivePromotion();
         request.setAttribute("activePromotion", activePromo);
-        
+
         // Calcular precios
         BigDecimal singleSlotPrice = new BigDecimal("5.00");
         request.setAttribute("singleSlotPrice", singleSlotPrice);
-        
+
         if (activePromo != null) {
             BigDecimal savings = activePromo.calculateSavings();
             request.setAttribute("savings", savings);
         }
-        
-        System.out.println("🛒 Usuario " + userId + " viendo página de compra de slots");
-        
+
+        logger.info("Usuario {} viendo pagina de compra de slots", userId);
+
         request.getRequestDispatcher("/view/internalUser/purchase-slots.jsp").forward(request, response);
     }
 }

@@ -3,6 +3,8 @@ package model.dao;
 import config.DatabaseConnection;
 import model.entity.User;
 import org.mindrot.jbcrypt.BCrypt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import java.util.List;
  * Maneja todas las operaciones de base de datos relacionadas con usuarios
  */
 public class UserDAO {
+    private static final Logger logger = LoggerFactory.getLogger(UserDAO.class);
     
     /**
      * Crea un nuevo usuario en la base de datos
@@ -49,8 +52,7 @@ public class UserDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al crear usuario: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al crear usuario: {}", e.getMessage(), e);
         }
         
         return false;
@@ -88,8 +90,7 @@ public class UserDAO {
             }
 
         } catch (SQLException e) {
-            System.err.println("Error al crear usuario fundación: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al crear usuario fundación: {}", e.getMessage(), e);
         }
 
         return false;
@@ -110,8 +111,7 @@ public class UserDAO {
             return pstmt.executeUpdate() > 0;
 
         } catch (SQLException e) {
-            System.err.println("Error al actualizar visibilidad: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al actualizar visibilidad: {}", e.getMessage(), e);
         }
         return false;
     }
@@ -143,8 +143,7 @@ public class UserDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al buscar usuario: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar usuario: {}", e.getMessage(), e);
         }
         
         return null;
@@ -171,8 +170,7 @@ public class UserDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al buscar usuario por email: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar usuario por email: {}", e.getMessage(), e);
         }
         
         return null;
@@ -199,8 +197,7 @@ public class UserDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al verificar email: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al verificar email: {}", e.getMessage(), e);
         }
         
         return false;
@@ -227,8 +224,7 @@ public class UserDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al buscar usuario por ID: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al buscar usuario por ID: {}", e.getMessage(), e);
         }
         
         return null;
@@ -252,8 +248,7 @@ public class UserDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al obtener usuarios: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al obtener usuarios: {}", e.getMessage(), e);
         }
         
         return users;
@@ -280,8 +275,7 @@ public class UserDAO {
             return pstmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
-            System.err.println("Error al actualizar usuario: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al actualizar usuario: {}", e.getMessage(), e);
         }
         
         return false;
@@ -300,18 +294,17 @@ public class UserDAO {
             int affected = pstmt.executeUpdate();
             
             if (affected > 0) {
-                System.out.println("✅ Límite actualizado para usuario " + userId + ": " + newLimit);
+                logger.info("Límite actualizado para usuario {}: {}", userId, newLimit);
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al actualizar límite: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al actualizar límite: {}", e.getMessage(), e);
         }
-        
+
         return false;
     }
-    
+
     // ✅ NUEVO: Incrementar límite de mascotas (al comprar slots)
     public boolean incrementPetLimit(Integer userId, Integer slotsToAdd) {
         String sql = "UPDATE users SET pet_limit = pet_limit + ? WHERE id_user = ?";
@@ -325,13 +318,12 @@ public class UserDAO {
             int affected = pstmt.executeUpdate();
             
             if (affected > 0) {
-                System.out.println("✅ Se agregaron " + slotsToAdd + " slots al usuario " + userId);
+                logger.info("Se agregaron {} slots al usuario {}", slotsToAdd, userId);
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al incrementar límite: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al incrementar límite: {}", e.getMessage(), e);
         }
         
         return false;
@@ -358,13 +350,12 @@ public class UserDAO {
             return pstmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
-            System.err.println("Error al actualizar contraseña: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al actualizar contraseña: {}", e.getMessage(), e);
         }
-        
+
         return false;
     }
-    
+
     /**
      * Actualiza solo la contraseña de un usuario
      * 
@@ -384,13 +375,12 @@ public class UserDAO {
             int affectedRows = pstmt.executeUpdate();
             
             if (affectedRows > 0) {
-                System.out.println("✅ Contraseña actualizada para usuario ID: " + userId);
+                logger.info("Contraseña actualizada para usuario ID: {}", userId);
                 return true;
             }
             
         } catch (SQLException e) {
-            System.err.println("❌ Error al actualizar contraseña: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al actualizar contraseña: {}", e.getMessage(), e);
         }
         
         return false;
@@ -412,8 +402,7 @@ public class UserDAO {
             return pstmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
-            System.err.println("Error al eliminar usuario: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al eliminar usuario: {}", e.getMessage(), e);
         }
         
         return false;
@@ -435,8 +424,7 @@ public class UserDAO {
             return pstmt.executeUpdate() > 0;
             
         } catch (SQLException e) {
-            System.err.println("Error al desactivar usuario: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al desactivar usuario: {}", e.getMessage(), e);
         }
         
         return false;
@@ -459,8 +447,7 @@ public class UserDAO {
             }
             
         } catch (SQLException e) {
-            System.err.println("Error al contar usuarios: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al contar usuarios: {}", e.getMessage(), e);
         }
         
         return 0;
