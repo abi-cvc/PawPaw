@@ -4,6 +4,7 @@ import model.dao.UserDAO;
 import model.dao.PetDAO;
 import model.dao.QRCodeDAO;
 import model.dao.SuggestionDAO;
+import model.dao.DonationDAO;
 import model.entity.User;
 
 import jakarta.servlet.ServletException;
@@ -29,6 +30,7 @@ public class AdminPanelServlet extends HttpServlet {
     private PetDAO petDAO = new PetDAO();
     private QRCodeDAO qrCodeDAO = new QRCodeDAO();
     private SuggestionDAO suggestionDAO = new SuggestionDAO();
+    private DonationDAO donationDAO = new DonationDAO();
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -68,12 +70,16 @@ public class AdminPanelServlet extends HttpServlet {
 
             int totalSuggestions = suggestionDAO.count();
             int pendingSuggestions = suggestionDAO.countByStatus("pending");
+            int totalDonations = donationDAO.count();
+            java.math.BigDecimal totalDonationAmount = donationDAO.sumTotal();
 
             request.setAttribute("totalUsers", totalUsers);
             request.setAttribute("totalPets", totalPets);
             request.setAttribute("totalQRCodes", totalQRCodes);
             request.setAttribute("totalSuggestions", totalSuggestions);
             request.setAttribute("pendingSuggestions", pendingSuggestions);
+            request.setAttribute("totalDonations", totalDonations);
+            request.setAttribute("totalDonationAmount", totalDonationAmount);
 
             logger.info("Dashboard stats - Users: {}, Pets: {}, Suggestions: {}", totalUsers, totalPets, totalSuggestions);
 

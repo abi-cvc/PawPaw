@@ -13,6 +13,7 @@
                 <a href="${pageContext.request.contextPath}/terms" class="footer-link">Terminos de uso</a>
                 <a href="${pageContext.request.contextPath}/foundations/public" class="footer-link">Fundaciones Aliadas</a>
                 <a href="${pageContext.request.contextPath}/foundation/apply" class="footer-link">Ser fundacion aliada</a>
+                <a href="${pageContext.request.contextPath}/donate" class="footer-link">Donar</a>
             </nav>
         </div>
         <div class="footer-bottom">

@@ -29,6 +29,11 @@
     if (totalQRCodes == null) totalQRCodes = 0;
     if (totalSuggestions == null) totalSuggestions = 0;
     if (pendingSuggestions == null) pendingSuggestions = 0;
+
+    Integer totalDonations = (Integer) request.getAttribute("totalDonations");
+    java.math.BigDecimal totalDonationAmount = (java.math.BigDecimal) request.getAttribute("totalDonationAmount");
+    if (totalDonations == null) totalDonations = 0;
+    if (totalDonationAmount == null) totalDonationAmount = java.math.BigDecimal.ZERO;
 %>
 <!DOCTYPE html>
 <html lang="es">
@@ -88,8 +93,15 @@
                     <% if (pendingSuggestions > 0) { %>
                         <span style="margin-left: auto; background: var(--color-error); color: white; padding: 0.25rem 0.5rem; border-radius: var(--radio-full); font-size: 0.75rem; font-weight: 700;"><c:out value="${pendingSuggestions}"/></span>
                     <% } %>
-                </a>               
-                
+                </a>
+
+                <a href="${pageContext.request.contextPath}/admin/donations" class="nav-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                    </svg>
+                    Donaciones
+                </a>
+
                 <div class="nav-divider"></div>
 		        
 		        <a href="${pageContext.request.contextPath}/logout" class="nav-item">
@@ -160,6 +172,17 @@
                             <% if (pendingSuggestions > 0) { %>
                                 <small style="color: var(--color-error); font-weight: 600;"><c:out value="${pendingSuggestions}"/> pendientes</small>
                             <% } %>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">
+                            ❤️
+                        </div>
+                        <div class="stat-info">
+                            <h3>Donaciones</h3>
+                            <p><c:out value="${totalDonations}"/></p>
+                            <small style="color: var(--color-success); font-weight: 600;">$<%= String.format("%.2f", totalDonationAmount) %> recaudados</small>
                         </div>
                     </div>
                 </div>

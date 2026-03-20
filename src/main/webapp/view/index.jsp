@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=2">
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=3">
 </head>
 <body>
 
@@ -32,6 +32,9 @@
                     <div class="hero-botones">
                         <a href="${pageContext.request.contextPath}/register" class="btn btn-primario btn-grande">Crear cuenta gratis</a>
                         <a href="${pageContext.request.contextPath}/login" class="btn btn-outline btn-grande">Iniciar sesión</a>
+                    </div>
+                    <div class="hero-donar">
+                        <a href="${pageContext.request.contextPath}/donate" class="btn btn-donar-hero">Donar</a>
                     </div>
                     <div class="hero-confianza">
                         <div class="confianza-item">
