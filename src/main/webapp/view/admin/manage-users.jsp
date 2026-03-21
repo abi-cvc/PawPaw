@@ -10,7 +10,7 @@
     if (successMessage != null) pageContext.setAttribute("successMsg", successMessage);
     if (errorMessage != null) pageContext.setAttribute("errorMsg", errorMessage);
 %>
-<c:set var="userName" value="${not empty user ? user.nameUser : sessionScope.userName}"/>
+<c:set var="userName" value="${not empty requestScope.user ? requestScope.user.nameUser : sessionScope.userName}"/>
 <!DOCTYPE html>
 <html lang="es">
 <head>

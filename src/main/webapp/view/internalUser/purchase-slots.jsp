@@ -10,7 +10,7 @@
     if (successMessage != null) pageContext.setAttribute("successMsg", successMessage);
     if (errorMessage != null) pageContext.setAttribute("errorMsg", errorMessage);
 %>
-<c:set var="userName" value="${not empty user ? user.nameUser : sessionScope.userName}"/>
+<c:set var="userName" value="${not empty requestScope.user ? requestScope.user.nameUser : sessionScope.userName}"/>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -58,6 +58,10 @@
                     Comprar Slots
                 </a>
                 <div class="nav-divider"></div>
+                <a href="${pageContext.request.contextPath}/donate" class="nav-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                    Donar
+                </a>
                 <a href="${pageContext.request.contextPath}/logout" class="nav-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                     Cerrar Sesión

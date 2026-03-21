@@ -23,16 +23,21 @@ public class DonateServlet extends HttpServlet {
             throws ServletException, IOException {
 
         HttpSession session = request.getSession(false);
+        boolean loggedIn = session != null && session.getAttribute("userId") != null;
 
-        if (session != null && session.getAttribute("userId") != null) {
-            request.setAttribute("loggedIn", true);
+        if (loggedIn) {
             request.setAttribute("sessionUserName", session.getAttribute("userName"));
             request.setAttribute("sessionUserEmail", session.getAttribute("user"));
         }
 
         request.setAttribute("paypalClientId", PayPalConfig.getClientId());
 
-        logger.info("Acceso a pagina de donaciones");
-        request.getRequestDispatcher("/view/public/donate.jsp").forward(request, response);
+        logger.info("Acceso a pagina de donaciones - usuario logueado: {}", loggedIn);
+
+        if (loggedIn) {
+            request.getRequestDispatcher("/view/internalUser/donate.jsp").forward(request, response);
+        } else {
+            request.getRequestDispatcher("/view/public/donate.jsp").forward(request, response);
+        }
     }
 }

@@ -13,7 +13,7 @@
     } catch (Exception e) { /* silent */ }
     pageContext.setAttribute("unreadCount", unreadCount);
 %>
-<c:set var="userName" value="${not empty user ? user.nameUser : sessionScope.userName}"/>
+<c:set var="userName" value="${not empty requestScope.user ? requestScope.user.nameUser : sessionScope.userName}"/>
 <c:set var="isPartner" value="${sessionScope.isPartner == true}"/>
 <!DOCTYPE html>
 <html lang="es">
@@ -81,6 +81,10 @@
                 <a href="${pageContext.request.contextPath}/user/my-suggestions" class="nav-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
                     Mis Sugerencias
+                </a>
+                <a href="${pageContext.request.contextPath}/donate" class="nav-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                    Donar
                 </a>
                 <a href="${pageContext.request.contextPath}/logout" class="nav-item">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
