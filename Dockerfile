@@ -26,4 +26,4 @@ COPY --from=build /app/target/PawPaw-*.war /usr/local/tomcat/webapps/ROOT.war
 EXPOSE 8080
 
 # Tomcat arranca automáticamente
-CMD ["catalina.sh", "run"]
+CMD ["sh", "-c", "sed -i \"s/8080/${PORT:-8080}/g\" /usr/local/tomcat/conf/server.xml && catalina.sh run"]
