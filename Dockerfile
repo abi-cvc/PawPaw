@@ -25,5 +25,5 @@ COPY --from=build /app/target/PawPaw-*.war /usr/local/tomcat/webapps/ROOT.war
 # Exponer puerto
 EXPOSE 8080
 
-# Tomcat arranca automáticamente
+# Deshabilitar shutdown port y usar puerto dinamico de Render
 CMD ["sh", "-c", "sed -i 's/port=\"8005\"/port=\"-1\"/' /usr/local/tomcat/conf/server.xml && sed -i \"s/8080/${PORT:-8080}/g\" /usr/local/tomcat/conf/server.xml && catalina.sh run"]

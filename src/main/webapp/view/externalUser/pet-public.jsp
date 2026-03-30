@@ -2,6 +2,11 @@
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%
+    // Redirect if no pet in request
+    if (request.getAttribute("pet") == null) {
+        response.sendRedirect(request.getContextPath() + "/");
+        return;
+    }
     // Session flash messages require removeAttribute (no JSTL equivalent)
     String successMessage = (String) session.getAttribute("successMessage");
     String errorMessage = (String) session.getAttribute("errorMessage");
@@ -10,9 +15,6 @@
     if (successMessage != null) pageContext.setAttribute("successMsg", successMessage);
     if (errorMessage != null) pageContext.setAttribute("errorMsg", errorMessage);
 %>
-<c:if test="${empty pet}">
-    <% response.sendRedirect(request.getContextPath() + "/"); return; %>
-</c:if>
 <!DOCTYPE html>
 <html lang="es">
 <head>
