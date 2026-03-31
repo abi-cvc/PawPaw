@@ -187,22 +187,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="public-footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>PawPaw</h4>
-                    <p>Sistema de identificación de mascotas</p>
-                </div>
-                <div class="footer-section">
-                    <p><a href="${pageContext.request.contextPath}/foundations/public">Ver todas las fundaciones</a></p>
-                </div>
-                <div class="footer-section">
-                    <p>&copy; 2025 PawPaw. Todos los derechos reservados.</p>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <jsp:include page="/view/components/footer.jsp" />
 
 </body>
 </html>

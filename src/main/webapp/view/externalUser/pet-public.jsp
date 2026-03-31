@@ -277,12 +277,14 @@
 
             <!-- Footer informativo -->
             <div class="public-footer">
-                <p>Esta mascota está protegida con <strong>PawPaw</strong></p>
-                <p>¿Quieres proteger a tu mascota también? <a href="${pageContext.request.contextPath}/register">Crea tu cuenta gratis</a></p>
+                <p>Esta mascota esta protegida con <strong>PawPaw</strong></p>
+                <p>¿Quieres proteger a tu mascota tambien? <a href="${pageContext.request.contextPath}/register">Crea tu cuenta gratis</a></p>
             </div>
 
         </div>
     </main>
+
+    <jsp:include page="/view/components/footer.jsp" />
 
     <script>
         // Deshabilitar botón y mostrar "Enviando..." mientras procesa

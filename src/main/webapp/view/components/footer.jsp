@@ -17,7 +17,7 @@
             </nav>
         </div>
         <div class="footer-bottom">
-            <p class="footer-copyright">&copy; 2025 PawPaw. Todos los derechos reservados.</p>
+            <p class="footer-copyright">&copy; 2026 PawPaw. Todos los derechos reservados.</p>
         </div>
     </div>
 </footer>

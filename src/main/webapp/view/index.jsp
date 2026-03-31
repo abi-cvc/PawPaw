@@ -311,27 +311,7 @@
     </main>
 
     <!-- ==================== FOOTER ==================== -->
-    <footer class="footer">
-        <div class="footer-contenedor">
-            <div class="footer-contenido">
-                <div class="footer-brand">
-                    <img src="${pageContext.request.contextPath}/images/logo.png" alt="Logo PawPaw" class="footer-logo-img">
-                    <span class="footer-logo-texto">PawPaw</span>
-                </div>
-                <nav class="footer-links">
-                    <a href="${pageContext.request.contextPath}/about" class="footer-link">Sobre nosotros</a>
-                    <a href="${pageContext.request.contextPath}/contact" class="footer-link">Contacto</a>
-                    <a href="${pageContext.request.contextPath}/privacy" class="footer-link">Política de privacidad</a>
-                    <a href="${pageContext.request.contextPath}/terms" class="footer-link">Términos de uso</a>
-                    <a href="${pageContext.request.contextPath}/foundations/public" class="footer-link">Fundaciones Aliadas</a>
-                    <a href="${pageContext.request.contextPath}/foundation/apply" class="footer-link">Ser fundación aliada</a>
-                </nav>
-            </div>
-            <div class="footer-bottom">
-                <p class="footer-copyright">© 2024 PawPaw. Todos los derechos reservados.</p>
-            </div>
-        </div>
-    </footer>
+    <jsp:include page="/view/components/footer.jsp" />
 
 </body>
 </html>

@@ -307,5 +307,8 @@
             alerts.forEach(function(a) { a.style.opacity = '0'; a.style.transition = 'opacity 0.5s'; });
         }, 5000);
     </script>
+
+    <jsp:include page="/view/components/footer.jsp" />
+
 </body>
 </html>
