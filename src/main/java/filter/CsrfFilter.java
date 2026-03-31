@@ -68,6 +68,7 @@ public class CsrfFilter implements Filter {
         return path.contains("/api/") ||
                path.contains("/paypal/") ||
                path.contains("/accept-transfer") ||
+               path.contains("/auth/google/") ||
                path.contains("/health") ||
                path.contains("/diagnostic");
     }

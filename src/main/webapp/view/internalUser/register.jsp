@@ -10,6 +10,7 @@
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
     <div class="contenedor-formulario">
@@ -37,6 +38,35 @@
                 </div>
             </c:if>
             
+            <!-- Google Sign-In (solo para registro normal, no fundaciones) -->
+            <c:if test="${empty foundationToken}">
+                <div id="g_id_onload"
+                     data-client_id="${googleClientId}"
+                     data-context="signup"
+                     data-ux_mode="redirect"
+                     data-login_uri="${pageContext.request.contextPath}/auth/google/callback"
+                     data-auto_prompt="false">
+                </div>
+                <div class="google-btn-wrapper" style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
+                    <div class="g_id_signin"
+                         data-type="standard"
+                         data-shape="rectangular"
+                         data-theme="outline"
+                         data-text="signup_with"
+                         data-size="large"
+                         data-locale="es"
+                         data-logo_alignment="left"
+                         data-width="100%">
+                    </div>
+                </div>
+
+                <div class="separador-o" style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                    <hr style="flex: 1; border: none; border-top: 1px solid #ddd;">
+                    <span style="color: #999; font-size: 0.85rem;">o</span>
+                    <hr style="flex: 1; border: none; border-top: 1px solid #ddd;">
+                </div>
+            </c:if>
+
             <form action="${pageContext.request.contextPath}/register" method="post" id="registerForm">
                 <input type="hidden" name="_csrf" value="${sessionScope.csrfToken}">
                 <c:if test="${not empty foundationToken}">

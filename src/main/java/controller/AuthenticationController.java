@@ -45,6 +45,9 @@ public class AuthenticationController extends HttpServlet {
             return;
         }
 
+        // Pasar Google Client ID al JSP
+        request.setAttribute("googleClientId", System.getenv("GOOGLE_CLIENT_ID"));
+
         // Mostrar la página de login
         request.getRequestDispatcher("/view/internalUser/login.jsp").forward(request, response);
     }
@@ -95,6 +98,7 @@ public class AuthenticationController extends HttpServlet {
             logger.info("Login fallido - Email: {}", email);
             request.setAttribute("error", "Email o contraseña incorrectos");
             request.setAttribute("email", email);
+            request.setAttribute("googleClientId", System.getenv("GOOGLE_CLIENT_ID"));
             request.getRequestDispatcher("/view/internalUser/login.jsp").forward(request, response);
         }
     }

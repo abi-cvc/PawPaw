@@ -62,6 +62,7 @@ public class UserController extends HttpServlet {
             }
         }
 
+        request.setAttribute("googleClientId", System.getenv("GOOGLE_CLIENT_ID"));
         request.getRequestDispatcher("/view/internalUser/register.jsp").forward(request, response);
     }
 
@@ -97,6 +98,7 @@ public class UserController extends HttpServlet {
                     request.setAttribute("foundationName", fr.getFoundationName());
                 }
             }
+            request.setAttribute("googleClientId", System.getenv("GOOGLE_CLIENT_ID"));
             request.getRequestDispatcher("/view/internalUser/register.jsp").forward(request, response);
             return;
         }
@@ -113,12 +115,15 @@ public class UserController extends HttpServlet {
             }
         }
 
+        String gClientId = System.getenv("GOOGLE_CLIENT_ID");
+
         // Intentar registrar usuario
         if (isFoundationRegistration) {
             if (registerFoundationUser(name, email, password, foundationReq)) {
                 logger.info("Fundacion registrada exitosamente: {}", foundationReq.getFoundationName());
                 request.setAttribute("success", "¡Cuenta de fundación creada exitosamente! Por favor inicia sesión.");
                 request.setAttribute("email", email);
+                request.setAttribute("googleClientId", gClientId);
                 request.getRequestDispatcher("/view/internalUser/login.jsp").forward(request, response);
             } else {
                 logger.error("Error al registrar fundacion");
@@ -128,6 +133,7 @@ public class UserController extends HttpServlet {
                 request.setAttribute("foundationToken", foundationToken);
                 request.setAttribute("foundationEmail", email);
                 request.setAttribute("foundationName", foundationReq.getFoundationName());
+                request.setAttribute("googleClientId", gClientId);
                 request.getRequestDispatcher("/view/internalUser/register.jsp").forward(request, response);
             }
         } else {
@@ -135,12 +141,14 @@ public class UserController extends HttpServlet {
                 logger.info("Usuario registrado exitosamente");
                 request.setAttribute("success", "Cuenta creada exitosamente. Por favor inicia sesión.");
                 request.setAttribute("email", email);
+                request.setAttribute("googleClientId", gClientId);
                 request.getRequestDispatcher("/view/internalUser/login.jsp").forward(request, response);
             } else {
                 logger.error("Error: Email ya existe o error en BD");
                 request.setAttribute("error", "El email ya está registrado. Intenta con otro o inicia sesión.");
                 request.setAttribute("name", name);
                 request.setAttribute("email", email);
+                request.setAttribute("googleClientId", gClientId);
                 request.getRequestDispatcher("/view/internalUser/register.jsp").forward(request, response);
             }
         }
