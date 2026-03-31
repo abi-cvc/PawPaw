@@ -21,6 +21,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><c:out value="${pet.namePet}"/> - PawPaw</title>
+    <meta name="description" content="Perfil de ${fn:escapeXml(pet.namePet)}. Si encontraste a esta mascota, contacta a su dueno desde aqui.">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="${fn:escapeXml(pet.namePet)} - PawPaw">
+    <meta property="og:description" content="Perfil de ${fn:escapeXml(pet.namePet)}. Si encontraste a esta mascota, contacta a su dueno.">
+    <c:choose>
+        <c:when test="${not empty pet.photo}">
+    <meta property="og:image" content="${fn:escapeXml(pet.photo)}">
+        </c:when>
+        <c:otherwise>
+    <meta property="og:image" content="${pageContext.request.contextPath}/images/logo.png">
+        </c:otherwise>
+    </c:choose>
+    <meta property="og:locale" content="es_EC">
+    <meta property="og:site_name" content="PawPaw">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="${fn:escapeXml(pet.namePet)} - PawPaw">
+    <meta name="twitter:description" content="Perfil de ${fn:escapeXml(pet.namePet)}. Si encontraste a esta mascota, contacta a su dueno.">
+    <c:choose>
+        <c:when test="${not empty pet.photo}">
+    <meta name="twitter:image" content="${fn:escapeXml(pet.photo)}">
+        </c:when>
+        <c:otherwise>
+    <meta name="twitter:image" content="${pageContext.request.contextPath}/images/logo.png">
+        </c:otherwise>
+    </c:choose>
 
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">

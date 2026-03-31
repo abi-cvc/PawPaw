@@ -6,6 +6,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Donar - PawPaw</title>
+    <meta name="description" content="Apoya a PawPaw con una donacion. Tu contribucion nos ayuda a proteger mas mascotas en Ecuador con tecnologia QR.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="${pageContext.request.contextPath}/donate">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Donar - PawPaw">
+    <meta property="og:description" content="Apoya a PawPaw con una donacion para proteger mas mascotas en Ecuador.">
+    <meta property="og:image" content="${pageContext.request.contextPath}/images/logo.png">
+    <meta property="og:locale" content="es_EC">
+    <meta property="og:site_name" content="PawPaw">
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

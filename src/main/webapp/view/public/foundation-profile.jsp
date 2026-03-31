@@ -7,6 +7,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><c:out value="${foundation.foundationName}"/> - PawPaw</title>
+    <meta name="description" content="${fn:escapeXml(foundation.foundationName)} - Fundacion aliada de PawPaw. Conoce su labor y las mascotas disponibles para adopcion.">
+    <meta name="robots" content="index, follow">
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="${fn:escapeXml(foundation.foundationName)} - PawPaw">
+    <meta property="og:description" content="${fn:escapeXml(foundation.foundationName)} - Fundacion aliada verificada de PawPaw.">
+    <meta property="og:image" content="${pageContext.request.contextPath}/images/logo.png">
+    <meta property="og:locale" content="es_EC">
+    <meta property="og:site_name" content="PawPaw">
 
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/logo.png">
 

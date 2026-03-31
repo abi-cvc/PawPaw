@@ -5,7 +5,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PawPaw - La seguridad de tu mascota</title>
+    <title>PawPaw - Identificacion y Proteccion de Mascotas con QR</title>
+    <meta name="description" content="Protege a tu mascota con un perfil digital y codigo QR. Si se pierde, cualquier persona puede escanearlo y contactarte al instante. Registro gratuito.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="${pageContext.request.contextPath}/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="PawPaw - Identificacion y Proteccion de Mascotas con QR">
+    <meta property="og:description" content="Crea un perfil digital para tu mascota con codigo QR. Si se pierde, cualquier persona puede contactarte al instante.">
+    <meta property="og:image" content="${pageContext.request.contextPath}/images/logo.png">
+    <meta property="og:url" content="${pageContext.request.contextPath}/">
+    <meta property="og:locale" content="es_EC">
+    <meta property="og:site_name" content="PawPaw">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="PawPaw - Identificacion y Proteccion de Mascotas con QR">
+    <meta name="twitter:description" content="Protege a tu mascota con un perfil digital y codigo QR. Registro gratuito.">
+    <meta name="twitter:image" content="${pageContext.request.contextPath}/images/logo.png">
+
+    <!-- JSON-LD Organization -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "PawPaw",
+        "description": "Sistema de identificacion y proteccion de mascotas mediante codigos QR",
+        "url": "https://pawpaw-wmwb.onrender.com",
+        "logo": "https://pawpaw-wmwb.onrender.com/images/logo.png",
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "email": "pawpawsystem@gmail.com",
+            "contactType": "customer service"
+        },
+        "sameAs": []
+    }
+    </script>
+
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

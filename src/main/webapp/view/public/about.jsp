@@ -6,6 +6,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sobre Nosotros - PawPaw</title>
+    <meta name="description" content="Conoce a PawPaw, una plataforma ecuatoriana que protege mascotas con perfiles digitales y codigos QR para que siempre encuentren el camino a casa.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="${pageContext.request.contextPath}/about">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Sobre Nosotros - PawPaw">
+    <meta property="og:description" content="Conoce a PawPaw, plataforma ecuatoriana de proteccion de mascotas con codigos QR.">
+    <meta property="og:image" content="${pageContext.request.contextPath}/images/logo.png">
+    <meta property="og:locale" content="es_EC">
+    <meta property="og:site_name" content="PawPaw">
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

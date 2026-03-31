@@ -6,6 +6,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terminos de Uso - PawPaw</title>
+    <meta name="description" content="Terminos y condiciones de uso de PawPaw. Reglas para el uso de la plataforma de identificacion de mascotas.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="${pageContext.request.contextPath}/terms">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Terminos de Uso - PawPaw">
+    <meta property="og:description" content="Terminos y condiciones de uso de la plataforma PawPaw.">
+    <meta property="og:image" content="${pageContext.request.contextPath}/images/logo.png">
+    <meta property="og:locale" content="es_EC">
+    <meta property="og:site_name" content="PawPaw">
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

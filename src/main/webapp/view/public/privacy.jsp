@@ -6,6 +6,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Politica de Privacidad - PawPaw</title>
+    <meta name="description" content="Politica de privacidad de PawPaw. Conoce como protegemos tus datos personales y los de tu mascota conforme a la LOPDP de Ecuador.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="${pageContext.request.contextPath}/privacy">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Politica de Privacidad - PawPaw">
+    <meta property="og:description" content="Conoce como PawPaw protege tus datos personales conforme a la LOPDP de Ecuador.">
+    <meta property="og:image" content="${pageContext.request.contextPath}/images/logo.png">
+    <meta property="og:locale" content="es_EC">
+    <meta property="og:site_name" content="PawPaw">
     <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/images/logo.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
